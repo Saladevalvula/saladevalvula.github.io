@@ -405,6 +405,31 @@
         function filterValves(val) { const btns = document.getElementById('valve-grid').children; for(let btn of btns) { if(btn.innerText.includes(val)) btn.style.display = 'flex'; else btn.style.display = 'none'; } }
         function setFormType(type) { state.form.type = type; renderRegisterFlow(document.getElementById('main-container')); }
         function setFormStatus(status) { state.form.status = status; renderRegisterFlow(document.getElementById('main-container')); }
+
+        // --- FUNÇÕES DA SONDA (CORRIGIDO) ---
+        function checkSondaStatusAndOpen() {
+            // 1. Verifica no banco se já está jumpeada
+            const lineData = globalDB[state.selectedLine] || {};
+            const valveData = lineData[state.selectedValve] || {};
+            state.sondaStatusAtual = valveData.sonda_status || 'ok';
+            
+            // 2. Vai para a tela da sonda
+            navigateTo('sonda_form');
+        }
+
+        function selectSondaAction(action) {
+            state.sondaAction = action;
+            // Atualiza visual dos botões
+            const btnJumper = document.getElementById('btn-sj-jumper');
+            const btnNorm = document.getElementById('btn-sj-normalizar');
+            
+            const baseClass = "p-4 rounded-lg border border-transparent bg-secondary text-gray-400 font-bold hover:text-white transition-all flex items-center gap-3";
+            const activeClass = "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold transition-all flex items-center gap-3";
+
+            if(btnJumper) btnJumper.className = (action === 'jumper') ? activeClass : baseClass;
+            if(btnNorm) btnNorm.className = (action === 'normalizar') ? activeClass : baseClass;
+        }
+        // ---------------------------------------------
         
         function openDiagnosisPicker() { const options = [{label:'Limpar',value:''},{label:'1. Lata VAZIA',value:'1'},{label:'2. Lata METADE',value:'2'},{label:'3. Lata AMASSADA',value:'3'},{label:'4. EXPLODIU ESPUMA',value:'4'},{label:'5. Espuma INÍCIO',value:'5'},{label:'6. Mesa molhada',value:'6'}]; showOptionPicker("Sintoma do Problema", options, (val) => { state.form.kronesDiag = val; const el = document.getElementById('krones-result'); const btnText = document.getElementById('diag-text'); const msgs = { '1':'Bloqueio total. Verificar V3 (Produto) ou V1 (Retorno).', '2':'Enchimento lento. Verificar V1 (Retorno).', '3':'Falta de pressão. Verificar V2 (Pressurização).', '4':'Falha Snift. Verificar V5 (Descarga).', '5':'Choque de pressão. Verificar V2 ou V7.', '6':'Gotejamento. Verificar V6 (Soplado).' }; if(!val) { el.classList.add('hidden'); btnText.innerText = "Selecione o sintoma..."; btnText.className = "text-gray-400"; } else { el.innerHTML = `<strong>IA:</strong> ${msgs[val]}`; el.classList.remove('hidden'); btnText.innerText = options.find(o=>o.value==val).label; btnText.className = "text-white font-bold"; } }); }
         function openLinePicker() { const options = [{label:'Todas', value:'all'}, {label:'Linha 512', value:'512'}, {label:'Linha 513', value:'513'}, {label:'Linha 514', value:'514'}]; showOptionPicker("Filtrar por Linha", options, (val) => { updateFilter('line', val); document.getElementById('hist-line-text').innerText = val==='all'?'Todas':val; loadHistory(); }); }
@@ -492,6 +517,19 @@
         function confirmDeleteAll() {
             showPasswordPrompt(async () => {
                 showAlert("Aviso", "A exclusão total via App foi desativada por segurança no modo Online. Use o console do Firebase para limpar o banco inteiro.", "info");
+            });
+        }
+
+        function loadGridStatus() {
+            // Função auxiliar para pintar válvulas com defeito na grid
+            const dbData = globalDB[state.selectedLine] || {};
+            Object.values(dbData).forEach(v => {
+                const btn = document.getElementById(`valve-btn-${v.valveNumber}`);
+                if(btn) {
+                    if(v.sonda_status === 'jumpeada') {
+                        btn.classList.add('valve-jumpeada');
+                    }
+                }
             });
         }
 
