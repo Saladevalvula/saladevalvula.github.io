@@ -158,8 +158,8 @@
         window.addEventListener('popstate', (event) => { if (event.state && event.state.step) { state.step = event.state.step; render(false); } else { state.step = 'line'; render(false); } });
         function navigateTo(step) { state.step = step; window.history.pushState({ step: step }, null, ''); render(false); }
 
-        // --- MODAL SYSTEM (CUSTOM) ---
-        window.modalCallbacks = {}; // Callbacks storage
+        // --- MODAL SYSTEM ---
+        window.modalCallbacks = {}; 
         function openModal(title, html) {
             const m = document.getElementById('custom-modal'); document.getElementById('modal-title').innerText = title; document.getElementById('modal-content').innerHTML = html;
             m.classList.remove('hidden'); setTimeout(() => { m.classList.remove('opacity-0'); document.getElementById('modal-panel').classList.add('scale-100'); }, 10);
@@ -213,11 +213,12 @@
                         if(v.sonda_status === 'jumpeada') jumps.push(v.valveNumber);
                         if(v.historico) v.historico.forEach(h => { if(h.type==='preventiva') { prevTotal++; if(h.subset==='Geral') prevGeral++; } if(h.type==='corretiva') corr++; });
                     });
+                    jumps.sort((a,b)=>a-b);
                     const pends = cfg.valveCount - prevGeral;
                     const ops = opportunitiesDB[line] || [];
                     const ticker = ops.length ? `<div class="ticker-wrap"><div class="ticker-move">${ops.map(o => `<span class="ticker-item">⚠️ [${o.turno} - ${o.nome}] ${o.texto}</span>`).join('')}</div></div>` : `<div class="ticker-wrap"><div class="ticker-move"><span class="ticker-item text-green-500">✅ LINHA NORMAL</span></div></div>`;
 
-                    return `<div class="card-industrial p-0 w-full text-left group relative overflow-hidden flex flex-col justify-between pb-10"><div onclick="selectLine('${line}')" class="p-6 cursor-pointer h-full"><div class="flex items-start justify-between mb-4"><div class="flex items-center gap-4"><div class="w-14 h-14 rounded-lg bg-primary/20 flex items-center justify-center"><i data-lucide="wrench" class="w-7 h-7 text-primary"></i></div><div><div class="text-2xl font-bold font-mono text-foreground">Linha ${line}</div><div class="text-xs text-gray-400 font-bold uppercase mt-1">${cfg.valveCount} Válvulas ${cfg.hasProbe?'• Sonda':''}</div></div></div><i data-lucide="chevron-right" class="w-6 h-6 text-gray-500"></i></div><div class="border-t border-gray-700 pt-3 grid grid-cols-2 gap-y-2 text-xs font-mono"><div class="text-gray-400"><span class="block text-[10px] uppercase text-gray-500 font-bold">Pendentes</span><span class="text-white text-sm font-bold">${pends}</span></div><div class="text-green-500"><span class="block text-[10px] uppercase text-green-500/70 font-bold">Preventivas</span><span class="text-sm font-bold">${prevTotal}</span></div><div class="text-red-500"><span class="block text-[10px] uppercase text-red-500/70 font-bold">Corretivas</span><span class="text-sm font-bold">${corr}</span></div>${jumps.length?`<div class="col-span-2 mt-1 bg-yellow-500/10 border border-yellow-500/30 rounded p-2 text-yellow-500 animate-pulse font-bold text-[10px]"><i data-lucide="zap" class="w-3 h-3 inline"></i> ${jumps.length} Sondas Jumpeadas</div>`:''}</div></div><button onclick="openOpModal('${line}')" class="absolute top-2 right-2 p-2 bg-secondary rounded-full border border-gray-600 shadow-lg"><i data-lucide="list-plus" class="w-5 h-5 text-yellow-500"></i></button>${ticker}</div>`;
+                    return `<div class="card-industrial p-0 w-full text-left group relative overflow-hidden flex flex-col justify-between pb-10"><div onclick="selectLine('${line}')" class="p-6 cursor-pointer h-full"><div class="flex items-start justify-between mb-4"><div class="flex items-center gap-4"><div class="w-14 h-14 rounded-lg bg-primary/20 flex items-center justify-center"><i data-lucide="wrench" class="w-7 h-7 text-primary"></i></div><div><div class="text-2xl font-bold font-mono text-foreground">Linha ${line}</div><div class="text-xs text-gray-400 font-bold uppercase mt-1">${cfg.valveCount} Válvulas ${cfg.hasProbe?'• Sonda':''}</div></div></div><i data-lucide="chevron-right" class="w-6 h-6 text-gray-500"></i></div><div class="border-t border-gray-700 pt-3 grid grid-cols-2 gap-y-2 text-xs font-mono"><div class="text-gray-400"><span class="block text-[10px] uppercase text-gray-500 font-bold">Pendentes</span><span class="text-white text-sm font-bold">${pends}</span></div><div class="text-green-500"><span class="block text-[10px] uppercase text-green-500/70 font-bold">Preventivas</span><span class="text-sm font-bold">${prevTotal}</span></div><div class="text-red-500"><span class="block text-[10px] uppercase text-red-500/70 font-bold">Corretivas</span><span class="text-sm font-bold">${corr}</span></div>${jumps.length?`<div class="col-span-2 mt-1 bg-yellow-500/10 border border-yellow-500/30 rounded p-2 text-yellow-500 animate-pulse font-bold text-[10px]"><i data-lucide="zap" class="w-3 h-3 inline"></i> ${jumps.length} Sonda(s) Jumpeada(s)</div><div class="col-span-2 text-[10px] text-yellow-500 font-mono mt-1">Válvulas: ${jumps.join(', ')}</div>`:''}</div></div><button onclick="openOpModal('${line}')" class="absolute top-2 right-2 p-2 bg-secondary rounded-full border border-gray-600 shadow-lg"><i data-lucide="list-plus" class="w-5 h-5 text-yellow-500"></i></button>${ticker}</div>`;
                 }).join('');
                 c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase tracking-wider text-foreground">Painel Geral</h2></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4">${html}</div></div>`;
             } 
@@ -252,53 +253,20 @@
             const el = document.getElementById('h-list'); const {line, valve, historyType} = state.filters;
             let res = [];
             const lines = (line === 'all') ? Object.keys(LINE_CONFIGS) : [line];
-            
-            // 1. Manutenções e Sondas (Arrays)
             if(historyType !== 'oportunidades') {
-                lines.forEach(l => {
-                    const ld = globalDB[l]||{};
-                    Object.values(ld).forEach(v => {
-                        if(v.historico) v.historico.forEach(h => {
-                            if(historyType === 'sonda' && !h.isSonda) return;
-                            if(historyType === 'manutencao' && h.isSonda) return;
-                            res.push({...h, line: l, valve: v.valveNumber, source: 'array'});
-                        });
-                    });
-                });
+                lines.forEach(l => { const ld = globalDB[l]||{}; Object.values(ld).forEach(v => { if(v.historico) v.historico.forEach(h => { if(historyType === 'sonda' && !h.isSonda) return; if(historyType === 'manutencao' && h.isSonda) return; res.push({...h, line: l, valve: v.valveNumber}); }); }); });
             }
-            // 2. Oportunidades (Docs)
-            if(historyType === 'all' || historyType === 'oportunidades') {
-                lines.forEach(l => {
-                    const ops = opportunitiesDB[l]||[]; // Aqui pegamos as ativas, mas histórico é outra coleção
-                });
-                // Nota: Para histórico de oportunidades baixadas, precisaríamos ler a coleção 'historico_oportunidades'.
-                // Vou ler sob demanda para simplificar, ou misturar aqui se já tiver cache. 
-                // Como não temos cache realtime de historico_oportunidades, vou focar nos arrays por enquanto.
-                // *Correção*: Para o botão de excluir funcionar, vamos focar no que temos em tela.
-            }
-
             res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
             el.innerHTML = res.map(r => {
                 const d = new Date(r.timestamp);
                 const icon = r.isCritical ? 'flame' : (r.isSonda ? 'zap' : 'wrench');
                 const color = r.isCritical ? 'text-red-500' : (r.isSonda ? 'text-yellow-500' : 'text-primary');
-                return `<div class="card-industrial p-4 border ${r.isCritical ? 'border-red-500/80' : 'border-gray-700'} relative">
-                    ${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}
-                    <div class="flex justify-between mb-2">
-                        <span class="font-bold text-primary font-mono">L${r.line}/V${r.valve}</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>
-                            <button onclick="askDelete('${r.line}', '${r.valve}', '${r.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>
-                    <div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.description}</p></div>
-                </div>`;
+                return `<div class="card-industrial p-4 border ${r.isCritical ? 'border-red-500/80' : 'border-gray-700'} relative">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/V${r.valve}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span><button onclick="askDelete('${r.line}', '${r.valve}', '${r.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
             }).join('');
             lucide.createIcons();
         }
 
-        // --- LOGIC: ACTIONS ---
+        // --- ACTIONS ---
         function setMode(m) { state.mode = m; render(); }
         function selectLine(l) { state.selectedLine = l; navigateTo('valve'); }
         function selectValve(v) { state.selectedValve = v; const c = LINE_CONFIGS[state.selectedLine]; if(!c.subsets) { state.selectedSubset = null; navigateTo('form'); } else navigateTo('subset'); }
@@ -313,7 +281,6 @@
         function openLinePicker() { showOptionPicker("Filtrar Linha", [{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
         function openTypePicker() { showOptionPicker("Filtrar Tipo", [{label:'Todos',value:'all'},{label:'Manutenções',value:'manutencao'},{label:'Sondas',value:'sonda'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
         
-        // --- SUBMITS ---
         function preSubmit() {
             if(!state.form.description.trim()) { showAlert("Erro", "Descrição vazia.", "error"); return; }
             const hist = globalDB[state.selectedLine]?.[state.selectedValve]?.historico || [];
@@ -337,66 +304,22 @@
             showAlert("Sucesso", "Sonda Atualizada!", "success");
             state.step = 'line'; render(false);
         }
-
-        // --- DELETE ---
         function askDelete(line, valve, id) {
             showPasswordPrompt(async () => {
                 const docRef = db.collection('lines').doc(line).collection('valves').doc(String(valve));
                 const snap = await docRef.get();
-                if(snap.exists) {
-                    const data = snap.data();
-                    const newHist = data.historico.filter(r => r.id !== id);
-                    await docRef.update({ historico: newHist });
-                    showAlert("Feito", "Registro excluído.", "success");
-                }
+                if(snap.exists) { const data = snap.data(); const newHist = data.historico.filter(r => r.id !== id); await docRef.update({ historico: newHist }); showAlert("Feito", "Registro excluído.", "success"); }
             });
         }
-
-        // --- OPORTUNIDADES ---
         function openOpModal(line) { const html=`<div class="space-y-4"><div class="bg-secondary p-3 rounded border border-gray-700"><label class="label-industrial">Nova</label><input id="op-n" placeholder="Nome" class="input-industrial mb-2"><select id="op-t" class="input-industrial mb-2 bg-secondary"><option>Manhã</option><option>Tarde</option><option>Noite</option></select><textarea id="op-txt" placeholder="O que fazer?" class="input-industrial" rows="2"></textarea><button onclick="saveOp('${line}')" class="btn-industrial bg-primary text-white w-full py-3 mt-2">CADASTRAR</button></div><div id="op-lst-${line}" class="space-y-2 max-h-60 overflow-y-auto"></div></div>`; openModal(`Oportunidades L${line}`, html); renderOps(line); }
-        function renderOps(line) {
-            const c = document.getElementById(`op-lst-${line}`); if(!c) return;
-            const l = opportunitiesDB[line]||[];
-            c.innerHTML = l.length ? l.map(o => `<div class="bg-gray-800/50 p-3 rounded border border-gray-700 flex justify-between"><div><div class="text-xs font-bold text-yellow-500">${o.nome} (${o.turno})</div><div class="text-sm text-gray-300">${o.texto}</div></div><button onclick="askOpDone('${line}','${o.id}','${o.nome}','${o.turno}','${o.texto}')" class="text-green-500"><i data-lucide="check-square" class="w-6 h-6"></i></button></div>`).join('') : '<div class="text-center text-gray-500 text-xs">Sem pendências.</div>';
-            lucide.createIcons();
-        }
+        function renderOps(line) { const c = document.getElementById(`op-lst-${line}`); if(!c) return; const l = opportunitiesDB[line]||[]; c.innerHTML = l.length ? l.map(o => `<div class="bg-gray-800/50 p-3 rounded border border-gray-700 flex justify-between"><div><div class="text-xs font-bold text-yellow-500">${o.nome} (${o.turno})</div><div class="text-sm text-gray-300">${o.texto}</div></div><button onclick="askOpDone('${line}','${o.id}','${o.nome}','${o.turno}','${o.texto}')" class="text-green-500"><i data-lucide="check-square" class="w-6 h-6"></i></button></div>`).join('') : '<div class="text-center text-gray-500 text-xs">Sem pendências.</div>'; lucide.createIcons(); }
         function saveOp(line) { const n=document.getElementById('op-n').value, t=document.getElementById('op-t').value, x=document.getElementById('op-txt').value; if(!n||!x) return; db.collection('oportunidades').add({linha:line, nome:n, turno:t, texto:x}).then(()=>{ document.getElementById('op-txt').value=''; renderOps(line); }); }
-        function askOpDone(line, id, nome, turno, texto) {
-            openModal("Baixa Oportunidade", `<div class="space-y-3"><p class="text-gray-300 text-sm">Baixa em: "${texto}"</p><input id="bq" placeholder="Quem fez?" class="input-industrial"><textarea id="bo" placeholder="O que foi feito?" class="input-industrial" rows="2"></textarea><button onclick="doOpDone('${line}','${id}','${nome}','${turno}','${texto}')" class="btn-industrial bg-green-600 text-white w-full py-3">CONFIRMAR</button></div>`);
-        }
-        function doOpDone(line, id, nome, turno, txt) {
-            const quem = document.getElementById('bq').value, oque = document.getElementById('bo').value;
-            if(!quem || !oque) return;
-            db.collection('historico_oportunidades').add({ linha:line, solicitante:`${nome}/${turno}`, original:txt, executante:quem, solucao:oque, dataConclusao:new Date().toISOString() })
-            .then(() => db.collection('oportunidades').doc(id).delete())
-            .then(() => { closeModal(); render(false); });
-        }
-        
-        // --- MANUAL ---
+        function askOpDone(line, id, nome, turno, texto) { openModal("Baixa Oportunidade", `<div class="space-y-3"><p class="text-gray-300 text-sm">Baixa em: "${texto}"</p><input id="bq" placeholder="Quem fez?" class="input-industrial"><textarea id="bo" placeholder="O que foi feito?" class="input-industrial" rows="2"></textarea><button onclick="doOpDone('${line}','${id}','${nome}','${turno}','${texto}')" class="btn-industrial bg-green-600 text-white w-full py-3">CONFIRMAR</button></div>`); }
+        function doOpDone(line, id, nome, turno, txt) { const quem = document.getElementById('bq').value, oque = document.getElementById('bo').value; if(!quem || !oque) return; db.collection('historico_oportunidades').add({ linha:line, solicitante:`${nome}/${turno}`, original:txt, executante:quem, solucao:oque, dataConclusao:new Date().toISOString() }).then(() => db.collection('oportunidades').doc(id).delete()).then(() => { closeModal(); render(false); }); }
         function abrirManual() { renderManualHTML(''); }
-        function renderManualHTML(v) { 
-            v=v.toLowerCase(); const f = MANUAL_DATA.filter(i => i.titulo.toLowerCase().includes(v) || i.tags.includes(v));
-            const html = `<div class="space-y-4"><input placeholder="Buscar..." class="input-industrial" oninput="renderManualHTML(this.value)" value="${v}" autofocus><div class="space-y-3 max-h-[60vh] overflow-y-auto">${f.length?f.map(i=>`<div class="bg-secondary/50 p-4 rounded border border-gray-700"><h4 class="text-primary font-bold text-sm mb-1">${i.titulo}</h4><div class="text-gray-300 text-sm">${i.conteudo}</div></div>`).join(''):'<div class="text-center text-gray-500">Nada.</div>'}</div></div>`;
-            if(document.getElementById('custom-modal').classList.contains('hidden')) openModal("Manual", html); else { document.getElementById('modal-content').innerHTML=html; document.querySelector('#modal-content input').focus(); }
-        }
-
-        // --- EXPORT ---
-        async function exportData(fmt) {
-            const start=document.getElementById('d-ini').value, end=document.getElementById('d-fim').value;
-            let data = [];
-            // Coletar Arrays (Manutenção/Sonda)
-            const lines = (state.filters.line==='all') ? Object.keys(LINE_CONFIGS) : [state.filters.line];
-            lines.forEach(l => { const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.historico) v.historico.forEach(h=>{ const d=h.timestamp.split('T')[0]; if((!start||d>=start)&&(!end||d<=end)) data.push({Data:new Date(h.timestamp).toLocaleDateString(), Linha:l, Válvula:v.valveNumber, Tipo:h.type, Desc:h.description}); }); }); });
-            // Coletar Docs (Oportunidades Baixadas) - Busca direta pois não temos cache full
-            const snap = await db.collection('historico_oportunidades').get();
-            snap.forEach(d => { const r=d.data(); if((state.filters.line==='all'||r.linha===state.filters.line)) { const dt=r.dataConclusao.split('T')[0]; if((!start||dt>=start)&&(!end||dt<=end)) data.push({Data:new Date(r.dataConclusao).toLocaleDateString(), Linha:r.linha, Válvula:'-', Tipo:'Melhoria', Desc:`Solução: ${r.solucao} (Exec: ${r.executante})`}); } });
-
-            if(!data.length) { showAlert("Aviso","Sem dados.","info"); return; }
-            if(fmt==='excel') { const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); XLSX.writeFile(wb, "Relatorio.xlsx"); }
-            else { const doc=new window.jspdf.jsPDF(); doc.setFillColor(15,23,42); doc.rect(0,0,210,297,'F'); doc.setTextColor(255); doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); doc.save("Relatorio.pdf"); }
-        }
+        function renderManualHTML(v) { v=v.toLowerCase(); const f = MANUAL_DATA.filter(i => i.titulo.toLowerCase().includes(v) || i.tags.includes(v)); const html = `<div class="space-y-4"><input placeholder="Buscar..." class="input-industrial" oninput="renderManualHTML(this.value)" value="${v}" autofocus><div class="space-y-3 max-h-[60vh] overflow-y-auto">${f.length?f.map(i=>`<div class="bg-secondary/50 p-4 rounded border border-gray-700"><h4 class="text-primary font-bold text-sm mb-1">${i.titulo}</h4><div class="text-gray-300 text-sm">${i.conteudo}</div></div>`).join(''):'<div class="text-center text-gray-500">Nada.</div>'}</div></div>`; if(document.getElementById('custom-modal').classList.contains('hidden')) openModal("Manual", html); else { document.getElementById('modal-content').innerHTML=html; document.querySelector('#modal-content input').focus(); } }
+        async function exportData(fmt) { const start=document.getElementById('d-ini').value, end=document.getElementById('d-fim').value; let data = []; const lines = (state.filters.line==='all') ? Object.keys(LINE_CONFIGS) : [state.filters.line]; lines.forEach(l => { const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.historico) v.historico.forEach(h=>{ const d=h.timestamp.split('T')[0]; if((!start||d>=start)&&(!end||d<=end)) data.push({Data:new Date(h.timestamp).toLocaleDateString(), Linha:l, Válvula:v.valveNumber, Tipo:h.type, Desc:h.description}); }); }); }); const snap = await db.collection('historico_oportunidades').get(); snap.forEach(d => { const r=d.data(); if((state.filters.line==='all'||r.linha===state.filters.line)) { const dt=r.dataConclusao.split('T')[0]; if((!start||dt>=start)&&(!end||dt<=end)) data.push({Data:new Date(r.dataConclusao).toLocaleDateString(), Linha:r.linha, Válvula:'-', Tipo:'Melhoria', Desc:`Solução: ${r.solucao} (Exec: ${r.executante})`}); } }); if(!data.length) { showAlert("Aviso","Sem dados.","info"); return; } if(fmt==='excel') { const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); XLSX.writeFile(wb, "Relatorio.xlsx"); } else { const doc=new window.jspdf.jsPDF(); doc.setFillColor(15,23,42); doc.rect(0,0,210,297,'F'); doc.setTextColor(255); doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); doc.save("Relatorio.pdf"); } }
         function loadGridStatus() { const d=globalDB[state.selectedLine]||{}; Object.values(d).forEach(v=>{ const b=document.getElementById(`vbtn-${v.valveNumber}`); if(b && v.sonda_status==='jumpeada') b.classList.add('valve-jumpeada'); }); }
-
         render();
     </script>
 </body>
