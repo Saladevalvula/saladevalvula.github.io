@@ -187,7 +187,7 @@
             }
             res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
             el.innerHTML = res.map(r => {
-                if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span></div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
+                if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span><button onclick="askDeleteOp('${r.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
                 const d = new Date(r.timestamp); const icon = r.isCritical ? 'flame' : (r.isSonda ? 'zap' : 'wrench'); const color = r.isCritical ? 'text-red-500' : (r.isSonda ? 'text-yellow-500' : 'text-primary');
                 return `<div class="card-industrial p-4 border ${r.isCritical ? 'border-red-500/80' : 'border-gray-700'} relative">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/V${r.valve}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span><button onclick="askDelete('${r.line}', '${r.valve}', '${r.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
             }).join(''); lucide.createIcons();
@@ -210,14 +210,10 @@
         function openLinePicker() { showOptionPicker("Filtrar Linha", [{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
         function openTypePicker() { showOptionPicker("Filtrar Tipo", [{label:'Todos',value:'all'},{label:'Manutenções',value:'manutencao'},{label:'Sondas',value:'sonda'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
         
-        // --- OPORTUNIDADES CORRIGIDO (LISTA INTERNA) ---
+        // --- OPORTUNIDADES CORRIGIDO ---
         function openOpModal(line) { 
             const subsets = LINE_CONFIGS[line].subsets ? LINE_CONFIGS[line].subsets.concat(['Geral']) : ['Geral'];
-            
-            // Gerar HTML das opções de Subconjunto (INTERNO)
             const subOptions = subsets.map(s => `<div onclick="selectOpSub('${s}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${s}</div>`).join('');
-            
-            // Gerar HTML das opções de Turno (INTERNO)
             const turnoOptions = ['Manhã', 'Tarde', 'Noite'].map(t => `<div onclick="selectOpTurno('${t}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${t}</div>`).join('');
 
             const html=`
@@ -226,59 +222,34 @@
                     <label class="label-industrial">Nova Oportunidade</label>
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <input id="op-v" type="number" placeholder="Válvula (Nº)" class="input-industrial">
-                        
                         <div class="relative">
-                            <button onclick="toggleOpDropdown('sub-list-dd')" id="op-sub-btn" class="input-industrial text-left text-gray-400 truncate w-full flex justify-between items-center">
-                                <span>Componente...</span><i data-lucide="chevron-down" class="w-4 h-4"></i>
-                            </button>
+                            <button onclick="toggleOpDropdown('sub-list-dd')" id="op-sub-btn" class="input-industrial text-left text-gray-400 truncate w-full flex justify-between items-center"><span>Componente...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
                             <input id="op-sub" type="hidden">
-                            <div id="sub-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 max-h-40 overflow-y-auto mt-1 shadow-2xl">
-                                ${subOptions}
-                            </div>
+                            <div id="sub-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 max-h-40 overflow-y-auto mt-1 shadow-2xl">${subOptions}</div>
                         </div>
                     </div>
-
                     <input id="op-n" placeholder="Nome" class="input-industrial mb-2">
-                    
                     <div class="relative mb-2">
-                        <button onclick="toggleOpDropdown('turno-list-dd')" id="op-t-btn" class="input-industrial text-left text-gray-400 w-full flex justify-between items-center">
-                            <span>Turno...</span><i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </button>
+                        <button onclick="toggleOpDropdown('turno-list-dd')" id="op-t-btn" class="input-industrial text-left text-gray-400 w-full flex justify-between items-center"><span>Turno...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
                         <input id="op-t" type="hidden">
-                        <div id="turno-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 mt-1 shadow-2xl">
-                            ${turnoOptions}
-                        </div>
+                        <div id="turno-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 mt-1 shadow-2xl">${turnoOptions}</div>
                     </div>
-
                     <textarea id="op-txt" placeholder="O que fazer?" class="input-industrial" rows="2"></textarea>
                     <button onclick="saveOp('${line}')" class="btn-industrial bg-primary text-white w-full py-3 mt-2">CADASTRAR</button>
                 </div>
                 <div id="op-lst-${line}" class="space-y-2 max-h-60 overflow-y-auto"></div>
             </div>`; 
-            
             openModal(`Oportunidades L${line}`, html); renderOps(line); 
         }
 
-        // Helpers para os Dropdowns Internos
         function toggleOpDropdown(id) {
             const el = document.getElementById(id);
-            // Fecha outros se tiver (opcional, mas bom pra UX)
             if(id === 'sub-list-dd') document.getElementById('turno-list-dd')?.classList.add('hidden');
             if(id === 'turno-list-dd') document.getElementById('sub-list-dd')?.classList.add('hidden');
             el.classList.toggle('hidden');
         }
-        function selectOpSub(val) {
-            document.getElementById('op-sub').value = val;
-            const btn = document.getElementById('op-sub-btn');
-            btn.innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`;
-            document.getElementById('sub-list-dd').classList.add('hidden');
-        }
-        function selectOpTurno(val) {
-            document.getElementById('op-t').value = val;
-            const btn = document.getElementById('op-t-btn');
-            btn.innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`;
-            document.getElementById('turno-list-dd').classList.add('hidden');
-        }
+        function selectOpSub(val) { document.getElementById('op-sub').value = val; document.getElementById('op-sub-btn').innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`; document.getElementById('sub-list-dd').classList.add('hidden'); }
+        function selectOpTurno(val) { document.getElementById('op-t').value = val; document.getElementById('op-t-btn').innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`; document.getElementById('turno-list-dd').classList.add('hidden'); }
 
         function saveOp(line) { 
             const n=document.getElementById('op-n').value, t=document.getElementById('op-t').value, x=document.getElementById('op-txt').value, v=document.getElementById('op-v').value, s=document.getElementById('op-sub').value; 
@@ -295,7 +266,26 @@
             await db.collection('lines').doc(line).collection('valves').doc(String(valvula)).set({ valveNumber: parseInt(valvula), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true });
             await db.collection('oportunidades').doc(id).delete(); closeModal(); showToast("Baixa Realizada!", "success"); render(false); 
         }
-        function renderOps(line) { const c = document.getElementById(`op-lst-${line}`); if(!c) return; const l = opportunitiesDB[line]||[]; c.innerHTML = l.length ? l.map(o => `<div class="bg-gray-800/50 p-3 rounded border border-gray-700 flex justify-between"><div><div class="text-xs font-bold text-yellow-500">${o.nome} (${o.turno})</div><div class="text-xs text-blue-400 font-bold mb-1">V${o.valvula} • ${o.subset}</div><div class="text-sm text-gray-300">${o.texto}</div></div><button onclick="askOpDone('${line}','${o.id}','${o.nome}','${o.turno}','${o.texto}','${o.valvula}','${o.subset}')" class="text-green-500"><i data-lucide="check-square" class="w-6 h-6"></i></button></div>`).join('') : '<div class="text-center text-gray-500 text-xs">Sem pendências.</div>'; lucide.createIcons(); }
+        
+        // DELETAR OPORTUNIDADE (NOVO)
+        function askDeleteOp(id) { showPasswordPrompt(async () => { await db.collection('oportunidades').doc(id).delete(); showToast("Oportunidade Excluída!", "success"); render(false); }); }
+
+        function renderOps(line) { 
+            const c = document.getElementById(`op-lst-${line}`); if(!c) return; const l = opportunitiesDB[line]||[]; 
+            c.innerHTML = l.length ? l.map(o => `
+            <div class="bg-gray-800/50 p-3 rounded border border-gray-700 flex justify-between">
+                <div>
+                    <div class="text-xs font-bold text-yellow-500">${o.nome} (${o.turno})</div>
+                    <div class="text-xs text-blue-400 font-bold mb-1">V${o.valvula} • ${o.subset}</div>
+                    <div class="text-sm text-gray-300">${o.texto}</div>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <button onclick="askOpDone('${line}','${o.id}','${o.nome}','${o.turno}','${o.texto}','${o.valvula}','${o.subset}')" class="text-green-500"><i data-lucide="check-square" class="w-6 h-6"></i></button>
+                    <button onclick="askDeleteOp('${o.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-6 h-6"></i></button>
+                </div>
+            </div>`).join('') : '<div class="text-center text-gray-500 text-xs">Sem pendências.</div>'; 
+            lucide.createIcons(); 
+        }
 
         // SUBMITS
         function preSubmit() { if(!state.form.description.trim()) { showToast("Preencha a descrição!", "error"); return; } const hist = globalDB[state.selectedLine]?.[state.selectedValve]?.historico || []; const recent = hist.find(r => new Date(r.timestamp) > new Date(Date.now()-86400000) && r.type !== 'inspecao'); if(recent) showConfirm("Reincidência", "Manutenção recente detectada. Marcar CRÍTICA?", () => doSubmit(true)); else doSubmit(false); }
