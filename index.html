@@ -50,7 +50,6 @@
         .ticker-move { display: inline-block; white-space: nowrap; animation: ticker-loop 30s linear infinite; }
         .ticker-item { display: inline-block; padding: 0 2rem; color: #fbbf24; font-weight: 600; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
         @keyframes ticker-loop { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        /* TOAST */
         #toast-container { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 400px; pointer-events: none; }
     </style>
 </head>
@@ -102,7 +101,7 @@
         let state = { 
             mode: 'register', step: 'line', selectedLine: null, selectedValve: null, selectedSubset: null, sondaAction: 'jumper', sondaStatusAtual: 'ok', 
             form: { type: 'corretiva', description: '', status: 'ok', kronesDiag: '', operator: '', shift: '' },
-            sondaForm: { obs: '', op: '' }, // Memória do form da sonda
+            sondaForm: { obs: '', op: '' }, 
             filters: { line: 'all', valve: '', subset: 'all', onlyCritical: false, historyType: 'all' }
         };
         const LINE_CONFIGS = { '512': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V5', 'V6', 'V7', 'V8'], hasProbe: true }, '513': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7'], hasProbe: true }, '514': { valveCount: 72, subsets: null, hasProbe: false } };
@@ -125,7 +124,7 @@
             openModal(title, `<div class="space-y-2 max-h-[60vh] overflow-y-auto">${html}</div>`);
         }
         function showPasswordPrompt(onSuccess) { window.passwordCallback = onSuccess; openModal("Segurança", `<div class="text-center space-y-4"><div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center bg-primary/20 text-primary border border-primary/50"><i data-lucide="lock" class="w-8 h-8"></i></div><p class="text-gray-300 text-sm">Senha (0608)</p><input type="number" id="pwd" class="input-industrial text-center text-xl font-mono" placeholder="____" maxlength="4"><button onclick="checkPwd()" class="btn-industrial w-full bg-primary text-white py-3">CONFIRMAR</button></div>`); setTimeout(() => document.getElementById('pwd').focus(), 100); }
-        function checkPwd() { if(document.getElementById('pwd').value==='0608') { closeModal(); window.passwordCallback(); } else { showToast("Senha Incorreta", "error"); } }
+        function checkPwd() { const i = document.getElementById('pwd'); if (i.value === '0608') { closeModal(); window.passwordCallback(); } else { showToast("Senha Incorreta", "error"); i.value = ''; } }
 
         // PICKERS INTELIGENTES (SEM RENDERIZAR TUDO)
         function openSmartTurnoPicker(targetId) {
@@ -149,7 +148,6 @@
         function renderRegisterFlow(c) {
             if (state.step === 'sonda_form') {
                 const isJump = state.sondaStatusAtual === 'jumpeada';
-                // Note os ONINPUT salvando no state.sondaForm
                 c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/30 flex justify-between items-center"><div class="flex items-center gap-3"><i data-lucide="zap" class="w-6 h-6 text-yellow-500"></i><div><span class="text-xs font-bold text-yellow-500 uppercase">Status</span><div class="text-lg font-mono font-bold ${isJump?'text-red-500':'text-green-500'}">${isJump?'⚡ JUMPEADA':'✅ NORMAL'}</div></div></div></div><div class="grid gap-3"><button onclick="selectSondaAction('jumper')" id="btn-sj" class="p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"><i data-lucide="zap-off"></i> JUMPER</button>${isJump?`<button onclick="selectSondaAction('normalizar')" id="btn-sn" class="p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"><i data-lucide="check-circle-2"></i> NORMALIZAR</button>`:''}</div><div class="space-y-4"><div><label class="label-industrial">Motivo</label><textarea id="sonda-obs" class="input-industrial" rows="2" oninput="state.sondaForm.obs=this.value">${state.sondaForm.obs}</textarea></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Operador</label><input id="sonda-op" class="input-industrial" value="${state.sondaForm.op}" oninput="state.sondaForm.op=this.value"></div><div><label class="label-industrial">Turno</label><button onclick="openSmartTurnoPicker('sonda-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between"><span id="sonda-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Selecionar'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div></div><button onclick="submitSonda()" class="w-full btn-industrial bg-yellow-600 text-white py-4 mt-4">SALVAR</button></div>`;
                 if(!isJump) selectSondaAction('jumper');
             }
@@ -240,7 +238,20 @@
         // SUBMITS
         function preSubmit() { if(!state.form.description.trim()) { showToast("Preencha a descrição!", "error"); return; } const hist = globalDB[state.selectedLine]?.[state.selectedValve]?.historico || []; const recent = hist.find(r => new Date(r.timestamp) > new Date(Date.now()-86400000) && r.type !== 'inspecao'); if(recent) showConfirm("Reincidência", "Manutenção recente detectada. Marcar CRÍTICA?", () => doSubmit(true)); else doSubmit(false); }
         async function doSubmit(crit) { const btn = document.getElementById('btn-sub'); btn.disabled=true; btn.innerText="Salvando..."; const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: state.selectedSubset||'Geral', type: state.form.type, description: state.form.description, status: state.form.status, kronesDiag: state.form.kronesDiag||'', isCritical: crit }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); showToast("Manutenção Salva!", "success"); state.form.description=''; state.form.kronesDiag=''; state.step = 'line'; render(false); }
-        async function submitSonda() { const obs = state.sondaForm.obs, op = state.sondaForm.op, t = state.form.shift; if(!obs || !op || !t) { showToast("Preencha todos os campos!", "error"); return; } const status = state.sondaAction === 'jumper' ? 'jumpeada' : 'ok'; const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: 'SONDA', type: state.sondaAction === 'jumper'?'corretiva':'preventiva', description: `[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${t})`, status: status==='jumpeada'?'pendente':'ok', isSonda: true }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec), sonda_status: status }, { merge: true }); showToast("Sonda Atualizada!", "success"); state.sondaForm.obs=''; state.step = 'line'; render(false); }
+        
+        async function submitSonda() { 
+            const obs = state.sondaForm.obs, op = state.sondaForm.op, t = state.form.shift; 
+            if(!obs || !op || !t) { showToast("Preencha todos os campos!", "error"); return; } 
+            
+            // LÓGICA V10: Jumper = Neutro ('sonda_event'), Normalizar = Corretiva ('corretiva')
+            const typeRec = state.sondaAction === 'jumper' ? 'sonda_event' : 'corretiva';
+            const status = state.sondaAction === 'jumper' ? 'jumpeada' : 'ok'; 
+            
+            const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: 'SONDA', type: typeRec, description: `[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${t})`, status: status==='jumpeada'?'pendente':'ok', isSonda: true }; 
+            await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec), sonda_status: status }, { merge: true }); 
+            showToast("Sonda Atualizada!", "success"); state.sondaForm.obs=''; state.step = 'line'; render(false); 
+        }
+        
         function askDelete(line, valve, id) { showPasswordPrompt(async () => { const docRef = db.collection('lines').doc(line).collection('valves').doc(String(valve)); const snap = await docRef.get(); if(snap.exists) { const data = snap.data(); const newHist = data.historico.filter(r => r.id !== id); await docRef.update({ historico: newHist }); showToast("Excluído com sucesso!", "success"); render(false); } }); }
         function abrirManual() { openModal("Manual", `<div class="p-4 text-gray-300">Manual Simplificado: Use a busca para encontrar tópicos.</div>`); } 
         function loadGridStatus() { const d=globalDB[state.selectedLine]||{}; const ops=opportunitiesDB[state.selectedLine]||[]; const opValves = new Set(ops.map(o => parseInt(o.valvula))); const cnt = LINE_CONFIGS[state.selectedLine].valveCount; for(let i=1; i<=cnt; i++) { const btn = document.getElementById(`vbtn-${i}`); if(btn) { btn.classList.remove('valve-jumpeada', 'valve-op-ativa'); if(d[i] && d[i].sonda_status === 'jumpeada') btn.classList.add('valve-jumpeada'); if(opValves.has(i)) btn.classList.add('valve-op-ativa'); } } }
@@ -250,4 +261,3 @@
     </script>
 </body>
 </html>
-
