@@ -109,16 +109,11 @@
             </div>
         `;
 
-        // CORREÇÃO 1: NAVEGAÇÃO DO BOTÃO VOLTAR
-        window.history.replaceState({ step: 'line' }, null, ''); // Estado inicial
+        // NAV LISTENER
+        window.history.replaceState({ step: 'line' }, null, '');
         window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.step) {
-                state.step = event.state.step;
-                render(false);
-            } else {
-                state.step = 'line';
-                render(false);
-            }
+            if (event.state && event.state.step) { state.step = event.state.step; render(false); } 
+            else { state.step = 'line'; render(false); }
         });
 
         // UI HELPERS
@@ -136,7 +131,6 @@
         function showPasswordPrompt(cb) { window.passCB=cb; openModal("Segurança", `<div class="text-center space-y-4"><p class="text-gray-300 text-sm">Senha: 0608</p><input type="number" id="pwd" class="input-industrial text-center text-xl font-mono" placeholder="****"><button onclick="if(document.getElementById('pwd').value==='0608'){closeModal();window.passCB();}else{showToast('Senha Incorreta');}" class="btn-industrial w-full bg-primary text-white py-3">EXCLUIR</button></div>`); setTimeout(()=>document.getElementById('pwd').focus(),100); }
         function openManual() { openModal("Manual do Usuário", MANUAL_HTML); }
 
-        // PICKERS
         function openSmartTurnoPicker(targetId) {
             showOptionPicker("Turno", [{label:'Manhã',value:'Manhã'},{label:'Tarde',value:'Tarde'},{label:'Noite',value:'Noite'}], (val) => {
                 state.form.shift = val; const el = document.getElementById(targetId); if(el){el.innerText = val; el.classList.add('text-white', 'font-bold');}
@@ -180,7 +174,6 @@
             }
         }
 
-        // HISTÓRICO - Filtros Ajustados
         function renderHistoryView(c) {
             c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="card-industrial p-4 space-y-3"><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Linha</label><button onclick="openLinePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="hl-txt" class="text-sm font-bold">Todas</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><button onclick="openTypePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="ht-txt" class="text-sm font-bold">Todos</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Início</label><input type="date" id="d-ini" class="input-industrial text-xs py-2"></div><div><label class="label-industrial">Fim</label><input type="date" id="d-fim" class="input-industrial text-xs py-2"></div></div><div class="grid grid-cols-2 gap-3 mt-4"><button onclick="exportData('excel')" class="btn-industrial bg-green-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel</button><button onclick="exportData('pdf')" class="btn-industrial bg-red-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button></div></div><div id="h-list" class="space-y-2 pb-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>`;
             loadHistory();
@@ -192,7 +185,8 @@
                 lines.forEach(l => { const ld = globalDB[l]||{}; Object.values(ld).forEach(v => { if(valve && String(v.valveNumber) !== String(valve)) return; if(v.historico) v.historico.forEach(h => { 
                     const f = historyType;
                     if(f !== 'all') { if(f === 'sonda' && h.subset !== 'SONDA') return; if(f !== 'sonda' && h.type !== f) return; }
-                    res.push({...h, line: l, valve: v.valveNumber}); 
+                    // CORREÇÃO: Passar docId para rastreamento
+                    res.push({...h, line: l, valve: v.valveNumber, docId: v.docId}); 
                 }); }); });
             }
             if(historyType === 'ops_abertas') {
@@ -200,14 +194,31 @@
             }
             res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
             el.innerHTML = res.map(r => {
-                const btnDel = `<button onclick="${r.isOp ? `askDelOp('${r.id}')` : `askDel('${r.line}','${r.valve}','${r.id}')`}" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+                // CORREÇÃO: Usar docId no botão de deletar
+                const btnDel = `<button onclick="${r.isOp ? `askDelOp('${r.id}')` : `askDel('${r.line}','${r.docId}','${r.id}')`}" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
                 if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span>${btnDel}</div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
                 const d = new Date(r.timestamp); const icon = r.isCritical ? 'flame' : (r.isSonda ? 'zap' : 'wrench'); const color = r.isCritical ? 'text-red-500' : (r.isSonda ? 'text-yellow-500' : 'text-primary');
                 return `<div class="card-industrial p-4 border ${r.isCritical ? 'border-red-500/80' : 'border-gray-700'} relative">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/V${r.valve}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>${btnDel}</div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
             }).join(''); lucide.createIcons();
         }
 
-        function initRealtimeListeners() { Object.keys(LINE_CONFIGS).forEach(line => { db.collection('lines').doc(line).collection('valves').onSnapshot(snap => { if (!globalDB[line]) globalDB[line] = {}; snap.docs.forEach(doc => { globalDB[line][doc.id] = doc.data(); }); render(false); }); }); db.collection('oportunidades').onSnapshot(snap => { opportunitiesDB = {}; snap.forEach(doc => { const d = doc.data(); if(!opportunitiesDB[d.linha]) opportunitiesDB[d.linha] = []; opportunitiesDB[d.linha].push({ id: doc.id, ...d }); }); render(false); }); }
+        // Logic (CORREÇÃO DE RASTREAMENTO DOC.ID)
+        function initRealtimeListeners() { 
+            Object.keys(LINE_CONFIGS).forEach(line => { 
+                db.collection('lines').doc(line).collection('valves').onSnapshot(snap => { 
+                    if (!globalDB[line]) globalDB[line] = {}; 
+                    snap.docs.forEach(doc => { 
+                        // AQUI ESTÁ O SEGREDO: Salvar o ID real do documento
+                        const d = doc.data();
+                        d.docId = doc.id; 
+                        globalDB[line][doc.id] = d; 
+                    }); 
+                    render(false); 
+                }); 
+            }); 
+            db.collection('oportunidades').onSnapshot(snap => { opportunitiesDB = {}; snap.forEach(doc => { const d = doc.data(); if(!opportunitiesDB[d.linha]) opportunitiesDB[d.linha] = []; opportunitiesDB[d.linha].push({ id: doc.id, ...d }); }); render(false); }); 
+        }
+        
         initRealtimeListeners();
         function setMode(m) { state.mode = m; render(); }
         function selectLine(l) { state.selectedLine = l; navigateTo('valve'); }
@@ -254,19 +265,21 @@
         async function doSubmit(crit) { const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: state.selectedSubset||'Geral', type: state.form.type, description: state.form.description, status: state.form.status, kronesDiag: state.form.kronesDiag||'', isCritical: crit }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); showToast("Manutenção Salva!", "success"); state.form.description=''; state.form.kronesDiag=''; state.step = 'line'; render(false); }
         async function submitSonda() { const obs = state.sondaForm.obs, op = state.sondaForm.op, t = state.form.shift; if(!obs || !op || !t) { showToast("Preencha todos os campos!", "error"); return; } const typeRec = state.sondaAction === 'jumper' ? 'sonda_event' : 'corretiva'; const status = state.sondaAction === 'jumper' ? 'jumpeada' : 'ok'; const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: 'SONDA', type: typeRec, description: `[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${t})`, status: status==='jumpeada'?'pendente':'ok', isSonda: true }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec), sonda_status: status }, { merge: true }); showToast("Sonda Atualizada!", "success"); state.sondaForm.obs=''; state.step = 'line'; render(false); }
         
-        // CORREÇÃO 2: EXCLUSÃO BLINDADA (STRING COMPARISON)
-        function askDel(line, valve, id) { 
+        // --- DELETAR COM ID BLINDADO (v10.9) ---
+        function askDel(line, valveOrDocId, id) { 
             showPasswordPrompt(async () => { 
-                const docRef = db.collection('lines').doc(line).collection('valves').doc(String(valve)); 
+                // AQUI ESTÁ A CORREÇÃO: Usa o DocID real que recuperamos na leitura, não o 'valveNumber'
+                const docRef = db.collection('lines').doc(line).collection('valves').doc(String(valveOrDocId)); 
                 const snap = await docRef.get(); 
                 if(snap.exists) { 
                     const data = snap.data(); 
-                    // FORÇA ID PARA STRING NA COMPARAÇÃO
                     const newHist = data.historico.filter(r => String(r.id) !== String(id)); 
                     await docRef.update({ historico: newHist }); 
                     showToast("Excluído!", "success"); 
                     render(false); 
-                } 
+                } else {
+                    showToast("Erro: Doc não encontrado", "error");
+                }
             }); 
         }
         function askDelOp(id) { showPasswordPrompt(async () => { await db.collection('oportunidades').doc(id).delete(); showToast("Excluído!", "success"); render(false); }); }
