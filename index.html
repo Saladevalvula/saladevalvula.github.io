@@ -109,12 +109,37 @@
             </div>
         `;
 
-        // NAV LISTENER
-        window.history.replaceState({ step: 'line' }, null, '');
+        // --- SISTEMA DE NAVEGAÇÃO CORRIGIDO (v10.10) ---
+        window.history.replaceState({ mode: 'register', step: 'line' }, null, ''); // Estado Inicial
+
         window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.step) { state.step = event.state.step; render(false); } 
-            else { state.step = 'line'; render(false); }
+            if (event.state) {
+                // Se existe estado, recupera o modo (Aba) e a etapa
+                if(event.state.mode) state.mode = event.state.mode;
+                if(event.state.step) state.step = event.state.step;
+                render(false);
+            } else {
+                // Fallback para o início
+                state.mode = 'register';
+                state.step = 'line';
+                render(false);
+            }
         });
+
+        function navigateTo(step) { 
+            state.step = step; 
+            // Agora salva o MODO também para não perder a aba ao voltar
+            window.history.pushState({ mode: state.mode, step: step }, null, ''); 
+            render(false); 
+        }
+
+        function setMode(m) { 
+            state.mode = m; 
+            // Agora CRIA um histórico ao trocar de aba, permitindo voltar
+            window.history.pushState({ mode: m, step: state.step }, null, ''); 
+            render(); 
+        }
+        // --------------------------------------------------
 
         // UI HELPERS
         function showToast(msg, type='error') {
@@ -145,8 +170,6 @@
             if(state.mode === 'register') renderRegisterFlow(c); else renderHistoryView(c);
             lucide.createIcons();
         }
-
-        function navigateTo(step) { state.step = step; window.history.pushState({ step: step }, null, ''); render(false); }
 
         function renderRegisterFlow(c) {
             if (state.step === 'sonda_form') {
@@ -185,7 +208,6 @@
                 lines.forEach(l => { const ld = globalDB[l]||{}; Object.values(ld).forEach(v => { if(valve && String(v.valveNumber) !== String(valve)) return; if(v.historico) v.historico.forEach(h => { 
                     const f = historyType;
                     if(f !== 'all') { if(f === 'sonda' && h.subset !== 'SONDA') return; if(f !== 'sonda' && h.type !== f) return; }
-                    // CORREÇÃO: Passar docId para rastreamento
                     res.push({...h, line: l, valve: v.valveNumber, docId: v.docId}); 
                 }); }); });
             }
@@ -194,7 +216,6 @@
             }
             res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
             el.innerHTML = res.map(r => {
-                // CORREÇÃO: Usar docId no botão de deletar
                 const btnDel = `<button onclick="${r.isOp ? `askDelOp('${r.id}')` : `askDel('${r.line}','${r.docId}','${r.id}')`}" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
                 if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span>${btnDel}</div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
                 const d = new Date(r.timestamp); const icon = r.isCritical ? 'flame' : (r.isSonda ? 'zap' : 'wrench'); const color = r.isCritical ? 'text-red-500' : (r.isSonda ? 'text-yellow-500' : 'text-primary');
@@ -202,13 +223,12 @@
             }).join(''); lucide.createIcons();
         }
 
-        // Logic (CORREÇÃO DE RASTREAMENTO DOC.ID)
+        // Logic
         function initRealtimeListeners() { 
             Object.keys(LINE_CONFIGS).forEach(line => { 
                 db.collection('lines').doc(line).collection('valves').onSnapshot(snap => { 
                     if (!globalDB[line]) globalDB[line] = {}; 
                     snap.docs.forEach(doc => { 
-                        // AQUI ESTÁ O SEGREDO: Salvar o ID real do documento
                         const d = doc.data();
                         d.docId = doc.id; 
                         globalDB[line][doc.id] = d; 
@@ -220,7 +240,6 @@
         }
         
         initRealtimeListeners();
-        function setMode(m) { state.mode = m; render(); }
         function selectLine(l) { state.selectedLine = l; navigateTo('valve'); }
         function selectValve(v) { state.selectedValve = v; const c = LINE_CONFIGS[state.selectedLine]; if(!c.subsets) { state.selectedSubset = null; navigateTo('form'); } else navigateTo('subset'); }
         function selectSubset(s) { state.selectedSubset = s; navigateTo('form'); }
@@ -265,10 +284,8 @@
         async function doSubmit(crit) { const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: state.selectedSubset||'Geral', type: state.form.type, description: state.form.description, status: state.form.status, kronesDiag: state.form.kronesDiag||'', isCritical: crit }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); showToast("Manutenção Salva!", "success"); state.form.description=''; state.form.kronesDiag=''; state.step = 'line'; render(false); }
         async function submitSonda() { const obs = state.sondaForm.obs, op = state.sondaForm.op, t = state.form.shift; if(!obs || !op || !t) { showToast("Preencha todos os campos!", "error"); return; } const typeRec = state.sondaAction === 'jumper' ? 'sonda_event' : 'corretiva'; const status = state.sondaAction === 'jumper' ? 'jumpeada' : 'ok'; const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: 'SONDA', type: typeRec, description: `[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${t})`, status: status==='jumpeada'?'pendente':'ok', isSonda: true }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec), sonda_status: status }, { merge: true }); showToast("Sonda Atualizada!", "success"); state.sondaForm.obs=''; state.step = 'line'; render(false); }
         
-        // --- DELETAR COM ID BLINDADO (v10.9) ---
         function askDel(line, valveOrDocId, id) { 
             showPasswordPrompt(async () => { 
-                // AQUI ESTÁ A CORREÇÃO: Usa o DocID real que recuperamos na leitura, não o 'valveNumber'
                 const docRef = db.collection('lines').doc(line).collection('valves').doc(String(valveOrDocId)); 
                 const snap = await docRef.get(); 
                 if(snap.exists) { 
@@ -291,3 +308,4 @@
     </script>
 </body>
 </html>
+
