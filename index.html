@@ -96,7 +96,7 @@
         try { firebase.initializeApp(firebaseConfig); console.log("Firebase OK"); } catch (e) { console.error(e); }
         const db = firebase.firestore();
 
-        // STATE (Persistência)
+        // STATE
         let globalDB = {}, opportunitiesDB = {};
         let state = { 
             mode: 'register', step: 'line', selectedLine: null, selectedValve: null, selectedSubset: null, sondaAction: 'jumper', sondaStatusAtual: 'ok', 
@@ -106,7 +106,7 @@
         };
         const LINE_CONFIGS = { '512': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V5', 'V6', 'V7', 'V8'], hasProbe: true }, '513': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7'], hasProbe: true }, '514': { valveCount: 72, subsets: null, hasProbe: false } };
 
-        // UI HELPERS (Modais e Toasts)
+        // UI HELPERS
         function showToast(msg, type = 'error') {
             const container = document.getElementById('toast-container');
             const color = type === 'error' ? 'bg-red-600' : 'bg-green-600';
@@ -126,7 +126,7 @@
         function showPasswordPrompt(onSuccess) { window.passwordCallback = onSuccess; openModal("Segurança", `<div class="text-center space-y-4"><div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center bg-primary/20 text-primary border border-primary/50"><i data-lucide="lock" class="w-8 h-8"></i></div><p class="text-gray-300 text-sm">Senha (0608)</p><input type="number" id="pwd" class="input-industrial text-center text-xl font-mono" placeholder="____" maxlength="4"><button onclick="checkPwd()" class="btn-industrial w-full bg-primary text-white py-3">CONFIRMAR</button></div>`); setTimeout(() => document.getElementById('pwd').focus(), 100); }
         function checkPwd() { const i = document.getElementById('pwd'); if (i.value === '0608') { closeModal(); window.passwordCallback(); } else { showToast("Senha Incorreta", "error"); i.value = ''; } }
 
-        // PICKERS INTELIGENTES (SEM RENDERIZAR TUDO)
+        // PICKERS SMART (Sonda)
         function openSmartTurnoPicker(targetId) {
             showOptionPicker("Selecione o Turno", [{label:'Manhã',value:'Manhã'},{label:'Tarde',value:'Tarde'},{label:'Noite',value:'Noite'}], (val) => {
                 state.form.shift = val; 
@@ -161,7 +161,6 @@
                     j.sort((a,b)=>a-b); const pends=cfg.valveCount-pg; const ops=opportunitiesDB[line]||[];
                     const ticker = ops.length ? `<div class="ticker-wrap"><div class="ticker-move">${ops.map(o=>`<span class="ticker-item">⚠️ [${o.turno} - ${o.nome}] V${o.valvula}/${o.subset}: ${o.texto}</span>`).join('')}</div></div>` : `<div class="ticker-wrap"><div class="ticker-move"><span class="ticker-item text-green-500">✅ LINHA NORMAL</span></div></div>`;
                     
-                    // AQUI ESTÁ A CORREÇÃO DA VISUALIZAÇÃO
                     return `<div class="card-industrial p-0 w-full text-left group relative overflow-hidden flex flex-col justify-between pb-10"><div onclick="selectLine('${line}')" class="p-6 cursor-pointer h-full"><div class="flex items-start justify-between mb-4"><div class="flex items-center gap-4"><div class="w-14 h-14 rounded-lg bg-primary/20 flex items-center justify-center"><i data-lucide="wrench" class="w-7 h-7 text-primary"></i></div><div><div class="text-2xl font-bold font-mono text-foreground">Linha ${line}</div><div class="text-xs text-gray-400 font-bold uppercase mt-1">${cfg.valveCount} Válvulas ${cfg.hasProbe?'• Sonda':''}</div></div></div><i data-lucide="chevron-right" class="w-6 h-6 text-gray-500"></i></div><div class="border-t border-gray-700 pt-3 grid grid-cols-2 gap-y-2 text-xs font-mono"><div class="text-gray-400"><span class="block text-[10px] uppercase text-gray-500 font-bold">Pendentes</span><span class="text-white text-sm font-bold">${pends}</span></div><div class="text-green-500"><span class="block text-[10px] uppercase text-green-500/70 font-bold">Preventivas</span><span class="text-sm font-bold">${pt}</span></div><div class="text-red-500"><span class="block text-[10px] uppercase text-red-500/70 font-bold">Corretivas</span><span class="text-sm font-bold">${co}</span></div>${j.length?`<div class="col-span-2 mt-1 bg-yellow-500/10 border border-yellow-500/30 rounded p-2 text-yellow-500 animate-pulse font-bold text-[10px]"><i data-lucide="zap" class="w-3 h-3 inline"></i> ${j.length} Jumpeadas</div><div class="col-span-2 text-[10px] text-yellow-500 font-mono mt-1 leading-tight">Válvulas: ${j.join(', ')}</div>`:''}</div></div><button onclick="openOpModal('${line}')" class="absolute top-2 right-2 p-2 bg-secondary rounded-full border border-gray-600 shadow-lg"><i data-lucide="list-plus" class="w-5 h-5 text-yellow-500"></i></button>${ticker}</div>`;
                 }).join('');
                 c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase tracking-wider text-foreground">Painel Geral</h2></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4">${html}</div></div>`;
@@ -211,14 +210,76 @@
         function openLinePicker() { showOptionPicker("Filtrar Linha", [{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
         function openTypePicker() { showOptionPicker("Filtrar Tipo", [{label:'Todos',value:'all'},{label:'Manutenções',value:'manutencao'},{label:'Sondas',value:'sonda'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
         
-        // --- OPORTUNIDADES ---
+        // --- OPORTUNIDADES CORRIGIDO (LISTA INTERNA) ---
         function openOpModal(line) { 
-            const subsets = LINE_CONFIGS[line].subsets ? LINE_CONFIGS[line].subsets.concat(['Geral']) : ['Geral']; window.tempSubsets = subsets;
-            const html=`<div class="space-y-4"><div class="bg-secondary p-3 rounded border border-gray-700"><label class="label-industrial">Nova</label><div class="grid grid-cols-2 gap-2"><input id="op-v" type="number" placeholder="Válvula (Nº)" class="input-industrial"><button onclick="openOpSubPicker()" id="op-sub-btn" class="input-industrial text-left text-gray-400 truncate">Componente...</button></div><input id="op-sub" type="hidden"><input id="op-n" placeholder="Nome" class="input-industrial mb-2"><button onclick="openOpTurnoPicker()" id="op-t-btn" class="input-industrial mb-2 text-left text-gray-400">Turno...</button><input id="op-t" type="hidden"><textarea id="op-txt" placeholder="O que fazer?" class="input-industrial" rows="2"></textarea><button onclick="saveOp('${line}')" class="btn-industrial bg-primary text-white w-full py-3 mt-2">CADASTRAR</button></div><div id="op-lst-${line}" class="space-y-2 max-h-60 overflow-y-auto"></div></div>`; 
+            const subsets = LINE_CONFIGS[line].subsets ? LINE_CONFIGS[line].subsets.concat(['Geral']) : ['Geral'];
+            
+            // Gerar HTML das opções de Subconjunto (INTERNO)
+            const subOptions = subsets.map(s => `<div onclick="selectOpSub('${s}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${s}</div>`).join('');
+            
+            // Gerar HTML das opções de Turno (INTERNO)
+            const turnoOptions = ['Manhã', 'Tarde', 'Noite'].map(t => `<div onclick="selectOpTurno('${t}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${t}</div>`).join('');
+
+            const html=`
+            <div class="space-y-4">
+                <div class="bg-secondary p-3 rounded border border-gray-700">
+                    <label class="label-industrial">Nova Oportunidade</label>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input id="op-v" type="number" placeholder="Válvula (Nº)" class="input-industrial">
+                        
+                        <div class="relative">
+                            <button onclick="toggleOpDropdown('sub-list-dd')" id="op-sub-btn" class="input-industrial text-left text-gray-400 truncate w-full flex justify-between items-center">
+                                <span>Componente...</span><i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                            <input id="op-sub" type="hidden">
+                            <div id="sub-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 max-h-40 overflow-y-auto mt-1 shadow-2xl">
+                                ${subOptions}
+                            </div>
+                        </div>
+                    </div>
+
+                    <input id="op-n" placeholder="Nome" class="input-industrial mb-2">
+                    
+                    <div class="relative mb-2">
+                        <button onclick="toggleOpDropdown('turno-list-dd')" id="op-t-btn" class="input-industrial text-left text-gray-400 w-full flex justify-between items-center">
+                            <span>Turno...</span><i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                        <input id="op-t" type="hidden">
+                        <div id="turno-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 mt-1 shadow-2xl">
+                            ${turnoOptions}
+                        </div>
+                    </div>
+
+                    <textarea id="op-txt" placeholder="O que fazer?" class="input-industrial" rows="2"></textarea>
+                    <button onclick="saveOp('${line}')" class="btn-industrial bg-primary text-white w-full py-3 mt-2">CADASTRAR</button>
+                </div>
+                <div id="op-lst-${line}" class="space-y-2 max-h-60 overflow-y-auto"></div>
+            </div>`; 
+            
             openModal(`Oportunidades L${line}`, html); renderOps(line); 
         }
-        function openOpSubPicker() { showOptionPicker("Componente", window.tempSubsets.map(s=>({label:s,value:s})), (v)=>{ document.getElementById('op-sub').value=v; document.getElementById('op-sub-btn').innerText=v; document.getElementById('op-sub-btn').classList.remove('text-gray-400'); }); }
-        function openOpTurnoPicker() { showOptionPicker("Turno", [{label:'Manhã',value:'Manhã'},{label:'Tarde',value:'Tarde'},{label:'Noite',value:'Noite'}], (v)=>{ document.getElementById('op-t').value=v; document.getElementById('op-t-btn').innerText=v; document.getElementById('op-t-btn').classList.remove('text-gray-400'); }); }
+
+        // Helpers para os Dropdowns Internos
+        function toggleOpDropdown(id) {
+            const el = document.getElementById(id);
+            // Fecha outros se tiver (opcional, mas bom pra UX)
+            if(id === 'sub-list-dd') document.getElementById('turno-list-dd')?.classList.add('hidden');
+            if(id === 'turno-list-dd') document.getElementById('sub-list-dd')?.classList.add('hidden');
+            el.classList.toggle('hidden');
+        }
+        function selectOpSub(val) {
+            document.getElementById('op-sub').value = val;
+            const btn = document.getElementById('op-sub-btn');
+            btn.innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`;
+            document.getElementById('sub-list-dd').classList.add('hidden');
+        }
+        function selectOpTurno(val) {
+            document.getElementById('op-t').value = val;
+            const btn = document.getElementById('op-t-btn');
+            btn.innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`;
+            document.getElementById('turno-list-dd').classList.add('hidden');
+        }
+
         function saveOp(line) { 
             const n=document.getElementById('op-n').value, t=document.getElementById('op-t').value, x=document.getElementById('op-txt').value, v=document.getElementById('op-v').value, s=document.getElementById('op-sub').value; 
             if(!n||!x||!v||!s||!t) return showToast("Preencha todos os campos!", "error");
@@ -242,7 +303,6 @@
         async function submitSonda() { 
             const obs = state.sondaForm.obs, op = state.sondaForm.op, t = state.form.shift; 
             if(!obs || !op || !t) { showToast("Preencha todos os campos!", "error"); return; } 
-            // LÓGICA V10: Jumper = Neutro ('sonda_event'), Normalizar = Corretiva ('corretiva')
             const typeRec = state.sondaAction === 'jumper' ? 'sonda_event' : 'corretiva';
             const status = state.sondaAction === 'jumper' ? 'jumpeada' : 'ok'; 
             const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: 'SONDA', type: typeRec, description: `[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${t})`, status: status==='jumpeada'?'pendente':'ok', isSonda: true }; 
