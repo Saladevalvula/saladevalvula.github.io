@@ -3,49 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sala de Válvulas - Pack OW (Inteligente)</title>
-    
+    <title>Sala de Válvulas - Pack OW</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        background: "#0f172a", foreground: "#f8fafc", primary: "#f97316", secondary: "#1e293b", muted: "#334155", accent: "#ea580c", warning: "#eab308", success: "#22c55e", destructive: "#ef4444", info: "#3b82f6"
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                    animation: { 'pop-in': 'popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)', 'slide-down': 'slideDown 0.3s ease-out forwards' },
-                    keyframes: { popIn: { '0%': { opacity: '0', transform: 'scale(0.95)' }, '100%': { opacity: '1', transform: 'scale(1)' } }, slideDown: { '0%': { transform: 'translateY(-100%)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } } }
+                    colors: { background: "#0f172a", foreground: "#f8fafc", primary: "#f97316", secondary: "#1e293b", warning: "#eab308", success: "#22c55e", destructive: "#ef4444", info: "#3b82f6" },
+                    animation: { 'slide-down': 'slideDown 0.3s ease-out forwards' },
+                    keyframes: { slideDown: { '0%': { transform: 'translateY(-100%)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } } }
                 }
             }
         }
     </script>
-
     <style>
-        body { background-color: #0f172a; color: #f8fafc; -webkit-tap-highlight-color: transparent; }
-        .card-industrial { background-color: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; transition: all 0.2s; }
-        .card-industrial:active { transform: scale(0.98); border-color: #f97316; }
-        .btn-industrial { border-radius: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
-        .btn-industrial:active { transform: scale(0.95); }
+        body { background-color: #0f172a; color: #f8fafc; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        .card-industrial { background-color: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; }
         .input-industrial { background-color: #334155; border: 1px solid #475569; color: white; border-radius: 0.5rem; padding: 0.75rem; width: 100%; outline: none; }
-        .input-industrial:focus { border-color: #f97316; ring: 2px solid #f97316; }
-        .label-industrial { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 0.5rem; }
+        .btn-industrial { border-radius: 0.5rem; font-weight: 600; text-transform: uppercase; transition: all 0.2s; }
+        .btn-industrial:active { transform: scale(0.95); }
         .valve-jumpeada { border-color: #eab308 !important; color: #eab308 !important; background-color: rgba(234, 179, 8, 0.1) !important; }
-        .valve-op-ativa { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); } 
-        .modal-backdrop { background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); }
-        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #0f172a; } ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .valve-op-ativa { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
         .ticker-wrap { width: 100%; overflow: hidden; background-color: rgba(0, 0, 0, 0.3); border-top: 1px solid #334155; padding: 8px 0; white-space: nowrap; position: absolute; bottom: 0; left: 0; border-bottom-left-radius: 0.75rem; border-bottom-right-radius: 0.75rem; }
         .ticker-move { display: inline-block; white-space: nowrap; animation: ticker-loop 30s linear infinite; }
         .ticker-item { display: inline-block; padding: 0 2rem; color: #fbbf24; font-weight: 600; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
@@ -53,37 +39,25 @@
         #toast-container { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 400px; pointer-events: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans">
+<body class="min-h-screen flex flex-col">
 
-    <header class="sticky top-0 z-40 bg-[#0f172a]/95 border-b border-[#334155] backdrop-blur">
-        <div class="max-w-7xl mx-auto w-full flex items-center justify-between p-4">
-            <div class="flex items-center gap-3">
-                <div class="relative w-8 h-8 flex items-center justify-center">
-                    <i data-lucide="wrench" class="w-6 h-6 text-gray-400 absolute mt-2 ml-1"></i>
-                    <span class="text-xl absolute -top-0 -right-0" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7));">🍻</span>
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold uppercase tracking-wider text-foreground">SALA DE <span class="text-primary">VÁLVULAS</span></h1>
-                    <p class="text-xs text-muted-foreground font-mono">Pack OW</p>
-                </div>
-            </div>
-            <div class="flex bg-secondary rounded-lg p-1 items-center gap-1">
-                <button onclick="abrirManual()" class="p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 transition-all"><i data-lucide="book-open" class="w-5 h-5"></i></button>
-                <div class="w-px h-6 bg-gray-700 mx-1"></div>
-                <button onclick="setMode('register')" id="tab-register" class="px-3 py-2 rounded-md text-sm font-semibold transition-all bg-primary text-white shadow-sm">Registro</button>
-                <button onclick="setMode('history')" id="tab-history" class="px-3 py-2 rounded-md text-sm font-semibold transition-all text-gray-400 hover:text-white">Histórico</button>
+    <header class="sticky top-0 z-40 bg-[#0f172a]/95 border-b border-[#334155] backdrop-blur p-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <h1 class="text-lg font-bold uppercase tracking-wider">SALA DE <span class="text-primary">VÁLVULAS</span></h1>
+            <div class="flex bg-secondary rounded-lg p-1 gap-1">
+                <button onclick="setMode('register')" id="tab-register" class="px-3 py-2 rounded-md text-sm font-semibold">Registro</button>
+                <button onclick="setMode('history')" id="tab-history" class="px-3 py-2 rounded-md text-sm font-semibold">Histórico</button>
             </div>
         </div>
     </header>
 
-    <main id="main-container" class="flex-1 p-4 overflow-y-auto pb-24 w-full max-w-7xl mx-auto"></main>
-
+    <main id="main-container" class="flex-1 p-4 pb-24 max-w-7xl mx-auto w-full"></main>
     <div id="toast-container"></div>
 
-    <div id="custom-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop p-4 opacity-0 transition-opacity duration-200">
-        <div class="card-industrial w-full max-w-sm border border-primary/30 shadow-2xl shadow-black/50 transform scale-95 transition-transform duration-200 flex flex-col max-h-[85vh]" id="modal-panel">
+    <div id="custom-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 opacity-0 transition-all duration-200">
+        <div class="card-industrial w-full max-w-sm transform scale-95 transition-all flex flex-col max-h-[85vh]" id="modal-panel">
             <div class="p-5 border-b border-gray-700 flex justify-between items-center">
-                <h3 id="modal-title" class="text-lg font-bold text-white uppercase tracking-wide">Título</h3>
+                <h3 id="modal-title" class="text-lg font-bold uppercase">Título</h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             <div id="modal-content" class="p-5 overflow-y-auto"></div>
@@ -93,218 +67,179 @@
     <script>
         // CONFIG
         const firebaseConfig = { apiKey: "AIzaSyA61zwT-_IG0r6B_0GcgUzCjsGct1d_DXI", authDomain: "sala-valvulas-ow-163b3.firebaseapp.com", projectId: "sala-valvulas-ow-163b3", storageBucket: "sala-valvulas-ow-163b3.firebasestorage.app", messagingSenderId: "845901302642", appId: "1:845901302642:web:84871bdbcfcf97bf886beb" };
-        try { firebase.initializeApp(firebaseConfig); console.log("Firebase OK"); } catch (e) { console.error(e); }
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // STATE
         let globalDB = {}, opportunitiesDB = {};
-        let state = { 
-            mode: 'register', step: 'line', selectedLine: null, selectedValve: null, selectedSubset: null, sondaAction: 'jumper', sondaStatusAtual: 'ok', 
-            form: { type: 'corretiva', description: '', status: 'ok', kronesDiag: '', operator: '', shift: '' },
-            sondaForm: { obs: '', op: '' }, 
-            filters: { line: 'all', valve: '', subset: 'all', onlyCritical: false, historyType: 'all' }
-        };
+        let state = { mode: 'register', step: 'line', selectedLine: null, selectedValve: null, selectedSubset: null, sondaAction: 'jumper', sondaStatusAtual: 'ok', form: { type: 'corretiva', description: '', status: 'ok', kronesDiag: '', shift: '' }, sondaForm: { obs: '', op: '' }, filters: { line: 'all', valve: '', historyType: 'all' } };
         const LINE_CONFIGS = { '512': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V5', 'V6', 'V7', 'V8'], hasProbe: true }, '513': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7'], hasProbe: true }, '514': { valveCount: 72, subsets: null, hasProbe: false } };
 
-        // UI HELPERS
-        function showToast(msg, type = 'error') {
-            const container = document.getElementById('toast-container');
-            const color = type === 'error' ? 'bg-red-600' : 'bg-green-600';
+        // UI
+        function showToast(msg, type='error') {
+            const c = document.getElementById('toast-container');
             const el = document.createElement('div');
-            el.className = `${color} text-white px-4 py-3 rounded-lg shadow-lg mb-2 flex items-center gap-3 animate-slide-down border border-white/10`;
+            el.className = `${type==='error'?'bg-red-600':'bg-green-600'} text-white px-4 py-3 rounded-lg shadow-lg mb-2 flex items-center gap-3 animate-slide-down`;
             el.innerHTML = `<i data-lucide="${type==='error'?'alert-circle':'check-circle'}" class="w-5 h-5"></i><span class="text-sm font-bold">${msg}</span>`;
-            container.appendChild(el); lucide.createIcons();
-            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
+            c.appendChild(el); lucide.createIcons();
+            setTimeout(() => { el.remove(); }, 3000);
         }
-        function openModal(title, html) { const m = document.getElementById('custom-modal'); document.getElementById('modal-title').innerText = title; document.getElementById('modal-content').innerHTML = html; m.classList.remove('hidden'); setTimeout(() => { m.classList.remove('opacity-0'); document.getElementById('modal-panel').classList.add('scale-100'); }, 10); lucide.createIcons(); }
-        function closeModal() { const m = document.getElementById('custom-modal'); m.classList.add('opacity-0'); document.getElementById('modal-panel').classList.remove('scale-100'); setTimeout(() => { m.classList.add('hidden'); }, 200); }
-        function showOptionPicker(title, options, onSelect) {
-            window.currentPickerCallback = onSelect;
-            const html = options.map(o => `<button onclick="window.currentPickerCallback('${o.value}'); closeModal();" class="w-full text-left p-4 rounded-lg bg-secondary border border-gray-700 mb-2 hover:border-primary flex justify-between group"><span class="font-bold text-gray-200 group-hover:text-white">${o.label}</span>${o.icon?`<i data-lucide="${o.icon}" class="w-5 h-5 text-primary"></i>`:''}</button>`).join('');
-            openModal(title, `<div class="space-y-2 max-h-[60vh] overflow-y-auto">${html}</div>`);
+        function openModal(t, h) { const m=document.getElementById('custom-modal'); document.getElementById('modal-title').innerText=t; document.getElementById('modal-content').innerHTML=h; m.classList.remove('hidden'); setTimeout(()=>{m.classList.remove('opacity-0');document.getElementById('modal-panel').classList.add('scale-100');},10); lucide.createIcons(); }
+        function closeModal() { const m=document.getElementById('custom-modal'); m.classList.add('opacity-0'); document.getElementById('modal-panel').classList.remove('scale-100'); setTimeout(()=>{m.classList.add('hidden');},200); }
+        function showOptionPicker(t, opts, cb) { window.pickerCB=cb; const h=opts.map(o=>`<button onclick="window.pickerCB('${o.value}');closeModal();" class="w-full text-left p-4 rounded-lg bg-secondary border border-gray-700 mb-2 hover:border-primary flex justify-between font-bold text-gray-200">${o.label}</button>`).join(''); openModal(t, h); }
+        
+        // NOVO: Modal de Exclusão de Dois Níveis
+        function showDeleteChoice(l, v, id) {
+            const h = `
+                <div class="space-y-4">
+                    <p class="text-xs text-gray-400 uppercase font-bold text-center">Nível 1: Administrativo</p>
+                    <button onclick="confirmAction('hide','${l}','${v}','${id}')" class="w-full btn-industrial bg-secondary border border-gray-600 text-white py-3">Ocultar do App (0608)</button>
+                    
+                    <div class="border-t border-gray-700 my-4 pt-4">
+                        <p class="text-xs text-red-500 uppercase font-bold text-center">Nível 2: Destrutivo</p>
+                        <button onclick="confirmAction('delete','${l}','${v}','${id}')" class="w-full btn-industrial bg-red-900/40 border border-red-600 text-red-500 py-3 mt-2">Excluir do Firebase (Senha Mestra)</button>
+                    </div>
+                </div>
+            `;
+            openModal("Gerenciar Registro", h);
         }
-        function showPasswordPrompt(onSuccess) { window.passwordCallback = onSuccess; openModal("Segurança", `<div class="text-center space-y-4"><div class="mx-auto w-16 h-16 rounded-full flex items-center justify-center bg-primary/20 text-primary border border-primary/50"><i data-lucide="lock" class="w-8 h-8"></i></div><p class="text-gray-300 text-sm">Senha (0608)</p><input type="number" id="pwd" class="input-industrial text-center text-xl font-mono" placeholder="____" maxlength="4"><button onclick="checkPwd()" class="btn-industrial w-full bg-primary text-white py-3">CONFIRMAR</button></div>`); setTimeout(() => document.getElementById('pwd').focus(), 100); }
-        function checkPwd() { const i = document.getElementById('pwd'); if (i.value === '0608') { closeModal(); window.passwordCallback(); } else { showToast("Senha Incorreta", "error"); i.value = ''; } }
 
-        // PICKERS SMART (Sonda)
-        function openSmartTurnoPicker(targetId) {
-            showOptionPicker("Selecione o Turno", [{label:'Manhã',value:'Manhã'},{label:'Tarde',value:'Tarde'},{label:'Noite',value:'Noite'}], (val) => {
-                state.form.shift = val; 
-                const el = document.getElementById(targetId);
-                if(el) { el.innerText = val; el.classList.remove('text-gray-400'); el.classList.add('text-white', 'font-bold'); }
-            });
+        // Função de confirmação com as duas senhas
+        function confirmAction(type, l, v, id) {
+            const promptHTML = `
+                <div class="space-y-4 text-center">
+                    <p class="text-sm text-gray-300">Digite a senha para ${type==='hide'?'Ocultar':'DELETAR'}:</p>
+                    <input type="password" id="confirm-pwd" class="input-industrial text-center text-xl font-mono" placeholder="****">
+                    <button onclick="executeAction('${type}','${l}','${v}','${id}')" class="btn-industrial w-full bg-primary text-white py-3">Confirmar</button>
+                </div>
+            `;
+            openModal("Segurança", promptHTML);
         }
 
-        // RENDER CORE
-        function render(u) {
-            const c = document.getElementById('main-container'); c.innerHTML = '';
-            document.getElementById('tab-register').className = state.mode==='register' ? "px-3 py-2 rounded-md text-sm font-semibold bg-primary text-white shadow-sm" : "px-3 py-2 rounded-md text-sm font-semibold text-gray-400 hover:text-white";
-            document.getElementById('tab-history').className = state.mode==='history' ? "px-3 py-2 rounded-md text-sm font-semibold bg-primary text-white shadow-sm" : "px-3 py-2 rounded-md text-sm font-semibold text-gray-400 hover:text-white";
-            if(state.mode === 'register') renderRegisterFlow(c); else renderHistoryView(c);
+        async function executeAction(type, l, v, id) {
+            const pass = document.getElementById('confirm-pwd').value;
+            const ref = db.collection('lines').doc(l).collection('valves').doc(String(v));
+            
+            if(type === 'hide') {
+                if(pass !== '0608') return showToast("Senha Incorreta");
+                const s = await ref.get();
+                if(s.exists) {
+                    const newHist = s.data().historico.map(h => h.id === id ? {...h, oculto: true} : h);
+                    await ref.update({historico: newHist});
+                    showToast("Registro Ocultado", "success");
+                }
+            } else {
+                if(pass !== 'Wilkerdiego@84') return showToast("Senha Mestra Incorreta");
+                const s = await ref.get();
+                if(s.exists) {
+                    const newHist = s.data().historico.filter(h => h.id !== id);
+                    await ref.update({historico: newHist});
+                    showToast("Excluído Permanentemente", "success");
+                }
+            }
+            closeModal();
+        }
+
+        function showPasswordPrompt(cb) { window.passCB=cb; openModal("Segurança", `<div class="text-center space-y-4"><input type="number" id="pwd" class="input-industrial text-center text-xl font-mono" placeholder="Senha"><button onclick="if(document.getElementById('pwd').value==='0608'){closeModal();window.passCB();}else{showToast('Erro');}" class="btn-industrial w-full bg-primary text-white py-3">Confirmar</button></div>`); }
+
+        // RENDER
+        function setMode(m) { state.mode=m; render(); }
+        function navigateTo(s) { state.step=s; window.history.pushState({step:s},null,''); render(false); }
+        function render(u=true) {
+            const c=document.getElementById('main-container'); c.innerHTML='';
+            document.getElementById('tab-register').className = state.mode==='register' ? "bg-primary text-white px-3 py-2 rounded-md" : "text-gray-400 px-3 py-2 rounded-md";
+            document.getElementById('tab-history').className = state.mode==='history' ? "bg-primary text-white px-3 py-2 rounded-md" : "text-gray-400 px-3 py-2 rounded-md";
+            if(state.mode==='register') renderRegister(c); else renderHistory(c);
             lucide.createIcons();
         }
 
-        function renderRegisterFlow(c) {
-            if (state.step === 'sonda_form') {
-                const isJump = state.sondaStatusAtual === 'jumpeada';
-                c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/30 flex justify-between items-center"><div class="flex items-center gap-3"><i data-lucide="zap" class="w-6 h-6 text-yellow-500"></i><div><span class="text-xs font-bold text-yellow-500 uppercase">Status</span><div class="text-lg font-mono font-bold ${isJump?'text-red-500':'text-green-500'}">${isJump?'⚡ JUMPEADA':'✅ NORMAL'}</div></div></div></div><div class="grid gap-3"><button onclick="selectSondaAction('jumper')" id="btn-sj" class="p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"><i data-lucide="zap-off"></i> JUMPER</button>${isJump?`<button onclick="selectSondaAction('normalizar')" id="btn-sn" class="p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"><i data-lucide="check-circle-2"></i> NORMALIZAR</button>`:''}</div><div class="space-y-4"><div><label class="label-industrial">Motivo</label><textarea id="sonda-obs" class="input-industrial" rows="2" oninput="state.sondaForm.obs=this.value">${state.sondaForm.obs}</textarea></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Operador</label><input id="sonda-op" class="input-industrial" value="${state.sondaForm.op}" oninput="state.sondaForm.op=this.value"></div><div><label class="label-industrial">Turno</label><button onclick="openSmartTurnoPicker('sonda-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between"><span id="sonda-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Selecionar'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div></div><button onclick="submitSonda()" class="w-full btn-industrial bg-yellow-600 text-white py-4 mt-4">SALVAR</button></div>`;
-                if(!isJump) selectSondaAction('jumper');
-            }
-            else if (state.step === 'form') {
-                const TYPES={preventiva:{label:'Preventiva',color:'bg-green-500/20 text-green-500 border-green-500/50'},corretiva:{label:'Corretiva',color:'bg-red-500/20 text-red-500 border-red-500/50'},inspecao:{label:'Inspeção',color:'bg-orange-500/20 text-orange-500 border-orange-500/50'}};
-                const STATUS={ok:{label:'OK',icon:'check-circle',color:'bg-green-500 text-white'},observacao:{label:'Obs',icon:'alert-circle',color:'bg-yellow-500 text-white'},pendente:{label:'Pendente',icon:'clock',color:'bg-red-500 text-white'}};
-                c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-secondary/50 p-4 rounded-lg border border-gray-700 flex justify-between items-center"><div><span class="text-xs font-bold text-gray-400 uppercase">Local</span><div class="text-lg font-mono font-bold text-foreground">L${state.selectedLine} • V${state.selectedValve}</div></div><div class="text-right"><span class="text-xs font-bold text-gray-400 uppercase">Item</span><div class="text-lg font-mono font-bold text-primary">${state.selectedSubset||'-'}</div></div></div><div class="space-y-2"><label class="label-industrial">Diagnóstico IA</label><button onclick="openDiagPicker()" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 flex justify-between" id="diag-btn"><span class="text-gray-400" id="diag-text">${state.form.kronesDiag?`Sintoma ${state.form.kronesDiag}`:'Selecione...'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><div class="grid grid-cols-3 gap-2">${Object.keys(TYPES).map(t=>`<button onclick="setType('${t}')" class="rounded-lg font-semibold text-sm py-3 border border-transparent ${state.form.type===t?TYPES[t].color+' border-current':'bg-secondary text-gray-400'}">${TYPES[t].label}</button>`).join('')}</div></div><div><label class="label-industrial">Descrição</label><textarea id="desc" oninput="state.form.description=this.value" class="input-industrial" rows="3">${state.form.description}</textarea></div><div><label class="label-industrial">Status</label><div class="grid grid-cols-3 gap-2">${Object.keys(STATUS).map(s=>`<button onclick="setSt('${s}')" class="rounded-lg font-semibold text-sm py-3 flex flex-col items-center gap-1 ${state.form.status===s?STATUS[s].color:'bg-secondary text-gray-400'}"><i data-lucide="${STATUS[s].icon}" class="w-4 h-4"></i>${STATUS[s].label}</button>`).join('')}</div></div><button onclick="preSubmit()" id="btn-sub" class="w-full btn-industrial bg-primary text-white py-4 mt-4">SALVAR</button></div>`;
-            }
-            else if (state.step === 'line') {
-                const html = Object.keys(LINE_CONFIGS).map(line => {
-                    const cfg=LINE_CONFIGS[line]; let pg=0, pt=0, co=0, j=[]; const ld=globalDB[line]||{}; Object.values(ld).forEach(v=>{ if(v.sonda_status==='jumpeada')j.push(v.valveNumber); if(v.historico)v.historico.forEach(h=>{ if(h.type==='preventiva'){ pt++; if(h.subset==='Geral')pg++; } if(h.type==='corretiva')co++; }); });
-                    j.sort((a,b)=>a-b); const pends=cfg.valveCount-pg; const ops=opportunitiesDB[line]||[];
-                    const ticker = ops.length ? `<div class="ticker-wrap"><div class="ticker-move">${ops.map(o=>`<span class="ticker-item">⚠️ [${o.turno} - ${o.nome}] V${o.valvula}/${o.subset}: ${o.texto}</span>`).join('')}</div></div>` : `<div class="ticker-wrap"><div class="ticker-move"><span class="ticker-item text-green-500">✅ LINHA NORMAL</span></div></div>`;
-                    
-                    return `<div class="card-industrial p-0 w-full text-left group relative overflow-hidden flex flex-col justify-between pb-10"><div onclick="selectLine('${line}')" class="p-6 cursor-pointer h-full"><div class="flex items-start justify-between mb-4"><div class="flex items-center gap-4"><div class="w-14 h-14 rounded-lg bg-primary/20 flex items-center justify-center"><i data-lucide="wrench" class="w-7 h-7 text-primary"></i></div><div><div class="text-2xl font-bold font-mono text-foreground">Linha ${line}</div><div class="text-xs text-gray-400 font-bold uppercase mt-1">${cfg.valveCount} Válvulas ${cfg.hasProbe?'• Sonda':''}</div></div></div><i data-lucide="chevron-right" class="w-6 h-6 text-gray-500"></i></div><div class="border-t border-gray-700 pt-3 grid grid-cols-2 gap-y-2 text-xs font-mono"><div class="text-gray-400"><span class="block text-[10px] uppercase text-gray-500 font-bold">Pendentes</span><span class="text-white text-sm font-bold">${pends}</span></div><div class="text-green-500"><span class="block text-[10px] uppercase text-green-500/70 font-bold">Preventivas</span><span class="text-sm font-bold">${pt}</span></div><div class="text-red-500"><span class="block text-[10px] uppercase text-red-500/70 font-bold">Corretivas</span><span class="text-sm font-bold">${co}</span></div>${j.length?`<div class="col-span-2 mt-1 bg-yellow-500/10 border border-yellow-500/30 rounded p-2 text-yellow-500 animate-pulse font-bold text-[10px]"><i data-lucide="zap" class="w-3 h-3 inline"></i> ${j.length} Jumpeadas</div><div class="col-span-2 text-[10px] text-yellow-500 font-mono mt-1 leading-tight">Válvulas: ${j.join(', ')}</div>`:''}</div></div><button onclick="openOpModal('${line}')" class="absolute top-2 right-2 p-2 bg-secondary rounded-full border border-gray-600 shadow-lg"><i data-lucide="list-plus" class="w-5 h-5 text-yellow-500"></i></button>${ticker}</div>`;
+        function renderRegister(c) {
+            if(state.step==='line') {
+                const html=Object.keys(LINE_CONFIGS).map(l=>{
+                    const cfg=LINE_CONFIGS[l]; let pg=0, pt=0, co=0, j=[]; const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.sonda_status==='jumpeada')j.push(v.valveNumber); if(v.historico)v.historico.forEach(h=>{ if(h.type==='preventiva'){ pt++; if(h.subset==='Geral')pg++; } if(h.type==='corretiva')co++; }); });
+                    const ops=opportunitiesDB[l]||[];
+                    return `<div class="card-industrial p-0 relative overflow-hidden mb-4"><div onclick="state.selectedLine='${l}';navigateTo('valve');" class="p-6 cursor-pointer"><h2 class="text-2xl font-bold font-mono">Linha ${l}</h2><div class="grid grid-cols-2 gap-2 mt-2 text-xs font-mono"><div>Meta: ${cfg.valveCount-pg}</div><div class="text-green-500">Prev: ${pt}</div><div class="text-red-500">Corr: ${co}</div>${j.length?`<div class="col-span-2 text-yellow-500 font-bold mt-1">Sondas (${j.length}): ${j.sort((a,b)=>a-b).join(', ')}</div>`:''}</div></div><button onclick="openOpModal('${l}')" class="absolute top-2 right-2 p-2 bg-secondary rounded-full border border-gray-600"><i data-lucide="list-plus" class="text-yellow-500"></i></button><div class="ticker-wrap"><div class="ticker-move">${ops.map(o=>`<span class="ticker-item">⚠️ V${o.valvula}: ${o.texto}</span>`).join('')}</div></div></div>`;
                 }).join('');
-                c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase tracking-wider text-foreground">Painel Geral</h2></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4">${html}</div></div>`;
-            }
-            else if (state.step === 'valve' || state.step === 'subset') {
-                if(state.step==='valve') { const cnt=LINE_CONFIGS[state.selectedLine].valveCount; let b=''; for(let i=1;i<=cnt;i++)b+=`<button id="vbtn-${i}" onclick="selectValve(${i})" class="card-industrial aspect-square flex flex-col items-center justify-center font-mono font-bold text-lg hover:bg-primary/10">${i}</button>`; c.innerHTML=`<div class="space-y-4 animate-pop-in"><button onclick="window.history.back()" class="flex items-center text-gray-400 mb-4"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase text-foreground">Linha ${state.selectedLine}</h2></div><div class="relative mb-4"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i><input type="number" placeholder="Buscar..." class="input-industrial pl-10" oninput="filterValves(this.value)"></div><div id="vgrid" class="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-3 max-h-[65vh] overflow-y-auto pr-1 pb-10 custom-scrollbar">${b}</div></div>`; loadGridStatus(); }
-                if(state.step==='subset') { const cfg=LINE_CONFIGS[state.selectedLine]; const sBtn=cfg.hasProbe?`<button onclick="checkSonda()" class="card-industrial p-4 flex items-center gap-4 border-yellow-500/30 bg-yellow-500/5 w-full mb-6"><div class="w-12 h-12 rounded-lg bg-yellow-500/20 flex items-center justify-center"><i data-lucide="zap" class="w-6 h-6 text-yellow-500"></i></div><div class="flex-1"><div class="text-xl font-bold font-mono text-yellow-500">GESTÃO DE SONDA</div><div class="text-sm text-gray-400">Jumper / Normalizar</div></div></button>`:''; c.innerHTML=`<div class="space-y-4 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400 mb-4"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="text-center mb-6"><h2 class="text-lg font-bold uppercase text-foreground">Válvula ${state.selectedValve}</h2></div>${sBtn}<div class="grid gap-3">${cfg.subsets.map(s=>`<button onclick="selectSubset('${s}')" class="card-industrial p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-gray-700/50 flex items-center justify-center"><i data-lucide="layers" class="w-6 h-6 text-white"></i></div><div class="flex-1"><div class="text-xl font-bold font-mono text-foreground">${s}</div><div class="text-sm text-gray-400">Componente</div></div></button>`).join('')}<button onclick="selectSubset('Geral')" class="card-industrial p-5 flex items-center gap-4 mt-4 border-t border-dashed border-gray-700"><div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center"><i data-lucide="check-circle" class="w-6 h-6 text-primary"></i></div><div class="flex-1"><div class="text-xl font-bold font-mono text-foreground">Válvula Completa</div><div class="text-sm text-gray-400">Manutenção Geral</div></div></button></div></div>`; }
+                c.innerHTML=html;
+            } else if(state.step==='valve') {
+                const cnt=LINE_CONFIGS[state.selectedLine].valveCount; let b=''; for(let i=1;i<=cnt;i++)b+=`<button id="vbtn-${i}" onclick="state.selectedValve=${i};navigateTo(LINE_CONFIGS[state.selectedLine].subsets?'subset':'form');" class="card-industrial aspect-square flex items-center justify-center font-bold">${i}</button>`;
+                c.innerHTML=`<div class="grid grid-cols-4 gap-3">${b}</div>`; loadGrid();
+            } else if(state.step==='subset') {
+                const cfg=LINE_CONFIGS[state.selectedLine];
+                c.innerHTML=`<div class="space-y-3"><button onclick="checkSonda()" class="card-industrial p-4 w-full text-yellow-500 font-bold">GESTÃO DE SONDA</button>${cfg.subsets.map(s=>`<button onclick="state.selectedSubset='${s}';navigateTo('form');" class="card-industrial p-5 w-full text-left font-bold">${s}</button>`).join('')}<button onclick="state.selectedSubset='Geral';navigateTo('form');" class="card-industrial p-5 w-full text-left font-bold text-primary">Válvula Completa</button></div>`;
+            } else if(state.step==='sonda_form') {
+                const isJ=state.sondaStatusAtual==='jumpeada';
+                c.innerHTML=`<div class="space-y-4"><div class="p-4 rounded-lg bg-secondary font-bold text-center ${isJ?'text-red-500':'text-green-500'}">Status: ${isJ?'JUMPEADA':'NORMAL'}</div><div class="grid grid-cols-2 gap-2"><button onclick="state.sondaAction='jumper';render(false);" class="p-4 rounded bg-secondary font-bold border ${state.sondaAction==='jumper'?'border-yellow-500':''}">JUMPER</button>${isJ?`<button onclick="state.sondaAction='normalizar';render(false);" class="p-4 rounded bg-secondary font-bold border ${state.sondaAction==='normalizar'?'border-yellow-500':''}">NORMALIZAR</button>`:''}</div><textarea oninput="state.sondaForm.obs=this.value" class="input-industrial" placeholder="Motivo">${state.sondaForm.obs}</textarea><input oninput="state.sondaForm.op=this.value" class="input-industrial" placeholder="Nome" value="${state.sondaForm.op}"><button onclick="openSmartTurnoPicker('st-txt')" class="input-industrial text-left flex justify-between items-center"><span id="st-txt">${state.form.shift||'Turno...'}</span><i data-lucide="chevron-down"></i></button><button onclick="submitSonda()" class="btn-industrial bg-yellow-600 text-white py-4 w-full">Salvar</button></div>`;
+            } else if(state.step==='form') {
+                c.innerHTML=`<div class="space-y-4"><h2 class="text-xl font-bold">L${state.selectedLine} V${state.selectedValve} - ${state.selectedSubset||'Geral'}</h2><div class="grid grid-cols-3 gap-2"><button onclick="setType('corretiva')" class="p-3 rounded bg-secondary border ${state.form.type==='corretiva'?'border-red-500':''}">Corr</button><button onclick="setType('preventiva')" class="p-3 rounded bg-secondary border ${state.form.type==='preventiva'?'border-green-500':''}">Prev</button><button onclick="setType('inspecao')" class="p-3 rounded bg-secondary border ${state.form.type==='inspecao'?'border-orange-500':''}">Insp</button></div><textarea oninput="state.form.description=this.value" class="input-industrial" rows="3" placeholder="Descrição">${state.form.description}</textarea><button onclick="submitForm()" class="btn-industrial bg-primary text-white py-4 w-full">Salvar</button></div>`;
             }
         }
 
-        // HISTÓRICO
-        function renderHistoryView(c) {
-            c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="card-industrial p-4 space-y-3"><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Linha</label><button onclick="openLinePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="hl-txt" class="text-sm font-bold">Todas</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><button onclick="openTypePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="ht-txt" class="text-sm font-bold">Todos</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Início</label><input type="date" id="d-ini" class="input-industrial text-xs py-2"></div><div><label class="label-industrial">Fim</label><input type="date" id="d-fim" class="input-industrial text-xs py-2"></div></div><div class="grid grid-cols-2 gap-3 mt-4"><button onclick="exportData('excel')" class="btn-industrial bg-green-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel</button><button onclick="exportData('pdf')" class="btn-industrial bg-red-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button></div></div><div id="h-list" class="space-y-2 pb-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>`;
-            loadHistory();
-        }
-        function loadHistory() {
-            const el = document.getElementById('h-list'); const {line, valve, historyType} = state.filters;
-            let res = []; const lines = (line === 'all') ? Object.keys(LINE_CONFIGS) : [line];
-            if(historyType !== 'ops_abertas') {
-                lines.forEach(l => { const ld = globalDB[l]||{}; Object.values(ld).forEach(v => { if(valve && String(v.valveNumber) !== String(valve)) return; if(v.historico) v.historico.forEach(h => { if(historyType === 'sonda' && !h.isSonda) return; if(historyType === 'manutencao' && h.isSonda) return; res.push({...h, line: l, valve: v.valveNumber}); }); }); });
+        function renderHistory(c) {
+            c.innerHTML=`<div class="space-y-4"><div class="card-industrial p-4 grid grid-cols-2 gap-2"><div><label class="text-[10px] uppercase">Linha</label><button onclick="showOptionPicker('Linha',[{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}],v=>{state.filters.line=v;render();})" class="w-full text-left p-2 rounded bg-secondary text-sm">${state.filters.line}</button></div><div><label class="text-[10px] uppercase">Tipo</label><button onclick="showOptionPicker('Tipo',[{label:'Tudo',value:'all'},{label:'Manutenções',value:'manutencao'},{label:'Pendentes',value:'ops_abertas'}],v=>{state.filters.historyType=v;render();})" class="w-full text-left p-2 rounded bg-secondary text-sm">${state.filters.historyType}</button></div></div><div id="h-list" class="space-y-2"></div></div>`;
+            const el=document.getElementById('h-list'); let res=[]; const lines=(state.filters.line==='all')?Object.keys(LINE_CONFIGS):[state.filters.line];
+            
+            if(state.filters.historyType!=='ops_abertas') {
+                lines.forEach(l=>{ 
+                    Object.values(globalDB[l]||{}).forEach(v=>{ 
+                        // FILTRO: Não mostra itens marcados como ocultos
+                        if(v.historico)v.historico.forEach(h=>{ if(!h.oculto) res.push({...h,line:l,valve:v.valveNumber}); }); 
+                    }); 
+                });
             }
-            if(historyType === 'ops_abertas') {
-                lines.forEach(l => { const ops = opportunitiesDB[l] || []; ops.forEach(o => { if(valve && String(o.valvula) !== String(valve)) return; res.push({ id: o.id, timestamp: new Date().toISOString(), line: l, valve: o.valvula, type: 'oportunidade', description: `PENDENTE: ${o.texto} (${o.subset}) - Solicitante: ${o.nome}`, isOp: true }); }); });
-            }
-            res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-            el.innerHTML = res.map(r => {
-                if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span><button onclick="askDeleteOp('${r.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
-                const d = new Date(r.timestamp); const icon = r.isCritical ? 'flame' : (r.isSonda ? 'zap' : 'wrench'); const color = r.isCritical ? 'text-red-500' : (r.isSonda ? 'text-yellow-500' : 'text-primary');
-                return `<div class="card-industrial p-4 border ${r.isCritical ? 'border-red-500/80' : 'border-gray-700'} relative">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/V${r.valve}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span><button onclick="askDelete('${r.line}', '${r.valve}', '${r.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
-            }).join(''); lucide.createIcons();
+            if(state.filters.historyType==='ops_abertas') lines.forEach(l=>{ (opportunitiesDB[l]||[]).forEach(o=>res.push({id:o.id,isOp:true,line:l,valve:o.valvula,description:`PENDENTE: ${o.texto}`,timestamp:new Date().toISOString()})); });
+            res.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+            el.innerHTML=res.map(r=>`<div class="card-industrial p-4 relative ${r.isOp?'border-blue-500':''}"><div class="flex justify-between font-bold text-primary"><span>L${r.line}/V${r.valve}</span><button onclick="${r.isOp?'askDelOp(\''+r.id+'\')':'showDeleteChoice(\''+r.line+'\',\''+r.valve+'\',\''+r.id+'\')'}" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div><p class="text-sm mt-1">${r.description}</p></div>`).join('');
         }
 
         // LOGIC
-        function initRealtimeListeners() { Object.keys(LINE_CONFIGS).forEach(line => { db.collection('lines').doc(line).collection('valves').onSnapshot(snap => { if (!globalDB[line]) globalDB[line] = {}; snap.docs.forEach(doc => { globalDB[line][doc.id] = doc.data(); }); render(false); }); }); db.collection('oportunidades').onSnapshot(snap => { opportunitiesDB = {}; snap.forEach(doc => { const d = doc.data(); if(!opportunitiesDB[d.linha]) opportunitiesDB[d.linha] = []; opportunitiesDB[d.linha].push({ id: doc.id, ...d }); }); render(false); }); }
-        initRealtimeListeners();
-        function navigateTo(step) { state.step = step; window.history.pushState({ step: step }, null, ''); render(false); }
-        function setMode(m) { state.mode = m; render(); }
-        function selectLine(l) { state.selectedLine = l; navigateTo('valve'); }
-        function selectValve(v) { state.selectedValve = v; const c = LINE_CONFIGS[state.selectedLine]; if(!c.subsets) { state.selectedSubset = null; navigateTo('form'); } else navigateTo('subset'); }
-        function selectSubset(s) { state.selectedSubset = s; navigateTo('form'); }
-        function filterValves(v) { const b = document.getElementById('vgrid').children; for(let x of b) { x.style.display = x.innerText.includes(v) ? 'flex' : 'none'; } }
-        function setType(t) { if(t==='preventiva') showPasswordPrompt(() => { state.form.type=t; render(false); }); else { state.form.type=t; render(false); } }
-        function setSt(s) { state.form.status = s; render(false); }
-        function checkSonda() { const d = globalDB[state.selectedLine]?.[state.selectedValve]||{}; state.sondaStatusAtual = d.sonda_status||'ok'; navigateTo('sonda_form'); }
-        function selectSondaAction(a) { state.sondaAction = a; const j = document.getElementById('btn-sj'), n = document.getElementById('btn-sn'); if(j) j.className = a==='jumper' ? "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold flex gap-3" : "p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"; if(n) n.className = a==='normalizar' ? "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold flex gap-3" : "p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"; }
-        function openDiagPicker() { showOptionPicker("IA Sintomas", [{label:'Lata VAZIA',value:'1'},{label:'Lata METADE',value:'2'},{label:'Lata AMASSADA',value:'3'},{label:'EXPLODIU',value:'4'},{label:'Gotejamento',value:'6'}], (v)=>{ state.form.kronesDiag=v; render(false); }); } 
-        function openLinePicker() { showOptionPicker("Filtrar Linha", [{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
-        function openTypePicker() { showOptionPicker("Filtrar Tipo", [{label:'Todos',value:'all'},{label:'Manutenções',value:'manutencao'},{label:'Sondas',value:'sonda'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
-        
-        // --- OPORTUNIDADES CORRIGIDO ---
-        function openOpModal(line) { 
-            const subsets = LINE_CONFIGS[line].subsets ? LINE_CONFIGS[line].subsets.concat(['Geral']) : ['Geral'];
-            const subOptions = subsets.map(s => `<div onclick="selectOpSub('${s}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${s}</div>`).join('');
-            const turnoOptions = ['Manhã', 'Tarde', 'Noite'].map(t => `<div onclick="selectOpTurno('${t}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${t}</div>`).join('');
+        db.collection('oportunidades').onSnapshot(s=>{ opportunitiesDB={}; s.forEach(d=>{ const data=d.data(); if(!opportunitiesDB[data.linha])opportunitiesDB[data.linha]=[]; opportunitiesDB[data.linha].push({id:d.id,...data}); }); render(false); });
+        Object.keys(LINE_CONFIGS).forEach(l=>db.collection('lines').doc(l).collection('valves').onSnapshot(s=>{ if(!globalDB[l])globalDB[l]={}; s.forEach(d=>{ globalDB[l][d.id]=d.data(); }); render(false); }));
 
-            const html=`
-            <div class="space-y-4">
-                <div class="bg-secondary p-3 rounded border border-gray-700">
-                    <label class="label-industrial">Nova Oportunidade</label>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <input id="op-v" type="number" placeholder="Válvula (Nº)" class="input-industrial">
-                        <div class="relative">
-                            <button onclick="toggleOpDropdown('sub-list-dd')" id="op-sub-btn" class="input-industrial text-left text-gray-400 truncate w-full flex justify-between items-center"><span>Componente...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
-                            <input id="op-sub" type="hidden">
-                            <div id="sub-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 max-h-40 overflow-y-auto mt-1 shadow-2xl">${subOptions}</div>
-                        </div>
-                    </div>
-                    <input id="op-n" placeholder="Nome" class="input-industrial mb-2">
-                    <div class="relative mb-2">
-                        <button onclick="toggleOpDropdown('turno-list-dd')" id="op-t-btn" class="input-industrial text-left text-gray-400 w-full flex justify-between items-center"><span>Turno...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
-                        <input id="op-t" type="hidden">
-                        <div id="turno-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 mt-1 shadow-2xl">${turnoOptions}</div>
-                    </div>
-                    <textarea id="op-txt" placeholder="O que fazer?" class="input-industrial" rows="2"></textarea>
-                    <button onclick="saveOp('${line}')" class="btn-industrial bg-primary text-white w-full py-3 mt-2">CADASTRAR</button>
-                </div>
-                <div id="op-lst-${line}" class="space-y-2 max-h-60 overflow-y-auto"></div>
-            </div>`; 
-            openModal(`Oportunidades L${line}`, html); renderOps(line); 
+        function setType(t){ if(t==='preventiva') showPasswordPrompt(()=>{state.form.type=t;render(false);}); else {state.form.type=t;render(false);} }
+        function openSmartTurnoPicker(id){ showOptionPicker("Turno",[{label:'Manhã',value:'Manhã'},{label:'Tarde',value:'Tarde'},{label:'Noite',value:'Noite'}],v=>{state.form.shift=v;const el=document.getElementById(id);el.innerText=v;el.className="text-white font-bold";}); }
+        function checkSonda(){ const d=globalDB[state.selectedLine]?.[state.selectedValve]||{}; state.sondaStatusAtual=d.sonda_status||'ok'; navigateTo('sonda_form'); }
+
+        async function submitSonda() {
+            const {obs,op}=state.sondaForm; if(!obs||!op||!state.form.shift)return showToast("Faltam dados");
+            const typeRec=state.sondaAction==='jumper'?'sonda_event':'corretiva'; const status=state.sondaAction==='jumper'?'jumpeada':'ok';
+            const rec={id:Date.now().toString(),timestamp:new Date().toISOString(),subset:'SONDA',type:typeRec,description:`[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${state.form.shift})`,status:'ok'};
+            await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({valveNumber:parseInt(state.selectedValve),historico:firebase.firestore.FieldValue.arrayUnion(rec),sonda_status:status},{merge:true});
+            showToast("Salvo","success"); state.sondaForm.obs=''; navigateTo('line');
         }
 
-        function toggleOpDropdown(id) {
-            const el = document.getElementById(id);
-            if(id === 'sub-list-dd') document.getElementById('turno-list-dd')?.classList.add('hidden');
-            if(id === 'turno-list-dd') document.getElementById('sub-list-dd')?.classList.add('hidden');
-            el.classList.toggle('hidden');
-        }
-        function selectOpSub(val) { document.getElementById('op-sub').value = val; document.getElementById('op-sub-btn').innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`; document.getElementById('sub-list-dd').classList.add('hidden'); }
-        function selectOpTurno(val) { document.getElementById('op-t').value = val; document.getElementById('op-t-btn').innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`; document.getElementById('turno-list-dd').classList.add('hidden'); }
-
-        function saveOp(line) { 
-            const n=document.getElementById('op-n').value, t=document.getElementById('op-t').value, x=document.getElementById('op-txt').value, v=document.getElementById('op-v').value, s=document.getElementById('op-sub').value; 
-            if(!n||!x||!v||!s||!t) return showToast("Preencha todos os campos!", "error");
-            const exists = (opportunitiesDB[line]||[]).find(o => o.valvula == v && o.subset == s);
-            if(exists) return showToast("Item Duplicado!", "error");
-            db.collection('oportunidades').add({linha:line, nome:n, turno:t, texto:x, valvula:v, subset:s}).then(()=>{ showToast("Registrado!", "success"); document.getElementById('op-txt').value=''; renderOps(line); }); 
-        }
-        function askOpDone(line, id, nome, turno, texto, valvula, subset) { openModal("Baixa Oportunidade", `<div class="space-y-3"><p class="text-gray-300 text-sm">Baixa em: "V${valvula} - ${texto}"</p><input id="bq" placeholder="Quem fez?" class="input-industrial"><textarea id="bo" placeholder="O que foi feito?" class="input-industrial" rows="2"></textarea><button onclick="doOpDone('${line}','${id}','${nome}','${turno}','${texto}','${valvula}','${subset}')" class="btn-industrial bg-green-600 text-white w-full py-3">CONFIRMAR</button></div>`); }
-        async function doOpDone(line, id, nome, turno, txt, valvula, subset) { 
-            const quem = document.getElementById('bq').value, oque = document.getElementById('bo').value; 
-            if(!quem || !oque) return showToast("Informe Quem e O Que!", "error");
-            const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: subset || 'Geral', type: 'corretiva', description: `[OPORTUNIDADE] Defeito: ${txt} | Solução: ${oque} (Exec: ${quem})`, status: 'ok', isCritical: false };
-            await db.collection('lines').doc(line).collection('valves').doc(String(valvula)).set({ valveNumber: parseInt(valvula), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true });
-            await db.collection('oportunidades').doc(id).delete(); closeModal(); showToast("Baixa Realizada!", "success"); render(false); 
-        }
-        
-        // DELETAR OPORTUNIDADE (NOVO)
-        function askDeleteOp(id) { showPasswordPrompt(async () => { await db.collection('oportunidades').doc(id).delete(); showToast("Oportunidade Excluída!", "success"); render(false); }); }
-
-        function renderOps(line) { 
-            const c = document.getElementById(`op-lst-${line}`); if(!c) return; const l = opportunitiesDB[line]||[]; 
-            c.innerHTML = l.length ? l.map(o => `
-            <div class="bg-gray-800/50 p-3 rounded border border-gray-700 flex justify-between">
-                <div>
-                    <div class="text-xs font-bold text-yellow-500">${o.nome} (${o.turno})</div>
-                    <div class="text-xs text-blue-400 font-bold mb-1">V${o.valvula} • ${o.subset}</div>
-                    <div class="text-sm text-gray-300">${o.texto}</div>
-                </div>
-                <div class="flex flex-col gap-2">
-                    <button onclick="askOpDone('${line}','${o.id}','${o.nome}','${o.turno}','${o.texto}','${o.valvula}','${o.subset}')" class="text-green-500"><i data-lucide="check-square" class="w-6 h-6"></i></button>
-                    <button onclick="askDeleteOp('${o.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-6 h-6"></i></button>
-                </div>
-            </div>`).join('') : '<div class="text-center text-gray-500 text-xs">Sem pendências.</div>'; 
-            lucide.createIcons(); 
+        async function submitForm(){
+            if(!state.form.description) return showToast("Falta descrição");
+            const rec={id:Date.now().toString(),timestamp:new Date().toISOString(),subset:state.selectedSubset||'Geral',type:state.form.type,description:state.form.description,status:state.form.status};
+            await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({valveNumber:parseInt(state.selectedValve),historico:firebase.firestore.FieldValue.arrayUnion(rec)},{merge:true});
+            showToast("Salvo","success"); state.form.description=''; navigateTo('line');
         }
 
-        // SUBMITS
-        function preSubmit() { if(!state.form.description.trim()) { showToast("Preencha a descrição!", "error"); return; } const hist = globalDB[state.selectedLine]?.[state.selectedValve]?.historico || []; const recent = hist.find(r => new Date(r.timestamp) > new Date(Date.now()-86400000) && r.type !== 'inspecao'); if(recent) showConfirm("Reincidência", "Manutenção recente detectada. Marcar CRÍTICA?", () => doSubmit(true)); else doSubmit(false); }
-        async function doSubmit(crit) { const btn = document.getElementById('btn-sub'); btn.disabled=true; btn.innerText="Salvando..."; const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: state.selectedSubset||'Geral', type: state.form.type, description: state.form.description, status: state.form.status, kronesDiag: state.form.kronesDiag||'', isCritical: crit }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); showToast("Manutenção Salva!", "success"); state.form.description=''; state.form.kronesDiag=''; state.step = 'line'; render(false); }
-        async function submitSonda() { 
-            const obs = state.sondaForm.obs, op = state.sondaForm.op, t = state.form.shift; 
-            if(!obs || !op || !t) { showToast("Preencha todos os campos!", "error"); return; } 
-            const typeRec = state.sondaAction === 'jumper' ? 'sonda_event' : 'corretiva';
-            const status = state.sondaAction === 'jumper' ? 'jumpeada' : 'ok'; 
-            const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: 'SONDA', type: typeRec, description: `[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${t})`, status: status==='jumpeada'?'pendente':'ok', isSonda: true }; 
-            await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec), sonda_status: status }, { merge: true }); 
-            showToast("Sonda Atualizada!", "success"); state.sondaForm.obs=''; state.step = 'line'; render(false); 
-        }
-        function askDelete(line, valve, id) { showPasswordPrompt(async () => { const docRef = db.collection('lines').doc(line).collection('valves').doc(String(valve)); const snap = await docRef.get(); if(snap.exists) { const data = snap.data(); const newHist = data.historico.filter(r => r.id !== id); await docRef.update({ historico: newHist }); showToast("Excluído com sucesso!", "success"); render(false); } }); }
-        function abrirManual() { openModal("Manual", `<div class="p-4 text-gray-300">Manual Simplificado: Use a busca para encontrar tópicos.</div>`); } 
-        function loadGridStatus() { const d=globalDB[state.selectedLine]||{}; const ops=opportunitiesDB[state.selectedLine]||[]; const opValves = new Set(ops.map(o => parseInt(o.valvula))); const cnt = LINE_CONFIGS[state.selectedLine].valveCount; for(let i=1; i<=cnt; i++) { const btn = document.getElementById(`vbtn-${i}`); if(btn) { btn.classList.remove('valve-jumpeada', 'valve-op-ativa'); if(d[i] && d[i].sonda_status === 'jumpeada') btn.classList.add('valve-jumpeada'); if(opValves.has(i)) btn.classList.add('valve-op-ativa'); } } }
-        async function exportData(fmt) { const start=document.getElementById('d-ini').value, end=document.getElementById('d-fim').value; let data = []; const lines = (state.filters.line==='all') ? Object.keys(LINE_CONFIGS) : [state.filters.line]; lines.forEach(l => { const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.historico) v.historico.forEach(h=>{ const d=h.timestamp.split('T')[0]; if((!start||d>=start)&&(!end||d<=end)) data.push({Data:new Date(h.timestamp).toLocaleDateString(), Linha:l, Válvula:v.valveNumber, Tipo:h.type, Desc:h.description}); }); }); }); const snap = await db.collection('historico_oportunidades').get(); snap.forEach(d => { const r=d.data(); if((state.filters.line==='all'||r.linha===state.filters.line)) { const dt=r.dataConclusao.split('T')[0]; if((!start||dt>=start)&&(!end||dt<=end)) data.push({Data:new Date(r.dataConclusao).toLocaleDateString(), Linha:r.linha, Válvula:'-', Tipo:'Melhoria', Desc:`Solução: ${r.solucao} (Exec: ${r.executante})`}); } }); if(!data.length) { showToast("Sem dados para exportar.", "error"); return; } if(fmt==='excel') { const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); XLSX.writeFile(wb, "Relatorio.xlsx"); } else { const doc=new window.jspdf.jsPDF(); doc.setFillColor(15,23,42); doc.rect(0,0,210,297,'F'); doc.setTextColor(255); doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); doc.save("Relatorio.pdf"); } }
+        function askDelOp(id){ showPasswordPrompt(async()=>{ await db.collection('oportunidades').doc(id).delete(); showToast("Excluído","success"); }); }
 
+        function openOpModal(l) {
+            const subs=(LINE_CONFIGS[l].subsets||[]).concat(['Geral']);
+            const h=`<div class="space-y-3"><input type="number" id="ov" class="input-industrial" placeholder="Válvula"><button onclick="showOptionPicker('Item',window.tempSubs.map(s=>({label:s,value:s})),v=>{document.getElementById('os').value=v;document.getElementById('ob').innerText=v;})" id="ob" class="input-industrial text-left">Item...</button><input type="hidden" id="os"><input id="on" class="input-industrial" placeholder="Nome"><button onclick="showOptionPicker('Turno',[{label:'Manhã',value:'Manhã'},{label:'Tarde',value:'Tarde'},{label:'Noite',value:'Noite'}],v=>{document.getElementById('ot').value=v;document.getElementById('tb').innerText=v;})" id="tb" class="input-industrial text-left">Turno...</button><input type="hidden" id="ot"><textarea id="ox" class="input-industrial" placeholder="Defeito"></textarea><button onclick="saveOp('${l}')" class="btn-industrial bg-primary text-white w-full py-3">Salvar</button><div id="ol" class="space-y-2 mt-4"></div></div>`;
+            window.tempSubs=subs; openModal("Oportunidades", h); renderOpsList(l);
+        }
+        function renderOpsList(l){ const el=document.getElementById('ol'); const ops=opportunitiesDB[l]||[]; el.innerHTML=ops.map(o=>`<div class="p-2 bg-secondary rounded border border-gray-700 flex justify-between"><div>V${o.valvula}: ${o.texto}</div><button onclick="doDone('${l}','${o.id}',${o.valvula},'${o.subset}','${o.texto}')" class="text-green-500"><i data-lucide="check-square"></i></button></div>`).join(''); lucide.createIcons(); }
+        async function saveOp(l){
+            const v=document.getElementById('ov').value,s=document.getElementById('os').value,n=document.getElementById('on').value,t=document.getElementById('ot').value,x=document.getElementById('ox').value;
+            if(!v||!s||!n||!t||!x) return showToast("Faltam dados");
+            await db.collection('oportunidades').add({linha:l,valvula:parseInt(v),subset:s,nome:n,turno:t,texto:x});
+            closeModal(); showToast("Registrado","success");
+        }
+        async function doDone(l,id,v,s,x){
+            openModal("Baixa",`<div class="space-y-3"><input id="bq" class="input-industrial" placeholder="Quem fez?"><textarea id="bo" class="input-industrial" placeholder="Solução"></textarea><button onclick="confirmDone('${l}','${id}',${v},'${s}','${x}')" class="btn-industrial bg-green-600 text-white w-full py-3">Concluir</button></div>`);
+        }
+        async function confirmDone(l,id,v,s,x){
+            const q=document.getElementById('bq').value,o=document.getElementById('bo').value; if(!q||!o)return;
+            const rec={id:Date.now().toString(),timestamp:new Date().toISOString(),subset:s,type:'corretiva',description:`[OP] ${x} | Sol: ${o} (Exec: ${q})`,status:'ok'};
+            await db.collection('lines').doc(l).collection('valves').doc(String(v)).set({valveNumber:v,historico:firebase.firestore.FieldValue.arrayUnion(rec)},{merge:true});
+            await db.collection('oportunidades').doc(id).delete(); closeModal(); showToast("Baixado","success");
+        }
+        function loadGrid(){ const d=globalDB[state.selectedLine]||{}; const ops=opportunitiesDB[state.selectedLine]||[]; const opV=new Set(ops.map(o=>o.valvula)); const cnt=LINE_CONFIGS[state.selectedLine].valveCount; for(let i=1;i<=cnt;i++){ const b=document.getElementById(`vbtn-${i}`); if(b){ b.classList.remove('valve-jumpeada','valve-op-ativa'); if(d[i]?.sonda_status==='jumpeada')b.classList.add('valve-jumpeada'); if(opV.has(i))b.classList.add('valve-op-ativa'); } } }
         render();
     </script>
 </body>
 </html>
+
