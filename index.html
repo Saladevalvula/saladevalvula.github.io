@@ -280,7 +280,31 @@
         }
         function renderOps(line) { const c = document.getElementById(`op-lst-${line}`); if(!c) return; const l = opportunitiesDB[line]||[]; c.innerHTML = l.length ? l.map(o => `<div class="bg-gray-800/50 p-3 rounded border border-gray-700 flex justify-between"><div><div class="text-xs font-bold text-yellow-500">${o.nome} (${o.turno})</div><div class="text-xs text-blue-400 font-bold mb-1">V${o.valvula} • ${o.subset}</div><div class="text-sm text-gray-300">${o.texto}</div></div><div class="flex flex-col gap-2"><button onclick="askOpDone('${line}','${o.id}','${o.nome}','${o.turno}','${o.texto}','${o.valvula}','${o.subset}')" class="text-green-500"><i data-lucide="check-square" class="w-6 h-6"></i></button><button onclick="askDelOp('${o.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-6 h-6"></i></button></div></div>`).join('') : '<div class="text-center text-gray-500 text-xs">Sem pendências.</div>'; lucide.createIcons(); }
 
-        function submitForm(){ if(!state.form.description.trim()) { showToast("Preencha a descrição!", "error"); return; } const hist = globalDB[state.selectedLine]?.[state.selectedValve]?.historico || []; const recent = hist.find(r => new Date(r.timestamp) > new Date(Date.now()-86400000) && r.type !== 'inspecao'); if(recent) showPasswordPrompt(() => doSubmit(true)); else doSubmit(false); } 
+        // --- FUNÇÃO ATUALIZADA (REINCIDÊNCIA) ---
+        function submitForm() {
+            if (!state.form.description.trim()) { showToast("Preencha a descrição!", "error"); return; }
+
+            const hist = globalDB[state.selectedLine]?.[state.selectedValve]?.historico || [];
+            
+            // 30 dias de janela
+            const timeWindow = 30 * 24 * 60 * 60 * 1000;
+            const recents = hist.filter(r => new Date(r.timestamp) > new Date(Date.now() - timeWindow) && r.type !== 'inspecao');
+
+            if (recents.length > 0) {
+                recents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                const last = recents[0];
+                const d = new Date(last.timestamp);
+                const dataFmt = d.toLocaleDateString('pt-BR');
+                const horaFmt = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+                const html = `<div class="text-center space-y-4"><div class="bg-yellow-500/10 border border-yellow-500/50 p-4 rounded-lg"><i data-lucide="alert-triangle" class="w-10 h-10 text-yellow-500 mx-auto mb-2"></i><h3 class="font-bold text-yellow-500 text-lg uppercase">Reincidência Detectada</h3><p class="text-sm text-gray-300 mt-2">Última atuação nesta válvula:</p><div class="text-xl font-mono font-bold text-white my-1">${dataFmt} às ${horaFmt}</div><p class="text-xs text-gray-400">Tipo: ${last.type.toUpperCase()}</p></div><p class="text-sm text-gray-400">Deseja registrar novamente?</p><div class="grid grid-cols-2 gap-3"><button onclick="closeModal()" class="btn-industrial bg-gray-600 text-white py-3">CANCELAR</button><button onclick="doSubmit(true); closeModal();" class="btn-industrial bg-primary text-white py-3">CONFIRMAR</button></div></div>`;
+                openModal("Atenção", html);
+            } else {
+                doSubmit(false);
+            }
+        }
+        // ----------------------------------------
+
         async function doSubmit(crit) { const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: state.selectedSubset||'Geral', type: state.form.type, description: state.form.description, status: state.form.status, kronesDiag: state.form.kronesDiag||'', isCritical: crit }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); showToast("Manutenção Salva!", "success"); state.form.description=''; state.form.kronesDiag=''; state.step = 'line'; render(false); }
         async function submitSonda() { const obs = state.sondaForm.obs, op = state.sondaForm.op, t = state.form.shift; if(!obs || !op || !t) { showToast("Preencha todos os campos!", "error"); return; } const typeRec = state.sondaAction === 'jumper' ? 'sonda_event' : 'corretiva'; const status = state.sondaAction === 'jumper' ? 'jumpeada' : 'ok'; const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: 'SONDA', type: typeRec, description: `[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${t})`, status: status==='jumpeada'?'pendente':'ok', isSonda: true }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec), sonda_status: status }, { merge: true }); showToast("Sonda Atualizada!", "success"); state.sondaForm.obs=''; state.step = 'line'; render(false); }
         
@@ -308,4 +332,3 @@
     </script>
 </body>
 </html>
-
