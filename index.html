@@ -80,8 +80,34 @@
         const db = firebase.firestore();
 
         let globalDB = {}, opportunitiesDB = {};
-        let state = { mode: 'register', step: 'line', selectedLine: null, selectedValve: null, selectedSubset: null, sondaAction: 'jumper', sondaStatusAtual: 'ok', form: { type: 'corretiva', description: '', status: 'ok', kronesDiag: '', shift: '' }, sondaForm: { obs: '', op: '' }, filters: { line: 'all', valve: '', historyType: 'all' } };
-        const LINE_CONFIGS = { '512': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V5', 'V6', 'V7', 'V8'], hasProbe: true }, '513': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7'], hasProbe: true }, '514': { valveCount: 72, subsets: null, hasProbe: false } };
+        
+        // --- ATUALIZAÇÃO: NOVOS COMPONENTES E LOCALSTORAGE ---
+        let state = { 
+            mode: 'register', 
+            step: 'line', 
+            selectedLine: null, 
+            selectedValve: null, 
+            selectedSubset: null, 
+            sondaAction: 'jumper', 
+            sondaStatusAtual: 'ok', 
+            form: { 
+                type: 'corretiva', 
+                description: '', 
+                status: 'ok', 
+                kronesDiag: '', 
+                shift: localStorage.getItem('sala_valvulas_turno') || '', 
+                name: localStorage.getItem('sala_valvulas_nome') || '' 
+            }, 
+            sondaForm: { obs: '', op: '' }, 
+            filters: { line: 'all', valve: '', historyType: 'all' } 
+        };
+        
+        const LINE_CONFIGS = { 
+            '512': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V5', 'V6', 'V7', 'V8', 'Tulipa', 'Caixa de ar', 'SMC'], hasProbe: true }, 
+            '513': { valveCount: 175, subsets: ['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'Tulipa', 'Caixa de ar', 'SMC'], hasProbe: true }, 
+            '514': { valveCount: 72, subsets: null, hasProbe: false } 
+        };
+        // -----------------------------------------------------
 
         // CONTEÚDO DO MANUAL
         const MANUAL_HTML = `
@@ -110,16 +136,14 @@
         `;
 
         // --- SISTEMA DE NAVEGAÇÃO CORRIGIDO (v10.10) ---
-        window.history.replaceState({ mode: 'register', step: 'line' }, null, ''); // Estado Inicial
+        window.history.replaceState({ mode: 'register', step: 'line' }, null, ''); 
 
         window.addEventListener('popstate', (event) => {
             if (event.state) {
-                // Se existe estado, recupera o modo (Aba) e a etapa
                 if(event.state.mode) state.mode = event.state.mode;
                 if(event.state.step) state.step = event.state.step;
                 render(false);
             } else {
-                // Fallback para o início
                 state.mode = 'register';
                 state.step = 'line';
                 render(false);
@@ -128,14 +152,12 @@
 
         function navigateTo(step) { 
             state.step = step; 
-            // Agora salva o MODO também para não perder a aba ao voltar
             window.history.pushState({ mode: state.mode, step: step }, null, ''); 
             render(false); 
         }
 
         function setMode(m) { 
             state.mode = m; 
-            // Agora CRIA um histórico ao trocar de aba, permitindo voltar
             window.history.pushState({ mode: m, step: state.step }, null, ''); 
             render(); 
         }
@@ -179,7 +201,8 @@
             else if (state.step === 'form') {
                 const TYPES={preventiva:{label:'Preventiva',color:'bg-green-500/20 text-green-500 border-green-500/50'},corretiva:{label:'Corretiva',color:'bg-red-500/20 text-red-500 border-red-500/50'},inspecao:{label:'Inspeção',color:'bg-orange-500/20 text-orange-500 border-orange-500/50'}};
                 const STATUS={ok:{label:'OK',icon:'check-circle',color:'bg-green-500 text-white'},observacao:{label:'Obs',icon:'alert-circle',color:'bg-yellow-500 text-white'},pendente:{label:'Pendente',icon:'clock',color:'bg-red-500 text-white'}};
-                c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-secondary/50 p-4 rounded-lg border border-gray-700 flex justify-between items-center"><div><span class="text-xs font-bold text-gray-400 uppercase">Local</span><div class="text-lg font-mono font-bold text-foreground">L${state.selectedLine} • V${state.selectedValve}</div></div><div class="text-right"><span class="text-xs font-bold text-gray-400 uppercase">Item</span><div class="text-lg font-mono font-bold text-primary">${state.selectedSubset||'-'}</div></div></div><div class="space-y-2"><label class="label-industrial">Diagnóstico IA</label><button onclick="openDiagPicker()" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 flex justify-between" id="diag-btn"><span class="text-gray-400" id="diag-text">${state.form.kronesDiag?`Sintoma ${state.form.kronesDiag}`:'Selecione...'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><div class="grid grid-cols-3 gap-2">${Object.keys(TYPES).map(t=>`<button onclick="setType('${t}')" class="rounded-lg font-semibold text-sm py-3 border border-transparent ${state.form.type===t?TYPES[t].color+' border-current':'bg-secondary text-gray-400'}">${TYPES[t].label}</button>`).join('')}</div></div><div><label class="label-industrial">Descrição</label><textarea id="desc" oninput="state.form.description=this.value" class="input-industrial" rows="3">${state.form.description}</textarea></div><div><label class="label-industrial">Status</label><div class="grid grid-cols-3 gap-2">${Object.keys(STATUS).map(s=>`<button onclick="setSt('${s}')" class="rounded-lg font-semibold text-sm py-3 flex flex-col items-center gap-1 ${state.form.status===s?STATUS[s].color:'bg-secondary text-gray-400'}"><i data-lucide="${STATUS[s].icon}" class="w-4 h-4"></i>${STATUS[s].label}</button>`).join('')}</div></div><button onclick="submitForm()" class="w-full btn-industrial bg-primary text-white py-4 mt-4">SALVAR</button></div>`;
+                // --- ATUALIZAÇÃO NO HTML: CAMPO NOME E TURNO ---
+                c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-secondary/50 p-4 rounded-lg border border-gray-700 flex justify-between items-center"><div><span class="text-xs font-bold text-gray-400 uppercase">Local</span><div class="text-lg font-mono font-bold text-foreground">L${state.selectedLine} • V${state.selectedValve}</div></div><div class="text-right"><span class="text-xs font-bold text-gray-400 uppercase">Item</span><div class="text-lg font-mono font-bold text-primary">${state.selectedSubset||'-'}</div></div></div><div class="bg-secondary/30 p-3 rounded-lg border border-gray-700/50 mb-2"><label class="label-industrial text-xs mb-1">Responsável Técnico (Obrigatório)</label><div class="grid grid-cols-2 gap-3"><input type="text" placeholder="Seu Nome" class="input-industrial font-bold text-yellow-500" value="${state.form.name}" oninput="state.form.name=this.value"><button onclick="openSmartTurnoPicker('form-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between items-center"><span id="form-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Turno'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div class="space-y-2"><label class="label-industrial">Diagnóstico IA</label><button onclick="openDiagPicker()" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 flex justify-between" id="diag-btn"><span class="text-gray-400" id="diag-text">${state.form.kronesDiag?`Sintoma ${state.form.kronesDiag}`:'Selecione...'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><div class="grid grid-cols-3 gap-2">${Object.keys(TYPES).map(t=>`<button onclick="setType('${t}')" class="rounded-lg font-semibold text-sm py-3 border border-transparent ${state.form.type===t?TYPES[t].color+' border-current':'bg-secondary text-gray-400'}">${TYPES[t].label}</button>`).join('')}</div></div><div><label class="label-industrial">Descrição</label><textarea id="desc" oninput="state.form.description=this.value" class="input-industrial" rows="3">${state.form.description}</textarea></div><div><label class="label-industrial">Status</label><div class="grid grid-cols-3 gap-2">${Object.keys(STATUS).map(s=>`<button onclick="setSt('${s}')" class="rounded-lg font-semibold text-sm py-3 flex flex-col items-center gap-1 ${state.form.status===s?STATUS[s].color:'bg-secondary text-gray-400'}"><i data-lucide="${STATUS[s].icon}" class="w-4 h-4"></i>${STATUS[s].label}</button>`).join('')}</div></div><button onclick="submitForm()" class="w-full btn-industrial bg-primary text-white py-4 mt-4">SALVAR</button></div>`;
             }
             else if (state.step === 'line') {
                 const html = Object.keys(LINE_CONFIGS).map(line => {
@@ -280,9 +303,15 @@
         }
         function renderOps(line) { const c = document.getElementById(`op-lst-${line}`); if(!c) return; const l = opportunitiesDB[line]||[]; c.innerHTML = l.length ? l.map(o => `<div class="bg-gray-800/50 p-3 rounded border border-gray-700 flex justify-between"><div><div class="text-xs font-bold text-yellow-500">${o.nome} (${o.turno})</div><div class="text-xs text-blue-400 font-bold mb-1">V${o.valvula} • ${o.subset}</div><div class="text-sm text-gray-300">${o.texto}</div></div><div class="flex flex-col gap-2"><button onclick="askOpDone('${line}','${o.id}','${o.nome}','${o.turno}','${o.texto}','${o.valvula}','${o.subset}')" class="text-green-500"><i data-lucide="check-square" class="w-6 h-6"></i></button><button onclick="askDelOp('${o.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-6 h-6"></i></button></div></div>`).join('') : '<div class="text-center text-gray-500 text-xs">Sem pendências.</div>'; lucide.createIcons(); }
 
-        // --- FUNÇÃO ATUALIZADA (REINCIDÊNCIA) ---
+        // --- FUNÇÃO ATUALIZADA (REINCIDÊNCIA + LOCALSTORAGE) ---
         function submitForm() {
+            // VALIDAÇÃO E LOCALSTORAGE
+            if (!state.form.name.trim()) { showToast("Preencha seu Nome!", "error"); return; }
+            if (!state.form.shift) { showToast("Selecione o Turno!", "error"); return; }
             if (!state.form.description.trim()) { showToast("Preencha a descrição!", "error"); return; }
+
+            localStorage.setItem('sala_valvulas_nome', state.form.name);
+            localStorage.setItem('sala_valvulas_turno', state.form.shift);
 
             const hist = globalDB[state.selectedLine]?.[state.selectedValve]?.historico || [];
             
@@ -303,9 +332,29 @@
                 doSubmit(false);
             }
         }
+        
+        async function doSubmit(crit) { 
+            const rec = { 
+                id: Date.now().toString(), 
+                timestamp: new Date().toISOString(), 
+                subset: state.selectedSubset||'Geral', 
+                type: state.form.type, 
+                description: state.form.description, 
+                executante: state.form.name, // Novo Campo
+                turno: state.form.shift,     // Novo Campo
+                status: state.form.status, 
+                kronesDiag: state.form.kronesDiag||'', 
+                isCritical: crit 
+            }; 
+            await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); 
+            showToast("Manutenção Salva!", "success"); 
+            state.form.description=''; 
+            state.form.kronesDiag=''; 
+            state.step = 'line'; 
+            render(false); 
+        }
         // ----------------------------------------
 
-        async function doSubmit(crit) { const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: state.selectedSubset||'Geral', type: state.form.type, description: state.form.description, status: state.form.status, kronesDiag: state.form.kronesDiag||'', isCritical: crit }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); showToast("Manutenção Salva!", "success"); state.form.description=''; state.form.kronesDiag=''; state.step = 'line'; render(false); }
         async function submitSonda() { const obs = state.sondaForm.obs, op = state.sondaForm.op, t = state.form.shift; if(!obs || !op || !t) { showToast("Preencha todos os campos!", "error"); return; } const typeRec = state.sondaAction === 'jumper' ? 'sonda_event' : 'corretiva'; const status = state.sondaAction === 'jumper' ? 'jumpeada' : 'ok'; const rec = { id: Date.now().toString(), timestamp: new Date().toISOString(), subset: 'SONDA', type: typeRec, description: `[SONDA] ${state.sondaAction.toUpperCase()}: ${obs} (Op: ${op}/${t})`, status: status==='jumpeada'?'pendente':'ok', isSonda: true }; await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec), sonda_status: status }, { merge: true }); showToast("Sonda Atualizada!", "success"); state.sondaForm.obs=''; state.step = 'line'; render(false); }
         
         function askDel(line, valveOrDocId, id) { 
