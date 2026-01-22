@@ -100,7 +100,8 @@
                 description: '', 
                 status: 'ok', 
                 shift: localStorage.getItem('sala_valvulas_turno') || '', 
-                name: localStorage.getItem('sala_valvulas_nome') || '' 
+                name: localStorage.getItem('sala_valvulas_nome') || '',
+                falhaType: '' // NOVO CAMPO PARA FALHA GERAL
             }, 
             sondaForm: { obs: '', op: '' }, 
             filters: { line: 'all', valve: '', historyType: 'all' } 
@@ -130,11 +131,8 @@
                     <p class="text-sm">Registre suas rondas diárias. A inspeção prova que você monitorou o equipamento. Ela <strong>não altera</strong> os contadores do painel (meta).</p>
                 </div>
                 <div class="border-t border-gray-700 pt-4">
-                    <h4 class="text-yellow-500 font-bold mb-1 flex items-center gap-2"><i data-lucide="zap"></i> Gestão de Sonda</h4>
-                    <ul class="text-sm list-disc pl-4 space-y-1">
-                        <li><strong>Jumper (Amarelo):</strong> Apenas cria o alerta visual.</li>
-                        <li><strong>Normalizar (Verde):</strong> Remove o alerta e registra uma Corretiva (reparo realizado).</li>
-                    </ul>
+                    <h4 class="text-red-500 font-bold mb-1 flex items-center gap-2"><i data-lucide="alert-triangle"></i> Falhas Enchedora</h4>
+                    <p class="text-sm">Use o botão "Registrar Falha Geral" na tela de válvulas para reportar problemas de Sincronismo, Altura, Crash, etc.</p>
                 </div>
             </div>
         `;
@@ -222,11 +220,50 @@
                 const isJump = state.sondaStatusAtual === 'jumpeada';
                 c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/30 flex justify-between items-center"><div class="flex items-center gap-3"><i data-lucide="zap" class="w-6 h-6 text-yellow-500"></i><div><span class="text-xs font-bold text-yellow-500 uppercase">Status</span><div class="text-lg font-mono font-bold ${isJump?'text-red-500':'text-green-500'}">${isJump?'⚡ JUMPEADA':'✅ NORMAL'}</div></div></div></div><div class="grid gap-3"><button onclick="state.sondaAction='jumper';render(false);" class="p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3 ${state.sondaAction==='jumper'?'border-yellow-500 text-yellow-500':''}"><i data-lucide="zap-off"></i> JUMPER</button>${isJump?`<button onclick="state.sondaAction='normalizar';render(false);" class="p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3 ${state.sondaAction==='normalizar'?'border-yellow-500 text-yellow-500':''}"><i data-lucide="check-circle-2"></i> NORMALIZAR</button>`:''}</div><div class="space-y-4"><div><label class="label-industrial">Motivo</label><textarea id="sonda-obs" class="input-industrial" rows="2" oninput="state.sondaForm.obs=this.value">${state.sondaForm.obs}</textarea></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Operador</label><input id="sonda-op" class="input-industrial" value="${state.sondaForm.op}" oninput="state.sondaForm.op=this.value"></div><div><label class="label-industrial">Turno</label><button onclick="openSmartTurnoPicker('sonda-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between"><span id="sonda-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Selecionar'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div></div><button onclick="submitSonda()" class="w-full btn-industrial bg-yellow-600 text-white py-4 mt-4">SALVAR</button></div>`;
             }
+            // --- NOVO: FORMULÁRIO DE FALHA GERAL ---
+            else if (state.step === 'falha_geral_form') {
+                c.innerHTML = `
+                <div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto">
+                    <button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button>
+                    <div class="bg-red-500/10 p-4 rounded-lg border border-red-500/30 flex items-center gap-3">
+                        <i data-lucide="alert-triangle" class="w-8 h-8 text-red-500"></i>
+                        <div>
+                            <h2 class="text-lg font-bold text-red-500 uppercase">Falha Enchedora Geral</h2>
+                            <p class="text-xs text-gray-400">Registro de problemas na máquina</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-secondary/30 p-3 rounded-lg border border-gray-700/50 mb-2">
+                        <label class="label-industrial text-xs mb-1">Responsável Técnico (Obrigatório)</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="text" placeholder="Seu Nome" class="input-industrial font-bold text-yellow-500" value="${state.form.name}" oninput="state.form.name=this.value">
+                            <button onclick="openSmartTurnoPicker('fg-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between items-center">
+                                <span id="fg-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Turno'}</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="label-industrial">Tipo de Falha</label>
+                        <button onclick="openFalhaTypePicker()" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 flex justify-between items-center h-[50px]">
+                            <span id="fg-type-txt" class="${state.form.falhaType?'text-white font-bold':'text-gray-400'}">${state.form.falhaType || 'Selecione a falha...'}</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div>
+                        <label class="label-industrial">Descrição (Opcional)</label>
+                        <textarea id="fg-desc" oninput="state.form.description=this.value" class="input-industrial" rows="3" placeholder="Detalhes adicionais...">${state.form.description}</textarea>
+                    </div>
+
+                    <button onclick="submitFalhaGeral()" class="w-full btn-industrial bg-red-600 text-white py-4 mt-4">SALVAR REGISTRO</button>
+                </div>`;
+            }
             else if (state.step === 'form') {
                 const TYPES={preventiva:{label:'Preventiva',color:'bg-green-500/20 text-green-500 border-green-500/50'},corretiva:{label:'Corretiva',color:'bg-red-500/20 text-red-500 border-red-500/50'},inspecao:{label:'Inspeção',color:'bg-orange-500/20 text-orange-500 border-orange-500/50'}};
                 const STATUS={ok:{label:'OK',icon:'check-circle',color:'bg-green-500 text-white'},observacao:{label:'Obs',icon:'alert-circle',color:'bg-yellow-500 text-white'},pendente:{label:'Pendente',icon:'clock',color:'bg-red-500 text-white'}};
                 
-                // --- AQUI: REMOVIDO O BLOCO DE DIAGNÓSTICO IA ---
                 c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-secondary/50 p-4 rounded-lg border border-gray-700 flex justify-between items-center"><div><span class="text-xs font-bold text-gray-400 uppercase">Local</span><div class="text-lg font-mono font-bold text-foreground">L${state.selectedLine} • V${state.selectedValve}</div></div><div class="text-right"><span class="text-xs font-bold text-gray-400 uppercase">Item</span><div class="text-lg font-mono font-bold text-primary">${state.selectedSubset||'-'}</div></div></div><div class="bg-secondary/30 p-3 rounded-lg border border-gray-700/50 mb-2"><label class="label-industrial text-xs mb-1">Responsável Técnico (Obrigatório)</label><div class="grid grid-cols-2 gap-3"><input type="text" placeholder="Seu Nome" class="input-industrial font-bold text-yellow-500" value="${state.form.name}" oninput="state.form.name=this.value"><button onclick="openSmartTurnoPicker('form-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between items-center"><span id="form-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Turno'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div><label class="label-industrial">Tipo</label><div class="grid grid-cols-3 gap-2">${Object.keys(TYPES).map(t=>`<button onclick="setType('${t}')" class="rounded-lg font-semibold text-sm py-3 border border-transparent ${state.form.type===t?TYPES[t].color+' border-current':'bg-secondary text-gray-400'}">${TYPES[t].label}</button>`).join('')}</div></div><div><label class="label-industrial">Descrição</label><textarea id="desc" oninput="state.form.description=this.value" class="input-industrial" rows="3">${state.form.description}</textarea></div><div><label class="label-industrial">Status</label><div class="grid grid-cols-3 gap-2">${Object.keys(STATUS).map(s=>`<button onclick="setSt('${s}')" class="rounded-lg font-semibold text-sm py-3 flex flex-col items-center gap-1 ${state.form.status===s?STATUS[s].color:'bg-secondary text-gray-400'}"><i data-lucide="${STATUS[s].icon}" class="w-4 h-4"></i>${STATUS[s].label}</button>`).join('')}</div></div><button onclick="submitForm()" class="w-full btn-industrial bg-primary text-white py-4 mt-4">SALVAR</button></div>`;
             }
             else if (state.step === 'line') {
@@ -308,7 +345,16 @@
                 c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase tracking-wider text-foreground">Painel Geral</h2></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4">${html}</div></div>`;
             }
             else if (state.step === 'valve' || state.step === 'subset') {
-                if(state.step==='valve') { const cnt=LINE_CONFIGS[state.selectedLine].valveCount; let b=''; for(let i=1;i<=cnt;i++)b+=`<button id="vbtn-${i}" onclick="selectValve(${i})" class="card-industrial aspect-square flex flex-col items-center justify-center font-mono font-bold text-lg hover:bg-primary/10">${i}</button>`; c.innerHTML=`<div class="space-y-4 animate-pop-in"><button onclick="window.history.back()" class="flex items-center text-gray-400 mb-4"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase text-foreground">Linha ${state.selectedLine}</h2></div><div class="relative mb-4"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i><input type="number" placeholder="Buscar..." class="input-industrial pl-10" oninput="filterValves(this.value)"></div><div id="vgrid" class="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-3 max-h-[65vh] overflow-y-auto pr-1 pb-10 custom-scrollbar">${b}</div></div>`; loadGridStatus(); }
+                if(state.step==='valve') { 
+                    const cnt=LINE_CONFIGS[state.selectedLine].valveCount; 
+                    let b=''; for(let i=1;i<=cnt;i++)b+=`<button id="vbtn-${i}" onclick="selectValve(${i})" class="card-industrial aspect-square flex flex-col items-center justify-center font-mono font-bold text-lg hover:bg-primary/10">${i}</button>`; 
+                    
+                    // --- BOTÃO DE FALHA GERAL ADICIONADO AQUI ---
+                    const falhaGeralBtn = `<button onclick="openFalhaGeral()" class="w-full bg-red-600/10 border border-red-600 text-red-500 hover:bg-red-600 hover:text-white p-3 rounded-lg font-bold mb-4 flex items-center justify-center gap-2 transition-colors"><i data-lucide="alert-triangle" class="w-5 h-5"></i> ⚠ REGISTRAR FALHA GERAL</button>`;
+                    
+                    c.innerHTML=`<div class="space-y-4 animate-pop-in"><button onclick="window.history.back()" class="flex items-center text-gray-400 mb-4"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase text-foreground">Linha ${state.selectedLine}</h2></div>${falhaGeralBtn}<div class="relative mb-4"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i><input type="number" placeholder="Buscar..." class="input-industrial pl-10" oninput="filterValves(this.value)"></div><div id="vgrid" class="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-3 max-h-[65vh] overflow-y-auto pr-1 pb-10 custom-scrollbar">${b}</div></div>`; 
+                    loadGridStatus(); 
+                }
                 if(state.step==='subset') { const cfg=LINE_CONFIGS[state.selectedLine]; const sBtn=cfg.hasProbe?`<button onclick="checkSonda()" class="card-industrial p-4 flex items-center gap-4 border-yellow-500/30 bg-yellow-500/5 w-full mb-6"><div class="w-12 h-12 rounded-lg bg-yellow-500/20 flex items-center justify-center"><i data-lucide="zap" class="w-6 h-6 text-yellow-500"></i></div><div class="flex-1"><div class="text-xl font-bold font-mono text-yellow-500">GESTÃO DE SONDA</div><div class="text-sm text-gray-400">Jumper / Normalizar</div></div></button>`:''; c.innerHTML=`<div class="space-y-4 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400 mb-4"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="text-center mb-6"><h2 class="text-lg font-bold uppercase text-foreground">Válvula ${state.selectedValve}</h2></div>${sBtn}<div class="grid gap-3">${cfg.subsets.map(s=>`<button onclick="selectSubset('${s}')" class="card-industrial p-5 flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-gray-700/50 flex items-center justify-center"><i data-lucide="layers" class="w-6 h-6 text-white"></i></div><div class="flex-1"><div class="text-xl font-bold font-mono text-foreground">${s}</div><div class="text-sm text-gray-400">Componente</div></div></button>`).join('')}<button onclick="selectSubset('Geral')" class="card-industrial p-5 flex items-center gap-4 mt-4 border-t border-dashed border-gray-700"><div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center"><i data-lucide="check-circle" class="w-6 h-6 text-primary"></i></div><div class="flex-1"><div class="text-xl font-bold font-mono text-foreground">Válvula Completa</div><div class="text-sm text-gray-400">Manutenção Geral</div></div></button></div></div>`; }
             }
         }
@@ -319,7 +365,7 @@
             loadHistory();
         }
 
-        // --- ATUALIZAÇÃO NO CARREGAMENTO (DESTAQUE SONDA) ---
+        // --- ATUALIZAÇÃO NO CARREGAMENTO (DESTAQUE SONDA + FALHA GERAL) ---
         function loadHistory() {
             const el = document.getElementById('h-list'); const {line, valve, historyType} = state.filters;
             let res = []; const lines = (line === 'all') ? Object.keys(LINE_CONFIGS) : [line];
@@ -329,7 +375,11 @@
                     if(valve && String(v.valveNumber) !== String(valve)) return; 
                     if(v.historico) v.historico.forEach(h => { 
                         const f = historyType;
-                        if(f !== 'all') { if(f === 'sonda' && h.subset !== 'SONDA') return; if(f !== 'sonda' && h.type !== f) return; }
+                        if(f !== 'all') { 
+                            if(f === 'sonda' && h.subset !== 'SONDA') return; 
+                            if(f === 'falha_geral' && h.type !== 'falha_geral') return; // Filtro Falha Geral
+                            if(f !== 'sonda' && f !== 'falha_geral' && h.type !== f) return; 
+                        }
                         res.push({...h, line: l, valve: v.valveNumber, docId: v.docId}); 
                     }); 
                 }); });
@@ -346,14 +396,18 @@
                 
                 const d = new Date(r.timestamp); 
                 const isSonda = r.isSonda || r.subset === 'SONDA';
-                const icon = r.isCritical ? 'flame' : (isSonda ? 'zap' : 'wrench'); 
-                const color = r.isCritical ? 'text-red-500' : (isSonda ? 'text-yellow-500' : 'text-primary');
-                let cardStyle = "card-industrial p-4 border relative ";
-                if(r.isCritical) cardStyle += "border-red-500/80 ";
-                else if(isSonda) cardStyle += "border-yellow-500 bg-yellow-500/10 ";
-                else cardStyle += "border-gray-700 ";
+                const isFalhaGeral = r.type === 'falha_geral';
+                
+                let icon = 'wrench'; let color = 'text-primary'; let cardStyle = "card-industrial p-4 border relative border-gray-700";
+                
+                if(r.isCritical) { icon = 'flame'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500/80"; }
+                else if(isSonda) { icon = 'zap'; color = 'text-yellow-500'; cardStyle = "card-industrial p-4 border relative border-yellow-500 bg-yellow-500/10"; }
+                else if(isFalhaGeral) { icon = 'alert-triangle'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500 bg-red-500/10"; }
 
-                return `<div class="${cardStyle}">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/V${r.valve}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>${btnDel}</div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
+                // Display "GERAL" se for valve 0
+                const valveDisplay = (r.valve === 0 || r.valve === 'GERAL') ? 'GERAL' : `V${r.valve}`;
+
+                return `<div class="${cardStyle}">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/${valveDisplay}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>${btnDel}</div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
             }).join(''); lucide.createIcons();
         }
 
@@ -382,10 +436,66 @@
         function setSt(s) { state.form.status = s; render(false); }
         function checkSonda() { const d = globalDB[state.selectedLine]?.[state.selectedValve]||{}; state.sondaStatusAtual = d.sonda_status||'ok'; navigateTo('sonda_form'); }
         function selectSondaAction(a) { state.sondaAction = a; const j = document.getElementById('btn-sj'), n = document.getElementById('btn-sn'); if(j) j.className = a==='jumper' ? "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold flex gap-3" : "p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"; if(n) n.className = a==='normalizar' ? "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold flex gap-3" : "p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"; }
-        // REMOVIDA A FUNÇÃO openDiagPicker()
         function openLinePicker() { showOptionPicker("Filtrar Linha", [{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
-        function openTypePicker() { showOptionPicker("Filtrar Tipo", [{label:'Todos',value:'all'},{label:'Preventiva',value:'preventiva'},{label:'Corretiva',value:'corretiva'},{label:'Inspeção',value:'inspecao'},{label:'Sonda',value:'sonda'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
         
+        // --- ATUALIZADO: OPÇÃO DE FILTRO FALHA GERAL ---
+        function openTypePicker() { showOptionPicker("Filtrar Tipo", [{label:'Todos',value:'all'},{label:'Preventiva',value:'preventiva'},{label:'Corretiva',value:'corretiva'},{label:'Inspeção',value:'inspecao'},{label:'Sonda',value:'sonda'},{label:'Falhas Enchedora',value:'falha_geral'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
+        
+        // --- NOVAS FUNÇÕES PARA FALHA GERAL ---
+        function openFalhaGeral() {
+            state.form.falhaType = '';
+            state.form.description = '';
+            navigateTo('falha_geral_form');
+        }
+
+        function openFalhaTypePicker() {
+            const opts = [
+                {label: 'Sincronismo', value: 'Sincronismo'},
+                {label: 'Ajuste de altura', value: 'Ajuste de altura'},
+                {label: 'Sistema de entrada de latas', value: 'Sistema de entrada de latas'},
+                {label: 'Crash de latas', value: 'Crash de latas'},
+                {label: 'Sincronismo de tampa na recravadora', value: 'Sincronismo de tampa na recravadora'}
+            ];
+            showOptionPicker("Tipo de Falha", opts, (v) => {
+                state.form.falhaType = v;
+                render(false);
+            });
+        }
+
+        async function submitFalhaGeral() {
+            if (!state.form.name.trim()) { showToast("Preencha seu Nome!", "error"); return; }
+            if (!state.form.shift) { showToast("Selecione o Turno!", "error"); return; }
+            if (!state.form.falhaType) { showToast("Selecione o Tipo de Falha!", "error"); return; }
+
+            localStorage.setItem('sala_valvulas_nome', state.form.name);
+            localStorage.setItem('sala_valvulas_turno', state.form.shift);
+
+            const rec = { 
+                id: Date.now().toString(), 
+                timestamp: new Date().toISOString(), 
+                subset: 'GERAL', 
+                type: 'falha_geral', 
+                description: `[FALHA] ${state.form.falhaType} ${state.form.description ? '- ' + state.form.description : ''} (Exec: ${state.form.name}/${state.form.shift})`, 
+                executante: state.form.name,
+                turno: state.form.shift,
+                status: 'ok', 
+                isCritical: false 
+            }; 
+            
+            // Salva na válvula 'GERAL' (ID fixo para a máquina)
+            await db.collection('lines').doc(state.selectedLine).collection('valves').doc('GERAL').set({ 
+                valveNumber: 0, // 0 indica Geral
+                historico: firebase.firestore.FieldValue.arrayUnion(rec) 
+            }, { merge: true }); 
+            
+            showToast("Falha Registrada!", "success"); 
+            state.form.description=''; 
+            state.form.falhaType='';
+            state.step = 'line'; 
+            render(false); 
+        }
+        // --------------------------------------
+
         function openOpModal(line) { 
             const subsets = LINE_CONFIGS[line].subsets ? LINE_CONFIGS[line].subsets.concat(['Geral']) : ['Geral'];
             const subOptions = subsets.map(s => `<div onclick="selectOpSub('${s}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${s}</div>`).join('');
@@ -453,13 +563,11 @@
                 executante: state.form.name,
                 turno: state.form.shift,
                 status: state.form.status, 
-                // kronesDiag REMOVIDO DAQUI
                 isCritical: crit 
             }; 
             await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); 
             showToast("Manutenção Salva!", "success"); 
             state.form.description=''; 
-            // state.form.kronesDiag=''; REMOVIDO
             state.step = 'line'; 
             render(false); 
         }
