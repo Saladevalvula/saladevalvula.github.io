@@ -36,10 +36,15 @@
         .btn-industrial:active { transform: scale(0.95); }
         .valve-jumpeada { border-color: #eab308 !important; color: #eab308 !important; background-color: rgba(234, 179, 8, 0.1) !important; }
         .valve-op-ativa { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+        
+        /* --- CORREÇÃO DO TICKER (LOOP INFINITO PERFEITO) --- */
         .ticker-wrap { width: 100%; overflow: hidden; background-color: rgba(0, 0, 0, 0.3); border-top: 1px solid #334155; padding: 8px 0; white-space: nowrap; position: absolute; bottom: 0; left: 0; border-bottom-left-radius: 0.75rem; border-bottom-right-radius: 0.75rem; }
-        .ticker-move { display: inline-block; white-space: nowrap; animation: ticker-loop 30s linear infinite; }
-        .ticker-item { display: inline-block; padding: 0 2rem; color: #fbbf24; font-weight: 600; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
-        @keyframes ticker-loop { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .ticker-move { display: inline-flex; white-space: nowrap; animation: ticker-loop linear infinite; }
+        .ticker-item { flex-shrink: 0; padding-right: 4rem; color: #fbbf24; font-weight: 600; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
+        /* Anima de 0 a -50% (metade do container duplicado), criando o loop invisível */
+        @keyframes ticker-loop { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        /* --------------------------------------------------- */
+
         #toast-container { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 400px; pointer-events: none; }
     </style>
 </head>
@@ -244,32 +249,29 @@
                     const pends = cfg.valveCount - pg; 
                     const ops = opportunitiesDB[line]||[];
                     
-                    // --- LÓGICA DO TICKER INTELIGENTE ---
+                    // --- LÓGICA DO TICKER INTELIGENTE (CORRIGIDA) ---
                     let tickerHtml = '';
                     
                     if (ops.length) {
                         // 1. Monta o texto base
                         const rawText = ops.map(o=> `⚠️ V${o.valvula}/${o.subset}: ${o.texto}`).join(' • ');
                         
-                        // 2. Duplica o texto para reduzir o "buraco" (delay visual)
-                        const displayText = `${rawText} ••• ${rawText}`;
+                        // 2. Cálculo de duração baseado em CARACTERES (Velocidade Linear Constante)
+                        // A fórmula garante que quanto mais texto, mais tempo leva, mantendo a velocidade de leitura igual.
+                        // 0.2 segundos por caractere + um mínimo de 10 segundos.
+                        const baseDuration = Math.max(10, rawText.length * 0.2);
                         
-                        // 3. Conta caracteres REAIS
-                        const charCount = rawText.length;
-                        
-                        // 4. Fórmula: Tempo = 10 + (Letras / 10)
-                        const baseTime = 10 + (charCount / 10);
-                        
-                        // 5. Aplica o multiplicador do usuário
+                        // 3. Aplica o multiplicador do usuário
                         const speedFactor = state.tickerSpeeds[line] || 1.0;
-                        const finalDuration = baseTime / speedFactor;
+                        const finalDuration = baseDuration / speedFactor;
 
                         tickerHtml = `
                             <div class="ticker-wrap relative group">
                                 <div class="ticker-move" style="animation-duration: ${finalDuration}s">
-                                    <span class="ticker-item">${displayText}</span>
+                                    <span class="ticker-item">${rawText}</span>
+                                    <span class="ticker-item">${rawText}</span>
                                 </div>
-                                <div class="absolute right-0 bottom-0 top-0 bg-slate-900/90 px-2 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity border-l border-slate-700">
+                                <div class="absolute right-0 bottom-0 top-0 bg-slate-900/90 px-2 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity border-l border-slate-700 z-10">
                                     <button onclick="adjustTickerSpeed(event, '${line}', -0.2)" class="text-gray-400 hover:text-white font-bold text-xs p-1" title="Mais Lento">🐢</button>
                                     <span class="text-[10px] font-mono text-gray-500">${speedFactor.toFixed(1)}x</span>
                                     <button onclick="adjustTickerSpeed(event, '${line}', +0.2)" class="text-gray-400 hover:text-white font-bold text-xs p-1" title="Mais Rápido">🐇</button>
