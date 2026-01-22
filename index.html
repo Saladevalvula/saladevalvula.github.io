@@ -89,7 +89,9 @@
             selectedValve: null, 
             selectedSubset: null, 
             sondaAction: 'jumper', 
-            sondaStatusAtual: 'ok', 
+            sondaStatusAtual: 'ok',
+            // NOVO: Controle de velocidade salvo no dispositivo
+            tickerSpeeds: JSON.parse(localStorage.getItem('sala_valvulas_speeds')) || {}, 
             form: { 
                 type: 'corretiva', 
                 description: '', 
@@ -183,6 +185,27 @@
             });
         }
 
+        // --- CONTROLE DE VELOCIDADE DO TICKER ---
+        function adjustTickerSpeed(event, line, delta) {
+            event.stopPropagation(); // Impede de entrar na linha ao clicar no botão
+            
+            // Pega velocidade atual ou assume 1.0
+            let current = state.tickerSpeeds[line] || 1.0;
+            
+            // Aplica o delta (aumenta ou diminui velocidade)
+            current += delta;
+            
+            // Limites de segurança (mínimo 0.2x, máximo 5.0x)
+            if (current < 0.2) current = 0.2;
+            if (current > 5.0) current = 5.0;
+            
+            // Salva no estado e no LocalStorage
+            state.tickerSpeeds[line] = current;
+            localStorage.setItem('sala_valvulas_speeds', JSON.stringify(state.tickerSpeeds));
+            
+            render(false); // Re-renderiza para aplicar a nova duração
+        }
+
         // RENDER CORE
         function render(u) {
             const c = document.getElementById('main-container'); c.innerHTML = '';
@@ -201,16 +224,86 @@
                 const TYPES={preventiva:{label:'Preventiva',color:'bg-green-500/20 text-green-500 border-green-500/50'},corretiva:{label:'Corretiva',color:'bg-red-500/20 text-red-500 border-red-500/50'},inspecao:{label:'Inspeção',color:'bg-orange-500/20 text-orange-500 border-orange-500/50'}};
                 const STATUS={ok:{label:'OK',icon:'check-circle',color:'bg-green-500 text-white'},observacao:{label:'Obs',icon:'alert-circle',color:'bg-yellow-500 text-white'},pendente:{label:'Pendente',icon:'clock',color:'bg-red-500 text-white'}};
                 
-                // --- NOVO BLOCO: NOME E TURNO ---
                 c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-secondary/50 p-4 rounded-lg border border-gray-700 flex justify-between items-center"><div><span class="text-xs font-bold text-gray-400 uppercase">Local</span><div class="text-lg font-mono font-bold text-foreground">L${state.selectedLine} • V${state.selectedValve}</div></div><div class="text-right"><span class="text-xs font-bold text-gray-400 uppercase">Item</span><div class="text-lg font-mono font-bold text-primary">${state.selectedSubset||'-'}</div></div></div><div class="bg-secondary/30 p-3 rounded-lg border border-gray-700/50 mb-2"><label class="label-industrial text-xs mb-1">Responsável Técnico (Obrigatório)</label><div class="grid grid-cols-2 gap-3"><input type="text" placeholder="Seu Nome" class="input-industrial font-bold text-yellow-500" value="${state.form.name}" oninput="state.form.name=this.value"><button onclick="openSmartTurnoPicker('form-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between items-center"><span id="form-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Turno'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div class="space-y-2"><label class="label-industrial">Diagnóstico IA</label><button onclick="openDiagPicker()" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 flex justify-between" id="diag-btn"><span class="text-gray-400" id="diag-text">${state.form.kronesDiag?`Sintoma ${state.form.kronesDiag}`:'Selecione...'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><div class="grid grid-cols-3 gap-2">${Object.keys(TYPES).map(t=>`<button onclick="setType('${t}')" class="rounded-lg font-semibold text-sm py-3 border border-transparent ${state.form.type===t?TYPES[t].color+' border-current':'bg-secondary text-gray-400'}">${TYPES[t].label}</button>`).join('')}</div></div><div><label class="label-industrial">Descrição</label><textarea id="desc" oninput="state.form.description=this.value" class="input-industrial" rows="3">${state.form.description}</textarea></div><div><label class="label-industrial">Status</label><div class="grid grid-cols-3 gap-2">${Object.keys(STATUS).map(s=>`<button onclick="setSt('${s}')" class="rounded-lg font-semibold text-sm py-3 flex flex-col items-center gap-1 ${state.form.status===s?STATUS[s].color:'bg-secondary text-gray-400'}"><i data-lucide="${STATUS[s].icon}" class="w-4 h-4"></i>${STATUS[s].label}</button>`).join('')}</div></div><button onclick="submitForm()" class="w-full btn-industrial bg-primary text-white py-4 mt-4">SALVAR</button></div>`;
             }
             else if (state.step === 'line') {
                 const html = Object.keys(LINE_CONFIGS).map(line => {
-                    const cfg=LINE_CONFIGS[line]; let pg=0, pt=0, co=0, j=[]; const ld=globalDB[line]||{}; Object.values(ld).forEach(v=>{ if(v.sonda_status==='jumpeada')j.push(v.valveNumber); if(v.historico)v.historico.forEach(h=>{ if(h.type==='preventiva'){ pt++; if(h.subset==='Geral')pg++; } if(h.type==='corretiva')co++; }); });
-                    j.sort((a,b)=>a-b); const pends=cfg.valveCount-pg; const ops=opportunitiesDB[line]||[];
-                    const ticker = ops.length ? `<div class="ticker-wrap"><div class="ticker-move">${ops.map(o=>`<span class="ticker-item">⚠️ V${o.valvula}/${o.subset}: ${o.texto}</span>`).join('')}</div></div>` : `<div class="ticker-wrap"><div class="ticker-move"><span class="ticker-item text-green-500">✅ LINHA NORMAL</span></div></div>`;
+                    const cfg = LINE_CONFIGS[line]; 
+                    let pg=0, pt=0, co=0, j=[]; 
+                    const ld = globalDB[line]||{}; 
                     
-                    return `<div class="card-industrial p-0 w-full text-left group relative overflow-hidden flex flex-col justify-between pb-10"><div onclick="selectLine('${line}')" class="p-6 cursor-pointer h-full"><div class="flex items-start justify-between mb-4"><div class="flex items-center gap-4"><div class="w-14 h-14 rounded-lg bg-primary/20 flex items-center justify-center"><i data-lucide="wrench" class="w-7 h-7 text-primary"></i></div><div><div class="text-2xl font-bold font-mono text-foreground">Linha ${line}</div><div class="text-xs text-gray-400 font-bold uppercase mt-1">${cfg.valveCount} Válvulas ${cfg.hasProbe?'• Sonda':''}</div></div></div><i data-lucide="chevron-right" class="w-6 h-6 text-gray-500"></i></div><div class="border-t border-gray-700 pt-3 grid grid-cols-2 gap-y-2 text-xs font-mono"><div class="text-gray-400"><span class="block text-[10px] uppercase text-gray-500 font-bold">Pendentes</span><span class="text-white text-sm font-bold">${pends}</span></div><div class="text-green-500"><span class="block text-[10px] uppercase text-green-500/70 font-bold">Preventivas</span><span class="text-sm font-bold">${pt}</span></div><div class="text-red-500"><span class="block text-[10px] uppercase text-red-500/70 font-bold">Corretivas</span><span class="text-sm font-bold">${co}</span></div>${j.length?`<div class="col-span-2 mt-1 bg-yellow-500/10 border border-yellow-500/30 rounded p-2 text-yellow-500 animate-pulse font-bold text-[10px]"><i data-lucide="zap" class="w-3 h-3 inline"></i> ${j.length} Jumpeadas</div><div class="col-span-2 text-[10px] text-yellow-500 font-mono mt-1 leading-tight">Válvulas: ${j.join(', ')}</div>`:''}</div></div><button onclick="openOpModal('${line}')" class="absolute top-2 right-2 p-2 bg-secondary rounded-full border border-gray-600 shadow-lg"><i data-lucide="list-plus" class="w-5 h-5 text-yellow-500"></i></button>${ticker}</div>`;
+                    Object.values(ld).forEach(v=>{ 
+                        if(v.sonda_status==='jumpeada') j.push(v.valveNumber); 
+                        if(v.historico) v.historico.forEach(h=>{ 
+                            if(h.type==='preventiva'){ pt++; if(h.subset==='Geral') pg++; } 
+                            if(h.type==='corretiva') co++; 
+                        }); 
+                    });
+                    
+                    j.sort((a,b)=>a-b); 
+                    const pends = cfg.valveCount - pg; 
+                    const ops = opportunitiesDB[line]||[];
+                    
+                    // --- LÓGICA DO TICKER INTELIGENTE ---
+                    let tickerHtml = '';
+                    
+                    if (ops.length) {
+                        // 1. Monta o texto base
+                        const rawText = ops.map(o=> `⚠️ V${o.valvula}/${o.subset}: ${o.texto}`).join(' • ');
+                        
+                        // 2. Duplica o texto para reduzir o "buraco" (delay visual)
+                        const displayText = `${rawText} ••• ${rawText}`;
+                        
+                        // 3. Conta caracteres REAIS
+                        const charCount = rawText.length;
+                        
+                        // 4. Fórmula: Tempo = 10 + (Letras / 10)
+                        const baseTime = 10 + (charCount / 10);
+                        
+                        // 5. Aplica o multiplicador do usuário
+                        const speedFactor = state.tickerSpeeds[line] || 1.0;
+                        const finalDuration = baseTime / speedFactor;
+
+                        tickerHtml = `
+                            <div class="ticker-wrap relative group">
+                                <div class="ticker-move" style="animation-duration: ${finalDuration}s">
+                                    <span class="ticker-item">${displayText}</span>
+                                </div>
+                                <div class="absolute right-0 bottom-0 top-0 bg-slate-900/90 px-2 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity border-l border-slate-700">
+                                    <button onclick="adjustTickerSpeed(event, '${line}', -0.2)" class="text-gray-400 hover:text-white font-bold text-xs p-1" title="Mais Lento">🐢</button>
+                                    <span class="text-[10px] font-mono text-gray-500">${speedFactor.toFixed(1)}x</span>
+                                    <button onclick="adjustTickerSpeed(event, '${line}', +0.2)" class="text-gray-400 hover:text-white font-bold text-xs p-1" title="Mais Rápido">🐇</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        tickerHtml = `<div class="ticker-wrap"><div class="ticker-move"><span class="ticker-item text-green-500">✅ LINHA NORMAL - SEM PENDÊNCIAS OPERACIONAIS</span></div></div>`;
+                    }
+
+                    return `<div class="card-industrial p-0 w-full text-left group relative overflow-hidden flex flex-col justify-between pb-10">
+                        <div onclick="selectLine('${line}')" class="p-6 cursor-pointer h-full">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 rounded-lg bg-primary/20 flex items-center justify-center">
+                                        <i data-lucide="wrench" class="w-7 h-7 text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-2xl font-bold font-mono text-foreground">Linha ${line}</div>
+                                        <div class="text-xs text-gray-400 font-bold uppercase mt-1">${cfg.valveCount} Válvulas ${cfg.hasProbe?'• Sonda':''}</div>
+                                    </div>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-6 h-6 text-gray-500"></i>
+                            </div>
+                            <div class="border-t border-gray-700 pt-3 grid grid-cols-2 gap-y-2 text-xs font-mono">
+                                <div class="text-gray-400"><span class="block text-[10px] uppercase text-gray-500 font-bold">Pendentes</span><span class="text-white text-sm font-bold">${pends}</span></div>
+                                <div class="text-green-500"><span class="block text-[10px] uppercase text-green-500/70 font-bold">Preventivas</span><span class="text-sm font-bold">${pt}</span></div>
+                                <div class="text-red-500"><span class="block text-[10px] uppercase text-red-500/70 font-bold">Corretivas</span><span class="text-sm font-bold">${co}</span></div>
+                                ${j.length?`<div class="col-span-2 mt-1 bg-yellow-500/10 border border-yellow-500/30 rounded p-2 text-yellow-500 animate-pulse font-bold text-[10px]"><i data-lucide="zap" class="w-3 h-3 inline"></i> ${j.length} Jumpeadas</div><div class="col-span-2 text-[10px] text-yellow-500 font-mono mt-1 leading-tight">Válvulas: ${j.join(', ')}</div>`:''}
+                            </div>
+                        </div>
+                        <button onclick="openOpModal('${line}')" class="absolute top-2 right-2 p-2 bg-secondary rounded-full border border-gray-600 shadow-lg z-10"><i data-lucide="list-plus" class="w-5 h-5 text-yellow-500"></i></button>
+                        ${tickerHtml}
+                    </div>`;
                 }).join('');
                 c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase tracking-wider text-foreground">Painel Geral</h2></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4">${html}</div></div>`;
             }
@@ -232,7 +325,7 @@
             let res = []; const lines = (line === 'all') ? Object.keys(LINE_CONFIGS) : [line];
             if(historyType !== 'ops_abertas') {
                 lines.forEach(l => { const ld = globalDB[l]||{}; Object.values(ld).forEach(v => { 
-                    // FILTRO DE VÁLVULA (Lógica existente, agora com Input conectado)
+                    // FILTRO DE VÁLVULA
                     if(valve && String(v.valveNumber) !== String(valve)) return; 
                     if(v.historico) v.historico.forEach(h => { 
                         const f = historyType;
@@ -252,15 +345,12 @@
                 if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span>${btnDel}</div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
                 
                 const d = new Date(r.timestamp); 
-                // LÓGICA DE DESTAQUE DE SONDA
                 const isSonda = r.isSonda || r.subset === 'SONDA';
                 const icon = r.isCritical ? 'flame' : (isSonda ? 'zap' : 'wrench'); 
                 const color = r.isCritical ? 'text-red-500' : (isSonda ? 'text-yellow-500' : 'text-primary');
-                
-                // CSS Diferenciado para Sonda (Borda Amarela + Fundo Amarelado)
                 let cardStyle = "card-industrial p-4 border relative ";
                 if(r.isCritical) cardStyle += "border-red-500/80 ";
-                else if(isSonda) cardStyle += "border-yellow-500 bg-yellow-500/10 "; // DESTAQUE AQUI
+                else if(isSonda) cardStyle += "border-yellow-500 bg-yellow-500/10 ";
                 else cardStyle += "border-gray-700 ";
 
                 return `<div class="${cardStyle}">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/V${r.valve}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>${btnDel}</div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`;
