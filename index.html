@@ -94,13 +94,11 @@
             selectedSubset: null, 
             sondaAction: 'jumper', 
             sondaStatusAtual: 'ok',
-            // NOVO: Controle de velocidade salvo no dispositivo
             tickerSpeeds: JSON.parse(localStorage.getItem('sala_valvulas_speeds')) || {}, 
             form: { 
                 type: 'corretiva', 
                 description: '', 
                 status: 'ok', 
-                kronesDiag: '', 
                 shift: localStorage.getItem('sala_valvulas_turno') || '', 
                 name: localStorage.getItem('sala_valvulas_nome') || '' 
             }, 
@@ -228,7 +226,8 @@
                 const TYPES={preventiva:{label:'Preventiva',color:'bg-green-500/20 text-green-500 border-green-500/50'},corretiva:{label:'Corretiva',color:'bg-red-500/20 text-red-500 border-red-500/50'},inspecao:{label:'Inspeção',color:'bg-orange-500/20 text-orange-500 border-orange-500/50'}};
                 const STATUS={ok:{label:'OK',icon:'check-circle',color:'bg-green-500 text-white'},observacao:{label:'Obs',icon:'alert-circle',color:'bg-yellow-500 text-white'},pendente:{label:'Pendente',icon:'clock',color:'bg-red-500 text-white'}};
                 
-                c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-secondary/50 p-4 rounded-lg border border-gray-700 flex justify-between items-center"><div><span class="text-xs font-bold text-gray-400 uppercase">Local</span><div class="text-lg font-mono font-bold text-foreground">L${state.selectedLine} • V${state.selectedValve}</div></div><div class="text-right"><span class="text-xs font-bold text-gray-400 uppercase">Item</span><div class="text-lg font-mono font-bold text-primary">${state.selectedSubset||'-'}</div></div></div><div class="bg-secondary/30 p-3 rounded-lg border border-gray-700/50 mb-2"><label class="label-industrial text-xs mb-1">Responsável Técnico (Obrigatório)</label><div class="grid grid-cols-2 gap-3"><input type="text" placeholder="Seu Nome" class="input-industrial font-bold text-yellow-500" value="${state.form.name}" oninput="state.form.name=this.value"><button onclick="openSmartTurnoPicker('form-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between items-center"><span id="form-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Turno'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div class="space-y-2"><label class="label-industrial">Diagnóstico IA</label><button onclick="openDiagPicker()" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 flex justify-between" id="diag-btn"><span class="text-gray-400" id="diag-text">${state.form.kronesDiag?`Sintoma ${state.form.kronesDiag}`:'Selecione...'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><div class="grid grid-cols-3 gap-2">${Object.keys(TYPES).map(t=>`<button onclick="setType('${t}')" class="rounded-lg font-semibold text-sm py-3 border border-transparent ${state.form.type===t?TYPES[t].color+' border-current':'bg-secondary text-gray-400'}">${TYPES[t].label}</button>`).join('')}</div></div><div><label class="label-industrial">Descrição</label><textarea id="desc" oninput="state.form.description=this.value" class="input-industrial" rows="3">${state.form.description}</textarea></div><div><label class="label-industrial">Status</label><div class="grid grid-cols-3 gap-2">${Object.keys(STATUS).map(s=>`<button onclick="setSt('${s}')" class="rounded-lg font-semibold text-sm py-3 flex flex-col items-center gap-1 ${state.form.status===s?STATUS[s].color:'bg-secondary text-gray-400'}"><i data-lucide="${STATUS[s].icon}" class="w-4 h-4"></i>${STATUS[s].label}</button>`).join('')}</div></div><button onclick="submitForm()" class="w-full btn-industrial bg-primary text-white py-4 mt-4">SALVAR</button></div>`;
+                // --- AQUI: REMOVIDO O BLOCO DE DIAGNÓSTICO IA ---
+                c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-secondary/50 p-4 rounded-lg border border-gray-700 flex justify-between items-center"><div><span class="text-xs font-bold text-gray-400 uppercase">Local</span><div class="text-lg font-mono font-bold text-foreground">L${state.selectedLine} • V${state.selectedValve}</div></div><div class="text-right"><span class="text-xs font-bold text-gray-400 uppercase">Item</span><div class="text-lg font-mono font-bold text-primary">${state.selectedSubset||'-'}</div></div></div><div class="bg-secondary/30 p-3 rounded-lg border border-gray-700/50 mb-2"><label class="label-industrial text-xs mb-1">Responsável Técnico (Obrigatório)</label><div class="grid grid-cols-2 gap-3"><input type="text" placeholder="Seu Nome" class="input-industrial font-bold text-yellow-500" value="${state.form.name}" oninput="state.form.name=this.value"><button onclick="openSmartTurnoPicker('form-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between items-center"><span id="form-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Turno'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div><label class="label-industrial">Tipo</label><div class="grid grid-cols-3 gap-2">${Object.keys(TYPES).map(t=>`<button onclick="setType('${t}')" class="rounded-lg font-semibold text-sm py-3 border border-transparent ${state.form.type===t?TYPES[t].color+' border-current':'bg-secondary text-gray-400'}">${TYPES[t].label}</button>`).join('')}</div></div><div><label class="label-industrial">Descrição</label><textarea id="desc" oninput="state.form.description=this.value" class="input-industrial" rows="3">${state.form.description}</textarea></div><div><label class="label-industrial">Status</label><div class="grid grid-cols-3 gap-2">${Object.keys(STATUS).map(s=>`<button onclick="setSt('${s}')" class="rounded-lg font-semibold text-sm py-3 flex flex-col items-center gap-1 ${state.form.status===s?STATUS[s].color:'bg-secondary text-gray-400'}"><i data-lucide="${STATUS[s].icon}" class="w-4 h-4"></i>${STATUS[s].label}</button>`).join('')}</div></div><button onclick="submitForm()" class="w-full btn-industrial bg-primary text-white py-4 mt-4">SALVAR</button></div>`;
             }
             else if (state.step === 'line') {
                 const html = Object.keys(LINE_CONFIGS).map(line => {
@@ -276,7 +275,7 @@
                             </div>
                         `;
                     } else {
-                        // --- AQUI ESTÁ A CORREÇÃO: DUPLICAÇÃO DO TEXTO E VELOCIDADE FIXA ---
+                        // --- TICKER LOOP INFINITO CORRIGIDO ---
                         const txt = "✅ LINHA NORMAL - SEM PENDÊNCIAS OPERACIONAIS";
                         tickerHtml = `<div class="ticker-wrap"><div class="ticker-move" style="animation-duration: 25s"><span class="ticker-item text-green-500">${txt}</span><span class="ticker-item text-green-500">${txt}</span></div></div>`;
                     }
@@ -383,7 +382,7 @@
         function setSt(s) { state.form.status = s; render(false); }
         function checkSonda() { const d = globalDB[state.selectedLine]?.[state.selectedValve]||{}; state.sondaStatusAtual = d.sonda_status||'ok'; navigateTo('sonda_form'); }
         function selectSondaAction(a) { state.sondaAction = a; const j = document.getElementById('btn-sj'), n = document.getElementById('btn-sn'); if(j) j.className = a==='jumper' ? "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold flex gap-3" : "p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"; if(n) n.className = a==='normalizar' ? "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold flex gap-3" : "p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"; }
-        function openDiagPicker() { showOptionPicker("IA Sintomas", [{label:'Lata VAZIA',value:'1'},{label:'Lata METADE',value:'2'},{label:'Lata AMASSADA',value:'3'},{label:'EXPLODIU',value:'4'},{label:'Gotejamento',value:'6'}], (v)=>{ state.form.kronesDiag=v; render(false); }); } 
+        // REMOVIDA A FUNÇÃO openDiagPicker()
         function openLinePicker() { showOptionPicker("Filtrar Linha", [{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
         function openTypePicker() { showOptionPicker("Filtrar Tipo", [{label:'Todos',value:'all'},{label:'Preventiva',value:'preventiva'},{label:'Corretiva',value:'corretiva'},{label:'Inspeção',value:'inspecao'},{label:'Sonda',value:'sonda'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
         
@@ -454,13 +453,13 @@
                 executante: state.form.name,
                 turno: state.form.shift,
                 status: state.form.status, 
-                kronesDiag: state.form.kronesDiag||'', 
+                // kronesDiag REMOVIDO DAQUI
                 isCritical: crit 
             }; 
             await db.collection('lines').doc(state.selectedLine).collection('valves').doc(String(state.selectedValve)).set({ valveNumber: parseInt(state.selectedValve), historico: firebase.firestore.FieldValue.arrayUnion(rec) }, { merge: true }); 
             showToast("Manutenção Salva!", "success"); 
             state.form.description=''; 
-            state.form.kronesDiag=''; 
+            // state.form.kronesDiag=''; REMOVIDO
             state.step = 'line'; 
             render(false); 
         }
