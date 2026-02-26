@@ -224,9 +224,6 @@
                 
                 c.innerHTML = `<div class="space-y-5 pb-6 animate-pop-in max-w-2xl mx-auto"><button onclick="window.history.back()" class="flex items-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="bg-secondary/50 p-4 rounded-lg border border-gray-700 flex justify-between items-center"><div><span class="text-xs font-bold text-gray-400 uppercase">Local</span><div class="text-lg font-mono font-bold text-foreground">L${state.selectedLine} • V${state.selectedValve}</div></div><div class="text-right"><span class="text-xs font-bold text-gray-400 uppercase">Item</span><div class="text-lg font-mono font-bold text-primary">${subText}</div></div></div><div class="bg-secondary/30 p-3 rounded-lg border border-gray-700/50 mb-2"><label class="label-industrial text-xs mb-1">Responsável Técnico (Obrigatório)</label><div class="grid grid-cols-2 gap-3"><input type="text" placeholder="Seu Nome" class="input-industrial font-bold text-yellow-500" value="${state.form.name}" oninput="state.form.name=this.value"><button onclick="openSmartTurnoPicker('form-turno-txt')" class="w-full text-left p-3 rounded-lg bg-secondary border border-gray-700 h-[46px] flex justify-between items-center"><span id="form-turno-txt" class="${state.form.shift?'text-white font-bold':'text-gray-400'}">${state.form.shift||'Turno'}</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div><label class="label-industrial">Tipo</label><div class="grid grid-cols-3 gap-2">${Object.keys(TYPES).map(t=>`<button onclick="setType('${t}')" class="rounded-lg font-semibold text-sm py-3 border border-transparent ${state.form.type===t?TYPES[t].color+' border-current':'bg-secondary text-gray-400'}">${TYPES[t].label}</button>`).join('')}</div></div><div><label class="label-industrial">Descrição</label><textarea id="desc" oninput="state.form.description=this.value" class="input-industrial" rows="3">${state.form.description}</textarea></div><div><label class="label-industrial">Status</label><div class="grid grid-cols-3 gap-2">${Object.keys(STATUS).map(s=>`<button onclick="setSt('${s}')" class="rounded-lg font-semibold text-sm py-3 flex flex-col items-center gap-1 ${state.form.status===s?STATUS[s].color:'bg-secondary text-gray-400'}"><i data-lucide="${STATUS[s].icon}" class="w-4 h-4"></i>${STATUS[s].label}</button>`).join('')}</div></div><button onclick="submitForm()" class="w-full btn-industrial bg-primary text-white py-4 mt-4">SALVAR</button></div>`;
             }
-            // ==========================================
-            // TELA 1: DASHBOARD PRINCIPAL (LINHAS E PLACAS)
-            // ==========================================
             else if (state.step === 'line') {
                 const html = Object.keys(LINE_CONFIGS).filter(l => l !== 'Placas').map(line => {
                     const cfg = LINE_CONFIGS[line]; 
@@ -289,7 +286,6 @@
                     </div>`;
                 }).join('');
 
-                // QUADRO EXCLUSIVO DE PLACAS NA TELA INICIAL
                 let totalBoas = 0, totalRuins = 0, totalLab = 0;
                 Object.values(placasDB).forEach(p => { totalBoas += p.boas; totalRuins += p.ruins; totalLab += p.lab; });
                 
@@ -312,10 +308,6 @@
 
                 c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase tracking-wider text-foreground">Painel Geral</h2></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">${html}${cardPlacas}</div></div>`;
             }
-            
-            // ==========================================
-            // TELA 2: LISTA DE PLACAS REGISTRADAS
-            // ==========================================
             else if (state.step === 'placas_list') {
                 const arrPlacas = Object.values(placasDB).sort((a,b) => a.nome.localeCompare(b.nome));
                 let htmlList = arrPlacas.length ? arrPlacas.map(p => `
@@ -343,10 +335,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 pb-10">${htmlList}</div>
                 </div>`;
             }
-
-            // ==========================================
-            // TELA 3: DETALHES E MOVIMENTAÇÃO DA PLACA
-            // ==========================================
             else if (state.step === 'placa_detail') {
                 const p = placasDB[state.selectedPlacaId];
                 if(!p) { navigateTo('placas_list'); return; }
@@ -427,7 +415,6 @@
                     </div>
                 </div>`;
             }
-
             else if (state.step === 'valve' || state.step === 'subset') {
                 const cfg = LINE_CONFIGS[state.selectedLine];
                 if(state.step==='valve') { 
@@ -444,18 +431,12 @@
             }
         }
 
-        // ==========================================
-        // FUNÇÕES DA GESTÃO DE PLACAS
-        // ==========================================
-        
-        // --- MODAL DE CRIAÇÃO ATUALIZADO COM ESTOQUE INICIAL ---
         function openNovaPlacaModal() {
             const html = `
                 <div class="space-y-4">
                     <p class="text-sm text-gray-400 leading-tight">Cadastre o nome do modelo e preencha a quantidade exata que você tem na sala de válvulas hoje.</p>
                     <div><label class="label-industrial">Nome do Modelo (Ex: MC9, EA10)</label><input type="text" id="np-nome" class="input-industrial font-bold text-blue-400" placeholder="Digite o nome..." uppercase></div>
                     <div><label class="label-industrial">Descrição (Opcional)</label><textarea id="np-desc" class="input-industrial" rows="2" placeholder="Ex: Placa principal da base..."></textarea></div>
-                    
                     <div class="bg-blue-900/10 border border-blue-500/20 p-3 rounded-lg">
                         <label class="label-industrial text-blue-400 mb-2">Estoque Inicial (Quantas existem hoje?)</label>
                         <div class="grid grid-cols-3 gap-2">
@@ -464,7 +445,6 @@
                             <div><label class="label-industrial text-[10px]">No Lab</label><input type="number" id="np-lab" class="input-industrial text-center text-yellow-500 font-bold" value="0" min="0"></div>
                         </div>
                     </div>
-
                     <button onclick="saveNovaPlaca()" class="btn-industrial bg-blue-600 text-white w-full py-3 mt-2">SALVAR MODELO E ESTOQUE</button>
                 </div>`;
             openModal("Criar Modelo de Placa", html);
@@ -476,95 +456,44 @@
             const boas = parseInt(document.getElementById('np-boas').value) || 0;
             const ruins = parseInt(document.getElementById('np-ruins').value) || 0;
             const lab = parseInt(document.getElementById('np-lab').value) || 0;
-
             if(!nome) return showToast("Digite o nome do modelo (Ex: MC9)!", "error");
-            
             const exists = Object.values(placasDB).find(p => p.nome === nome);
             if(exists) return showToast("Este modelo já existe na lista!", "error");
-
             const opName = localStorage.getItem('sala_valvulas_nome') || "Sistema";
             const shift = localStorage.getItem('sala_valvulas_turno') || "-";
-
             let hist =[];
-            
             if(boas > 0 || ruins > 0 || lab > 0) {
-                hist.push({
-                    id: Date.now().toString(),
-                    timestamp: new Date().toISOString(),
-                    executante: opName,
-                    turno: shift,
-                    de: 'externo',
-                    para: 'Estoque Inicial',
-                    qtd: (boas + ruins + lab),
-                    obs: `Estoque Inicial inserido na criação do modelo (${boas} Boas, ${ruins} Ruins, ${lab} Lab).`
-                });
+                hist.push({ id: Date.now().toString(), timestamp: new Date().toISOString(), executante: opName, turno: shift, de: 'externo', para: 'Estoque Inicial', qtd: (boas + ruins + lab), obs: `Estoque Inicial inserido na criação do modelo (${boas} Boas, ${ruins} Ruins, ${lab} Lab).` });
             }
-
             const newPlaca = { nome: nome, descricao: desc, boas: boas, ruins: ruins, lab: lab, historico: hist };
-            await db.collection('placas').add(newPlaca);
-            showToast("Modelo Criado com Sucesso!", "success");
-            closeModal();
+            await db.collection('placas').add(newPlaca); showToast("Modelo Criado com Sucesso!", "success"); closeModal();
         }
 
-        function openPlacaDetail(id) {
-            state.selectedPlacaId = id;
-            navigateTo('placa_detail');
-        }
+        function openPlacaDetail(id) { state.selectedPlacaId = id; navigateTo('placa_detail'); }
 
         async function submitPlacaMove() {
-            const pId = state.selectedPlacaId;
-            const p = placasDB[pId];
-            
-            const op = document.getElementById('placa-op').value.trim();
-            const turno = state.form.shift;
-            const de = document.getElementById('placa-de').value;
-            const para = document.getElementById('placa-para').value;
-            const qtd = parseInt(document.getElementById('placa-qtd').value);
-            const obs = document.getElementById('placa-obs').value.trim();
-
+            const pId = state.selectedPlacaId; const p = placasDB[pId];
+            const op = document.getElementById('placa-op').value.trim(); const turno = state.form.shift;
+            const de = document.getElementById('placa-de').value; const para = document.getElementById('placa-para').value;
+            const qtd = parseInt(document.getElementById('placa-qtd').value); const obs = document.getElementById('placa-obs').value.trim();
             if(!op || !turno) return showToast("Preencha Nome e Turno!", "error");
             if(isNaN(qtd) || qtd <= 0) return showToast("Quantidade inválida!", "error");
             if(de === para) return showToast("A origem e o destino são os mesmos!", "error");
-
-            localStorage.setItem('sala_valvulas_nome', op);
-            localStorage.setItem('sala_valvulas_turno', turno);
-
+            localStorage.setItem('sala_valvulas_nome', op); localStorage.setItem('sala_valvulas_turno', turno);
             let updateObj = {};
-            
-            if (de !== 'externo') {
-                if(p[de] < qtd) return showToast(`Não há ${qtd} placa(s) em '${de}' para retirar!`, "error");
-                updateObj[de] = firebase.firestore.FieldValue.increment(-qtd);
-            }
-
-            if (para !== 'externo') {
-                updateObj[para] = firebase.firestore.FieldValue.increment(qtd);
-            }
-
+            if (de !== 'externo') { if(p[de] < qtd) return showToast(`Não há ${qtd} placa(s) em '${de}' para retirar!`, "error"); updateObj[de] = firebase.firestore.FieldValue.increment(-qtd); }
+            if (para !== 'externo') { updateObj[para] = firebase.firestore.FieldValue.increment(qtd); }
             const log = { id: Date.now().toString(), timestamp: new Date().toISOString(), executante: op, turno: turno, de: de, para: para, qtd: qtd, obs: obs };
             updateObj.historico = firebase.firestore.FieldValue.arrayUnion(log);
-
-            await db.collection('placas').doc(pId).update(updateObj);
-            showToast("Movimentação Registrada!", "success");
-            
-            document.getElementById('placa-qtd').value = "1";
-            document.getElementById('placa-obs').value = "";
+            await db.collection('placas').doc(pId).update(updateObj); showToast("Movimentação Registrada!", "success");
+            document.getElementById('placa-qtd').value = "1"; document.getElementById('placa-obs').value = "";
         }
 
-        function askDelPlaca(id) {
-            showPasswordPrompt(async () => { 
-                await db.collection('placas').doc(id).delete();
-                showToast("Placa Excluída do Sistema!", "success");
-                state.selectedPlacaId = null;
-                navigateTo('placas_list');
-            });
-        }
+        function askDelPlaca(id) { showPasswordPrompt(async () => { await db.collection('placas').doc(id).delete(); showToast("Placa Excluída do Sistema!", "success"); state.selectedPlacaId = null; navigateTo('placas_list'); }); }
 
-        // ==========================================
-        // FLUXO DE VÁLVULAS (INTACTO)
-        // ==========================================
         function initRealtimeListeners() { 
             Object.keys(LINE_CONFIGS).forEach(line => { 
-                if(line==='Placas') return; // Ignora o mock das placas aqui
+                if(line==='Placas') return; 
                 db.collection('lines').doc(line).collection('valves').onSnapshot(snap => { 
                     if (!globalDB[line]) globalDB[line] = {}; 
                     snap.docs.forEach(doc => { const d = doc.data(); d.docId = doc.id; globalDB[line][doc.id] = d; }); 
@@ -572,14 +501,8 @@
                 }); 
             }); 
             db.collection('oportunidades').onSnapshot(snap => { opportunitiesDB = {}; snap.forEach(doc => { const d = doc.data(); if(!opportunitiesDB[d.linha]) opportunitiesDB[d.linha] =[]; opportunitiesDB[d.linha].push({ id: doc.id, ...d }); }); if(state.mode === 'register' && state.step === 'line') render(false); }); 
-            
-            db.collection('placas').onSnapshot(snap => {
-                placasDB = {};
-                snap.forEach(doc => { placasDB[doc.id] = { id: doc.id, ...doc.data() }; });
-                if (state.step === 'line' || state.step === 'placas_list' || state.step === 'placa_detail') render(false);
-            });
+            db.collection('placas').onSnapshot(snap => { placasDB = {}; snap.forEach(doc => { placasDB[doc.id] = { id: doc.id, ...doc.data() }; }); if (state.step === 'line' || state.step === 'placas_list' || state.step === 'placa_detail') render(false); });
         }
-        
         initRealtimeListeners();
         
         function selectLine(l) { state.selectedLine = l; navigateTo('valve'); }
@@ -590,7 +513,6 @@
         function setSt(s) { state.form.status = s; render(false); }
         function checkSonda() { const d = globalDB[state.selectedLine]?.[state.selectedValve]||{}; state.sondaStatusAtual = d.sonda_status||'ok'; navigateTo('sonda_form'); }
         function selectSondaAction(a) { state.sondaAction = a; const j = document.getElementById('btn-sj'), n = document.getElementById('btn-sn'); if(j) j.className = a==='jumper' ? "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold flex gap-3" : "p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"; if(n) n.className = a==='normalizar' ? "p-4 rounded-lg border border-yellow-500 bg-yellow-500/20 text-yellow-500 font-bold flex gap-3" : "p-4 rounded-lg border bg-secondary text-gray-400 font-bold flex gap-3"; }
-        
         function openFalhaGeral() { state.form.falhaType = ''; state.form.description = ''; navigateTo('falha_geral_form'); }
         function openFalhaTypePicker() { const opts =[{label: 'Sincronismo', value: 'Sincronismo'},{label: 'Ajuste de altura', value: 'Ajuste de altura'},{label: 'Sistema de entrada de latas', value: 'Sistema de entrada de latas'},{label: 'Crash de latas', value: 'Crash de latas'},{label: 'Sincronismo de tampa na recravadora', value: 'Sincronismo de tampa na recravadora'}]; showOptionPicker("Tipo de Falha", opts, (v) => { state.form.falhaType = v; render(false); }); }
 
@@ -605,7 +527,7 @@
         }
 
         function openOpModal(line) { 
-            const subsets = LINE_CONFIGS[line].subsets ? LINE_CONFIGS[line].subsets.concat(['Geral']) : ['Geral'];
+            const subsets = LINE_CONFIGS[line].subsets ? LINE_CONFIGS[line].subsets.concat(['Geral']) :['Geral'];
             const subOptions = subsets.map(s => `<div onclick="selectOpSub('${s}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${s}</div>`).join('');
             const turnoOptions =['Manhã', 'Tarde', 'Noite'].map(t => `<div onclick="selectOpTurno('${t}')" class="p-3 hover:bg-slate-700 cursor-pointer border-b border-slate-700/50 last:border-0 text-gray-200 font-mono text-sm">${t}</div>`).join('');
             const html=`<div class="space-y-4"><div class="bg-secondary p-3 rounded border border-gray-700"><label class="label-industrial">Nova Oportunidade</label><div class="grid grid-cols-2 gap-2 mb-2"><input id="op-v" type="number" placeholder="Válvula (Nº)" class="input-industrial"><div class="relative"><button onclick="toggleOpDropdown('sub-list-dd')" id="op-sub-btn" class="input-industrial text-left text-gray-400 truncate w-full flex justify-between items-center"><span>Componente...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button><input id="op-sub" type="hidden"><div id="sub-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 max-h-40 overflow-y-auto mt-1 shadow-2xl">${subOptions}</div></div></div><input id="op-n" placeholder="Nome" class="input-industrial mb-2"><div class="relative mb-2"><button onclick="toggleOpDropdown('turno-list-dd')" id="op-t-btn" class="input-industrial text-left text-gray-400 w-full flex justify-between items-center"><span>Turno...</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button><input id="op-t" type="hidden"><div id="turno-list-dd" class="hidden absolute top-full left-0 w-full bg-secondary border border-gray-600 rounded-lg z-50 mt-1 shadow-2xl">${turnoOptions}</div></div><textarea id="op-txt" placeholder="O que fazer?" class="input-industrial" rows="2"></textarea><button onclick="saveOp('${line}')" class="btn-industrial bg-primary text-white w-full py-3 mt-2">CADASTRAR</button></div><div id="op-lst-${line}" class="space-y-2 max-h-60 overflow-y-auto"></div></div>`; 
@@ -614,7 +536,6 @@
         function toggleOpDropdown(id) { const el = document.getElementById(id); if(id === 'sub-list-dd') document.getElementById('turno-list-dd')?.classList.add('hidden'); if(id === 'turno-list-dd') document.getElementById('sub-list-dd')?.classList.add('hidden'); el.classList.toggle('hidden'); }
         function selectOpSub(val) { document.getElementById('op-sub').value = val; document.getElementById('op-sub-btn').innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`; document.getElementById('sub-list-dd').classList.add('hidden'); }
         function selectOpTurno(val) { document.getElementById('op-t').value = val; document.getElementById('op-t-btn').innerHTML = `<span class="text-white font-bold">${val}</span><i data-lucide="check" class="w-4 h-4 text-green-500"></i>`; document.getElementById('turno-list-dd').classList.add('hidden'); }
-        
         function saveOp(line) { 
             const n=document.getElementById('op-n').value, t=document.getElementById('op-t').value, x=document.getElementById('op-txt').value, v=document.getElementById('op-v').value, s=document.getElementById('op-sub').value; 
             if(!n||!x||!v||!s||!t) return showToast("Preencha todos os campos!", "error");
@@ -665,11 +586,160 @@
         function askDelOp(id) { showPasswordPrompt(async () => { await db.collection('oportunidades').doc(id).delete(); showToast("Excluído!", "success"); render(false); }); }
         function loadGridStatus() { const d=globalDB[state.selectedLine]||{}; const ops=opportunitiesDB[state.selectedLine]||[]; const opValves = new Set(ops.map(o => String(o.valvula))); const cnt = LINE_CONFIGS[state.selectedLine].valveCount; if(!cnt) return; for(let i=1; i<=cnt; i++) { const btn = document.getElementById(`vbtn-${i}`); if(btn) { btn.classList.remove('valve-jumpeada', 'valve-op-ativa'); if(d[i] && d[i].sonda_status === 'jumpeada') btn.classList.add('valve-jumpeada'); if(opValves.has(String(i))) btn.classList.add('valve-op-ativa'); } } }
         
-        function openLinePicker() { showOptionPicker("Filtrar Linha",[{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
-        function openTypePicker() { showOptionPicker("Filtrar Tipo",[{label:'Todos',value:'all'},{label:'Preventiva',value:'preventiva'},{label:'Corretiva',value:'corretiva'},{label:'Inspeção',value:'inspecao'},{label:'Sonda',value:'sonda'},{label:'Falhas Enchedora',value:'falha_geral'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
-        function renderHistoryView(c) { c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="card-industrial p-4 space-y-3"><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Local</label><button onclick="openLinePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="hl-txt" class="text-sm font-bold">Todas</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><button onclick="openTypePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="ht-txt" class="text-sm font-bold">Todos</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Válvula (Nº)</label><input type="number" placeholder="Todas" class="input-industrial" oninput="state.filters.valve=this.value; loadHistory()"></div></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Início</label><input type="date" id="d-ini" class="input-industrial text-xs py-2"></div><div><label class="label-industrial">Fim</label><input type="date" id="d-fim" class="input-industrial text-xs py-2"></div></div><div class="grid grid-cols-2 gap-3 mt-4"><button onclick="exportData('excel')" class="btn-industrial bg-green-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel</button><button onclick="exportData('pdf')" class="btn-industrial bg-red-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button></div></div><div id="h-list" class="space-y-2 pb-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>`; loadHistory(); }
-        function loadHistory() { const el = document.getElementById('h-list'); const {line, valve, historyType} = state.filters; let res =[]; const lines = (line === 'all') ? Object.keys(LINE_CONFIGS).filter(k=>k!=='Placas') : [line]; if(historyType !== 'ops_abertas') { lines.forEach(l => { const ld = globalDB[l]||{}; Object.values(ld).forEach(v => { if(valve && String(v.valveNumber) !== String(valve)) return; if(v.historico) v.historico.forEach(h => { const f = historyType; if(f !== 'all') { if(f === 'sonda' && h.subset !== 'SONDA') return; if(f === 'falha_geral' && h.type !== 'falha_geral') return; if(f !== 'sonda' && f !== 'falha_geral' && h.type !== f) return; } res.push({...h, line: l, valve: v.valveNumber, docId: v.docId}); }); }); }); } if(historyType === 'ops_abertas') { lines.forEach(l => { const ops = opportunitiesDB[l] ||[]; ops.forEach(o => { if(valve && String(o.valvula) !== String(valve)) return; res.push({ id: o.id, timestamp: new Date().toISOString(), line: l, valve: o.valvula, type: 'oportunidade', description: `PENDENTE: ${o.texto} (${o.subset || 'Geral'}) - Solicitante: ${o.nome}`, isOp: true }); }); }); } res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)); el.innerHTML = res.map(r => { const btnDel = `<button onclick="${r.isOp ? `askDelOp('${r.id}')` : `askDel('${r.line}','${r.docId}','${r.id}')`}" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span>${btnDel}</div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`; const d = new Date(r.timestamp); const isSonda = r.isSonda || r.subset === 'SONDA'; const isFalhaGeral = r.type === 'falha_geral'; let icon = 'wrench'; let color = 'text-primary'; let cardStyle = "card-industrial p-4 border relative border-gray-700"; if(r.isCritical) { icon = 'flame'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500/80"; } else if(isSonda) { icon = 'zap'; color = 'text-yellow-500'; cardStyle = "card-industrial p-4 border relative border-yellow-500 bg-yellow-500/10"; } else if(isFalhaGeral) { icon = 'alert-triangle'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500 bg-red-500/10"; } const valveDisplay = (r.valve === 0 || r.valve === 'GERAL') ? 'GERAL' : `V${r.valve}`; return `<div class="${cardStyle}">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/${valveDisplay}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>${btnDel}</div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.subset} - ${r.description}</p></div></div>`; }).join(''); lucide.createIcons(); }
-        async function exportData(fmt) { const start=document.getElementById('d-ini').value, end=document.getElementById('d-fim').value; let data =[]; const lines = (state.filters.line==='all') ? Object.keys(LINE_CONFIGS).filter(k=>k!=='Placas') :[state.filters.line]; lines.forEach(l => { const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.historico) v.historico.forEach(h=>{ const d=h.timestamp.split('T')[0]; if((!start||d>=start)&&(!end||d<=end)) data.push({Data:new Date(h.timestamp).toLocaleDateString(), Local:l, Válvula:v.valveNumber, Tipo:h.type, Desc:h.description}); }); }); }); const snap = await db.collection('historico_oportunidades').get(); snap.forEach(d => { const r=d.data(); if((state.filters.line==='all'||r.linha===state.filters.line)) { const dt=r.dataConclusao.split('T')[0]; if((!start||dt>=start)&&(!end||dt<=end)) data.push({Data:new Date(r.dataConclusao).toLocaleDateString(), Local:r.linha, Válvula:'-', Tipo:'Melhoria', Desc:`Solução: ${r.solucao} (Exec: ${r.executante})`}); } }); if(!data.length) { showToast("Sem dados.", "error"); return; } if(fmt==='excel') { const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); XLSX.writeFile(wb, "Relatorio.xlsx"); } else { const doc=new window.jspdf.jsPDF(); doc.setFillColor(15,23,42); doc.rect(0,0,210,297,'F'); doc.setTextColor(255); doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); doc.save("Relatorio.pdf"); } }
+        function openLinePicker() { showOptionPicker("Filtrar Local",[{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'},{label:'Placas (Estoque/Lab)',value:'Placas'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
+        
+        // --- ADICIONADO "MOVIMENTAÇÃO DE PLACAS" NO FILTRO ---
+        function openTypePicker() { showOptionPicker("Filtrar Tipo",[{label:'Todos',value:'all'},{label:'Preventiva',value:'preventiva'},{label:'Corretiva',value:'corretiva'},{label:'Inspeção',value:'inspecao'},{label:'Sonda',value:'sonda'},{label:'Falhas Enchedora',value:'falha_geral'},{label:'Movimentação de Placas',value:'placa_move'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
+        
+        function renderHistoryView(c) { c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="card-industrial p-4 space-y-3"><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Local</label><button onclick="openLinePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="hl-txt" class="text-sm font-bold">Todas</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><button onclick="openTypePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="ht-txt" class="text-sm font-bold">Todos</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Válvula / Placa</label><input type="text" placeholder="Todas" class="input-industrial" oninput="state.filters.valve=this.value; loadHistory()"></div></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Início</label><input type="date" id="d-ini" class="input-industrial text-xs py-2"></div><div><label class="label-industrial">Fim</label><input type="date" id="d-fim" class="input-industrial text-xs py-2"></div></div><div class="grid grid-cols-2 gap-3 mt-4"><button onclick="exportData('excel')" class="btn-industrial bg-green-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel</button><button onclick="exportData('pdf')" class="btn-industrial bg-red-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button></div></div><div id="h-list" class="space-y-2 pb-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>`; loadHistory(); }
+        
+        // --- FUNÇÃO ÚNICA DE FILTRO (TELA E EXCEL USAM A MESMA AGORA) ---
+        function getFilteredData() {
+            const {line, valve, historyType} = state.filters;
+            let res =[];
+            const lines = (line === 'all') ? Object.keys(LINE_CONFIGS) : [line];
+            const searchValve = valve ? String(valve).toUpperCase() : null;
+
+            if (historyType !== 'ops_abertas') {
+                lines.forEach(l => {
+                    if (l === 'Placas') {
+                        Object.values(placasDB).forEach(p => {
+                            if (searchValve && String(p.nome).toUpperCase() !== searchValve) return;
+                            if (p.historico) {
+                                p.historico.forEach(h => {
+                                    if (historyType !== 'all' && historyType !== 'placa_move') return;
+                                    res.push({ id: h.id, timestamp: h.timestamp, line: 'Placas', valve: p.nome, type: 'placa_move', subset: 'Estoque', description: `Moveu ${h.qtd} un. de ${h.de.toUpperCase()} para ${h.para.toUpperCase()} ${h.obs ? '- '+h.obs : ''} (Exec: ${h.executante})`, isPlaca: true });
+                                });
+                            }
+                        });
+                    } else {
+                        const ld = globalDB[l] || {};
+                        Object.values(ld).forEach(v => {
+                            if (searchValve && String(v.valveNumber).toUpperCase() !== searchValve) return;
+                            if (v.historico) {
+                                v.historico.forEach(h => {
+                                    if (historyType !== 'all') {
+                                        if (historyType === 'sonda' && h.subset !== 'SONDA') return;
+                                        if (historyType === 'falha_geral' && h.type !== 'falha_geral') return;
+                                        if (historyType !== 'sonda' && historyType !== 'falha_geral' && h.type !== historyType) return;
+                                    }
+                                    res.push({...h, line: l, valve: v.valveNumber, docId: v.docId});
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            if (historyType === 'ops_abertas') {
+                lines.forEach(l => {
+                    const ops = opportunitiesDB[l] ||[];
+                    ops.forEach(o => {
+                        if (searchValve && String(o.valvula).toUpperCase() !== searchValve) return;
+                        res.push({ id: o.id, timestamp: new Date().toISOString(), line: l, valve: o.valvula, type: 'oportunidade', subset: o.subset || 'Geral', description: `PENDENTE: ${o.texto} - Solicitante: ${o.nome}`, isOp: true });
+                    });
+                });
+            }
+
+            res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+            return res;
+        }
+
+        function loadHistory() { 
+            const el = document.getElementById('h-list'); 
+            const res = getFilteredData();
+            
+            el.innerHTML = res.map(r => { 
+                let btnDel = '';
+                if (r.isOp) btnDel = `<button onclick="askDelOp('${r.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+                else if (!r.isPlaca) btnDel = `<button onclick="askDel('${r.line}','${r.docId}','${r.id}')" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+
+                if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">${r.line==='Placas'?'MOD':'L'+r.line}/${r.valve}</span>${btnDel}</div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`; 
+                
+                const d = new Date(r.timestamp); 
+                const isSonda = r.isSonda || r.subset === 'SONDA'; 
+                const isFalhaGeral = r.type === 'falha_geral'; 
+                
+                let icon = 'wrench'; let color = 'text-primary'; let cardStyle = "card-industrial p-4 border relative border-gray-700"; 
+                if(r.isCritical) { icon = 'flame'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500/80"; } 
+                else if(isSonda) { icon = 'zap'; color = 'text-yellow-500'; cardStyle = "card-industrial p-4 border relative border-yellow-500 bg-yellow-500/10"; } 
+                else if(isFalhaGeral) { icon = 'alert-triangle'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500 bg-red-500/10"; }
+                else if(r.isPlaca) { icon = 'cpu'; color = 'text-blue-400'; cardStyle = "card-industrial p-4 border relative border-blue-500/50 bg-blue-900/10"; }
+
+                const valveDisplay = (r.valve === 0 || r.valve === 'GERAL') ? 'GERAL' : `${r.line==='Placas'?'':'V'}${r.valve}`; 
+                const titleDisp = r.line === 'Placas' ? `<span class="text-blue-400">Placas/${valveDisplay}</span>` : `<span class="text-primary">L${r.line}/${valveDisplay}</span>`;
+
+                return `<div class="${cardStyle}">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold font-mono">${titleDisp}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>${btnDel}</div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300"><strong class="text-gray-400">${r.subset}:</strong> ${r.description}</p></div></div>`; 
+            }).join(''); 
+            lucide.createIcons(); 
+        }
+
+        // --- EXCEL E PDF TOTALMENTE CONECTADOS COM O QUE VOCÊ VÊ NA TELA ---
+        async function exportData(fmt) { 
+            const start = document.getElementById('d-ini').value; 
+            const end = document.getElementById('d-fim').value; 
+            
+            let data =[]; 
+            const screenData = getFilteredData();
+            
+            screenData.forEach(r => {
+                const dStr = r.timestamp.split('T')[0];
+                if ((!start || dStr >= start) && (!end || dStr <= end)) {
+                    
+                    // Tratamento bonito dos Nomes para a Coluna do Excel
+                    let tipoNome = r.type;
+                    if (r.type === 'sonda_event') tipoNome = 'Sonda (Jumper)';
+                    if (r.subset === 'SONDA' && r.type === 'corretiva') tipoNome = 'Sonda (Normalizado)';
+                    if (r.isPlaca) tipoNome = 'Movimentação Placa';
+                    if (r.type === 'falha_geral') tipoNome = 'Falha Enchedora';
+                    if (r.isOp) tipoNome = 'Oportunidade (Pendente)';
+
+                    data.push({
+                        Data: new Date(r.timestamp).toLocaleDateString() + ' ' + new Date(r.timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+                        Local: r.line === 'Placas' ? 'Placas' : 'L' + r.line,
+                        'Válvula/Placa': (r.valve === 0 || r.valve === 'GERAL') ? 'GERAL' : r.valve,
+                        Tipo: tipoNome.toUpperCase(),
+                        Item: r.subset || 'Geral',
+                        Desc: r.description
+                    });
+                }
+            });
+
+            // Resgata o histórico de oportunidades baixadas (do banco original)
+            const snap = await db.collection('historico_oportunidades').get(); 
+            snap.forEach(d => { 
+                const r = d.data(); 
+                if((state.filters.line === 'all' || r.linha === state.filters.line)) { 
+                    const dt = r.dataConclusao.split('T')[0]; 
+                    if((!start || dt >= start) && (!end || dt <= end)) { 
+                        data.push({
+                            Data: new Date(r.dataConclusao).toLocaleDateString() + ' ' + new Date(r.dataConclusao).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+                            Local: r.linha, 
+                            'Válvula/Placa': '-', 
+                            Tipo: 'MELHORIA (OP. CONCLUÍDA)', 
+                            Item: '-',
+                            Desc: `Solução: ${r.solucao} (Exec: ${r.executante})`
+                        }); 
+                    } 
+                } 
+            }); 
+
+            if(!data.length) { showToast("Sem dados para exportar.", "error"); return; } 
+            
+            if(fmt === 'excel') { 
+                const wb = XLSX.utils.book_new(); 
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); 
+                XLSX.writeFile(wb, "Relatorio.xlsx"); 
+            } else { 
+                const doc = new window.jspdf.jsPDF(); 
+                doc.setFillColor(15,23,42); 
+                doc.rect(0,0,210,297,'F'); 
+                doc.setTextColor(255); 
+                doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); 
+                doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); 
+                doc.save("Relatorio.pdf"); 
+            } 
+        }
 
         render();
     </script>
