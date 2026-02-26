@@ -91,7 +91,7 @@
             step: 'line', 
             selectedLine: null, 
             selectedValve: null, 
-            selectedSubsets:[], // ALTERADO: Permite selecionar várias atuações na mesma válvula
+            selectedSubsets:[], // Permite selecionar várias atuações na mesma válvula
             sondaAction: 'jumper', 
             sondaStatusAtual: 'ok',
             tickerSpeeds: JSON.parse(localStorage.getItem('sala_valvulas_speeds')) || {}, 
@@ -176,7 +176,7 @@
         function openModal(t, h) { const m=document.getElementById('custom-modal'); document.getElementById('modal-title').innerText=t; document.getElementById('modal-content').innerHTML=h; m.classList.remove('hidden'); setTimeout(()=>{m.classList.remove('opacity-0');document.getElementById('modal-panel').classList.add('scale-100');},10); lucide.createIcons(); }
         function closeModal() { const m=document.getElementById('custom-modal'); m.classList.add('opacity-0'); document.getElementById('modal-panel').classList.remove('scale-100'); setTimeout(()=>{m.classList.add('hidden');},200); }
         function showOptionPicker(t, opts, cb) { window.pickerCB=cb; const h=opts.map(o=>`<button onclick="window.pickerCB('${o.value}');closeModal();" class="w-full text-left p-4 rounded-lg bg-secondary border border-gray-700 mb-2 hover:border-primary flex justify-between font-bold text-gray-200">${o.label}</button>`).join(''); openModal(t, h); }
-        // ALTERADO: Botão agora diz CONFIRMAR
+        // Botão CONFIRMAR
         function showPasswordPrompt(cb) { window.passCB=cb; openModal("Segurança", `<div class="text-center space-y-4"><p class="text-gray-300 text-sm">Senha: 0608</p><input type="number" id="pwd" class="input-industrial text-center text-xl font-mono" placeholder="****"><button onclick="if(document.getElementById('pwd').value==='0608'){closeModal();window.passCB();}else{showToast('Senha Incorreta');}" class="btn-industrial w-full bg-primary text-white py-3">CONFIRMAR</button></div>`); setTimeout(()=>document.getElementById('pwd').focus(),100); }
         function openManual() { openModal("Manual do Usuário", MANUAL_HTML); }
 
@@ -432,10 +432,15 @@
                     render(false); 
                 }); 
             }); 
-            db.collection('oportunidades').onSnapshot(snap => { opportunitiesDB = {}; snap.forEach(doc => { const d = doc.data(); if(!opportunitiesDB[d.linha]) opportunitiesDB[d.linha] = []; opportunitiesDB[d.linha].push({ id: doc.id, ...d }); }); render(false); }); 
+            db.collection('oportunidades').onSnapshot(snap => { opportunitiesDB = {}; snap.forEach(doc => { const d = doc.data(); if(!opportunitiesDB[d.linha]) opportunitiesDB[d.linha] =[]; opportunitiesDB[d.linha].push({ id: doc.id, ...d }); }); render(false); }); 
         }
         
         initRealtimeListeners();
+        
+        // --- A FUNÇÃO QUE FALTAVA FOI RESTAURADA AQUI ---
+        function selectLine(l) { state.selectedLine = l; navigateTo('valve'); }
+        // ------------------------------------------------
+        
         // ALTERADO: Adicionado limpar selectedSubsets para preparar a nova válvula
         function selectValve(v) { state.selectedValve = v; state.selectedSubsets = []; const c = LINE_CONFIGS[state.selectedLine]; if(!c.subsets) { state.selectedSubsets = ['Geral']; navigateTo('form'); } else navigateTo('subset'); }
         function toggleSubset(s) { if(state.selectedSubsets.includes(s)) { state.selectedSubsets = state.selectedSubsets.filter(x => x !== s); } else { state.selectedSubsets.push(s); } render(false); }
@@ -612,7 +617,7 @@
         function askDelOp(id) { showPasswordPrompt(async () => { await db.collection('oportunidades').doc(id).delete(); showToast("Excluído!", "success"); render(false); }); }
         
         function loadGridStatus() { const d=globalDB[state.selectedLine]||{}; const ops=opportunitiesDB[state.selectedLine]||[]; const opValves = new Set(ops.map(o => parseInt(o.valvula))); const cnt = LINE_CONFIGS[state.selectedLine].valveCount; for(let i=1; i<=cnt; i++) { const btn = document.getElementById(`vbtn-${i}`); if(btn) { btn.classList.remove('valve-jumpeada', 'valve-op-ativa'); if(d[i] && d[i].sonda_status === 'jumpeada') btn.classList.add('valve-jumpeada'); if(opValves.has(i)) btn.classList.add('valve-op-ativa'); } } }
-        async function exportData(fmt) { const start=document.getElementById('d-ini').value, end=document.getElementById('d-fim').value; let data =[]; const lines = (state.filters.line==='all') ? Object.keys(LINE_CONFIGS) : [state.filters.line]; lines.forEach(l => { const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.historico) v.historico.forEach(h=>{ const d=h.timestamp.split('T')[0]; if((!start||d>=start)&&(!end||d<=end)) data.push({Data:new Date(h.timestamp).toLocaleDateString(), Linha:l, Válvula:v.valveNumber, Tipo:h.type, Desc:h.description}); }); }); }); const snap = await db.collection('historico_oportunidades').get(); snap.forEach(d => { const r=d.data(); if((state.filters.line==='all'||r.linha===state.filters.line)) { const dt=r.dataConclusao.split('T')[0]; if((!start||dt>=start)&&(!end||dt<=end)) data.push({Data:new Date(r.dataConclusao).toLocaleDateString(), Linha:r.linha, Válvula:'-', Tipo:'Melhoria', Desc:`Solução: ${r.solucao} (Exec: ${r.executante})`}); } }); if(!data.length) { showToast("Sem dados.", "error"); return; } if(fmt==='excel') { const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); XLSX.writeFile(wb, "Relatorio.xlsx"); } else { const doc=new window.jspdf.jsPDF(); doc.setFillColor(15,23,42); doc.rect(0,0,210,297,'F'); doc.setTextColor(255); doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); doc.save("Relatorio.pdf"); } }
+        async function exportData(fmt) { const start=document.getElementById('d-ini').value, end=document.getElementById('d-fim').value; let data =[]; const lines = (state.filters.line==='all') ? Object.keys(LINE_CONFIGS) :[state.filters.line]; lines.forEach(l => { const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.historico) v.historico.forEach(h=>{ const d=h.timestamp.split('T')[0]; if((!start||d>=start)&&(!end||d<=end)) data.push({Data:new Date(h.timestamp).toLocaleDateString(), Linha:l, Válvula:v.valveNumber, Tipo:h.type, Desc:h.description}); }); }); }); const snap = await db.collection('historico_oportunidades').get(); snap.forEach(d => { const r=d.data(); if((state.filters.line==='all'||r.linha===state.filters.line)) { const dt=r.dataConclusao.split('T')[0]; if((!start||dt>=start)&&(!end||dt<=end)) data.push({Data:new Date(r.dataConclusao).toLocaleDateString(), Linha:r.linha, Válvula:'-', Tipo:'Melhoria', Desc:`Solução: ${r.solucao} (Exec: ${r.executante})`}); } }); if(!data.length) { showToast("Sem dados.", "error"); return; } if(fmt==='excel') { const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); XLSX.writeFile(wb, "Relatorio.xlsx"); } else { const doc=new window.jspdf.jsPDF(); doc.setFillColor(15,23,42); doc.rect(0,0,210,297,'F'); doc.setTextColor(255); doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); doc.save("Relatorio.pdf"); } }
 
         render();
     </script>
