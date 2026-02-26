@@ -37,12 +37,10 @@
         .valve-jumpeada { border-color: #eab308 !important; color: #eab308 !important; background-color: rgba(234, 179, 8, 0.1) !important; }
         .valve-op-ativa { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
         
-        /* --- Ticker Loop Infinito --- */
         .ticker-wrap { width: 100%; overflow: hidden; background-color: rgba(0, 0, 0, 0.3); border-top: 1px solid #334155; padding: 8px 0; white-space: nowrap; position: absolute; bottom: 0; left: 0; border-bottom-left-radius: 0.75rem; border-bottom-right-radius: 0.75rem; }
         .ticker-move { display: inline-flex; white-space: nowrap; animation: ticker-loop linear infinite; }
         .ticker-item { flex-shrink: 0; padding-right: 4rem; color: #fbbf24; font-weight: 600; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
         @keyframes ticker-loop { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        /* --------------------------- */
 
         #toast-container { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; max-width: 400px; pointer-events: none; }
     </style>
@@ -78,12 +76,10 @@
     </div>
 
     <script>
-        // CONFIG
         const firebaseConfig = { apiKey: "AIzaSyA61zwT-_IG0r6B_0GcgUzCjsGct1d_DXI", authDomain: "sala-valvulas-ow-163b3.firebaseapp.com", projectId: "sala-valvulas-ow-163b3", storageBucket: "sala-valvulas-ow-163b3.firebasestorage.app", messagingSenderId: "845901302642", appId: "1:845901302642:web:84871bdbcfcf97bf886beb" };
         try{firebase.initializeApp(firebaseConfig);}catch(e){}
         const db = firebase.firestore();
 
-        // NOVO: Adicionado banco de dados em tempo real apenas para as Placas
         let globalDB = {}, opportunitiesDB = {}, placasDB = {};
         
         let state = { 
@@ -92,7 +88,7 @@
             selectedLine: null, 
             selectedValve: null, 
             selectedSubsets:[], 
-            selectedPlacaId: null, // NOVO: Guarda a placa sendo visualizada
+            selectedPlacaId: null, 
             sondaAction: 'jumper', 
             sondaStatusAtual: 'ok',
             tickerSpeeds: JSON.parse(localStorage.getItem('sala_valvulas_speeds')) || {}, 
@@ -111,7 +107,8 @@
         const LINE_CONFIGS = { 
             '512': { valveCount: 175, subsets:['V1', 'V2', 'V3', 'V5', 'V6', 'V7', 'V8', 'Tulipa', 'Caixa de ar', 'SMC'], hasProbe: true }, 
             '513': { valveCount: 175, subsets:['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'Tulipa', 'Caixa de ar', 'SMC'], hasProbe: true }, 
-            '514': { valveCount: 72, subsets: null, hasProbe: false }
+            '514': { valveCount: 72, subsets: null, hasProbe: false },
+            'Placas': { valveCount: 0, isPlaca: true, items: ['MC9', 'EA10'], subsets: null, hasProbe: false }
         };
 
         const MANUAL_HTML = `
@@ -231,7 +228,6 @@
             // TELA 1: DASHBOARD PRINCIPAL (LINHAS E PLACAS)
             // ==========================================
             else if (state.step === 'line') {
-                // Cálculo das válvulas
                 const html = Object.keys(LINE_CONFIGS).map(line => {
                     const cfg = LINE_CONFIGS[line]; 
                     let pg=0, pt=0, co=0, j=[]; 
@@ -303,13 +299,13 @@
                             <div class="flex items-start justify-between mb-4">
                                 <div class="flex items-center gap-4">
                                     <div class="w-14 h-14 rounded-lg bg-blue-500/20 flex items-center justify-center"><i data-lucide="cpu" class="w-7 h-7 text-blue-500"></i></div>
-                                    <div><div class="text-2xl font-bold font-mono text-foreground">Placas</div><div class="text-xs text-gray-400 font-bold uppercase mt-1">Gestão de Estoque Eletrônico</div></div>
+                                    <div><div class="text-2xl font-bold font-mono text-foreground">Placas</div><div class="text-xs text-gray-400 font-bold uppercase mt-1">Estoque e Laboratório</div></div>
                                 </div><i data-lucide="chevron-right" class="w-6 h-6 text-gray-500"></i>
                             </div>
                             <div class="border-t border-gray-700 pt-3 grid grid-cols-3 gap-y-2 text-xs font-mono">
                                 <div class="text-green-500"><span class="block text-[10px] uppercase text-green-500/70 font-bold">Boas (Sala)</span><span class="text-sm font-bold">${totalBoas}</span></div>
                                 <div class="text-red-500"><span class="block text-[10px] uppercase text-red-500/70 font-bold">Ruins (Sala)</span><span class="text-sm font-bold">${totalRuins}</span></div>
-                                <div class="text-yellow-500"><span class="block text-[10px] uppercase text-yellow-500/70 font-bold">Em Conserto (Lab)</span><span class="text-sm font-bold">${totalLab}</span></div>
+                                <div class="text-yellow-500"><span class="block text-[10px] uppercase text-yellow-500/70 font-bold">Lab Eletrônica</span><span class="text-sm font-bold">${totalLab}</span></div>
                             </div>
                         </div>
                     </div>`;
@@ -335,7 +331,7 @@
                             <div class="text-center bg-yellow-500/10 rounded py-1 border border-yellow-500/20"><div class="text-[10px] text-yellow-500/70 uppercase font-bold">Lab</div><div class="font-bold text-yellow-500 font-mono">${p.lab}</div></div>
                         </div>
                     </button>
-                `).join('') : `<div class="col-span-full text-center py-10 text-gray-500">Nenhuma placa cadastrada no sistema.</div>`;
+                `).join('') : `<div class="col-span-full text-center py-10"><i data-lucide="cpu" class="w-12 h-12 text-gray-600 mx-auto mb-3"></i><p class="text-gray-400 font-bold">Nenhum modelo cadastrado.</p><p class="text-sm text-gray-500 mt-1">Clique no botão azul acima para registrar a MC9, EA10 e seus respectivos estoques iniciais.</p></div>`;
 
                 c.innerHTML = `
                 <div class="space-y-4 animate-pop-in">
@@ -393,7 +389,7 @@
                             <div class="col-span-5">
                                 <label class="text-[10px] text-gray-400 uppercase font-bold ml-1">Retirar de:</label>
                                 <select id="placa-de" class="input-industrial appearance-none cursor-pointer">
-                                    <option value="externo">Fora do Sistema (Nova/Outros)</option>
+                                    <option value="externo">Fora do Sistema (Nova)</option>
                                     <option value="boas">Estoque de Boas</option>
                                     <option value="ruins">Estoque de Ruins</option>
                                     <option value="lab">Laboratório</option>
@@ -406,7 +402,7 @@
                                     <option value="boas">Estoque de Boas</option>
                                     <option value="ruins">Estoque de Ruins</option>
                                     <option value="lab">Laboratório</option>
-                                    <option value="externo">Fora do Sistema (Descarte)</option>
+                                    <option value="externo">Descarte (Lixo)</option>
                                 </select>
                             </div>
                         </div>
@@ -451,29 +447,64 @@
         // ==========================================
         // FUNÇÕES DA GESTÃO DE PLACAS
         // ==========================================
+        
+        // --- MODAL DE CRIAÇÃO ATUALIZADO COM ESTOQUE INICIAL ---
         function openNovaPlacaModal() {
             const html = `
                 <div class="space-y-4">
-                    <p class="text-sm text-gray-400">Crie o registro de um novo modelo de placa no sistema.</p>
-                    <div><label class="label-industrial">Nome do Modelo (Ex: MC9, EA10, Fonte)</label><input type="text" id="np-nome" class="input-industrial font-bold text-blue-400" placeholder="Digite o nome..." uppercase></div>
-                    <div><label class="label-industrial">Descrição (Para que serve?)</label><textarea id="np-desc" class="input-industrial" rows="2" placeholder="Ex: Placa principal da base..."></textarea></div>
-                    <button onclick="saveNovaPlaca()" class="btn-industrial bg-blue-600 text-white w-full py-3 mt-2">CRIAR PLACA</button>
+                    <p class="text-sm text-gray-400 leading-tight">Cadastre o nome do modelo e preencha a quantidade exata que você tem na sala de válvulas hoje.</p>
+                    <div><label class="label-industrial">Nome do Modelo (Ex: MC9, EA10)</label><input type="text" id="np-nome" class="input-industrial font-bold text-blue-400" placeholder="Digite o nome..." uppercase></div>
+                    <div><label class="label-industrial">Descrição (Opcional)</label><textarea id="np-desc" class="input-industrial" rows="2" placeholder="Ex: Placa principal da base..."></textarea></div>
+                    
+                    <div class="bg-blue-900/10 border border-blue-500/20 p-3 rounded-lg">
+                        <label class="label-industrial text-blue-400 mb-2">Estoque Inicial (Quantas existem hoje?)</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div><label class="label-industrial text-[10px]">Boas (Sala)</label><input type="number" id="np-boas" class="input-industrial text-center text-green-500 font-bold" value="0" min="0"></div>
+                            <div><label class="label-industrial text-[10px]">Ruins (Sala)</label><input type="number" id="np-ruins" class="input-industrial text-center text-red-500 font-bold" value="0" min="0"></div>
+                            <div><label class="label-industrial text-[10px]">No Lab</label><input type="number" id="np-lab" class="input-industrial text-center text-yellow-500 font-bold" value="0" min="0"></div>
+                        </div>
+                    </div>
+
+                    <button onclick="saveNovaPlaca()" class="btn-industrial bg-blue-600 text-white w-full py-3 mt-2">SALVAR MODELO E ESTOQUE</button>
                 </div>`;
-            openModal("Novo Modelo de Placa", html);
+            openModal("Criar Modelo de Placa", html);
         }
 
         async function saveNovaPlaca() {
             const nome = document.getElementById('np-nome').value.trim().toUpperCase();
             const desc = document.getElementById('np-desc').value.trim();
-            if(!nome) return showToast("Digite o nome da Placa!", "error");
-            
-            // Verifica duplicidade
-            const exists = Object.values(placasDB).find(p => p.nome === nome);
-            if(exists) return showToast("Este modelo já existe!", "error");
+            const boas = parseInt(document.getElementById('np-boas').value) || 0;
+            const ruins = parseInt(document.getElementById('np-ruins').value) || 0;
+            const lab = parseInt(document.getElementById('np-lab').value) || 0;
 
-            const newPlaca = { nome: nome, descricao: desc, boas: 0, ruins: 0, lab: 0, historico:[] };
+            if(!nome) return showToast("Digite o nome do modelo (Ex: MC9)!", "error");
+            
+            const exists = Object.values(placasDB).find(p => p.nome === nome);
+            if(exists) return showToast("Este modelo já existe na lista!", "error");
+
+            // Pega o nome do operador gravado na memória, se não tiver, grava como Sistema
+            const opName = localStorage.getItem('sala_valvulas_nome') || "Sistema";
+            const shift = localStorage.getItem('sala_valvulas_turno') || "-";
+
+            let hist =[];
+            
+            // Se o usuário digitou qualquer valor no estoque inicial, salva o histórico automático
+            if(boas > 0 || ruins > 0 || lab > 0) {
+                hist.push({
+                    id: Date.now().toString(),
+                    timestamp: new Date().toISOString(),
+                    executante: opName,
+                    turno: shift,
+                    de: 'externo',
+                    para: 'Estoque Inicial',
+                    qtd: (boas + ruins + lab),
+                    obs: `Estoque Inicial inserido na criação do modelo (${boas} Boas, ${ruins} Ruins, ${lab} Lab).`
+                });
+            }
+
+            const newPlaca = { nome: nome, descricao: desc, boas: boas, ruins: ruins, lab: lab, historico: hist };
             await db.collection('placas').add(newPlaca);
-            showToast("Placa Criada!", "success");
+            showToast("Modelo Criado com Sucesso!", "success");
             closeModal();
         }
 
@@ -502,18 +533,15 @@
 
             let updateObj = {};
             
-            // Subtrai da origem
             if (de !== 'externo') {
                 if(p[de] < qtd) return showToast(`Não há ${qtd} placa(s) em '${de}' para retirar!`, "error");
                 updateObj[de] = firebase.firestore.FieldValue.increment(-qtd);
             }
 
-            // Adiciona no destino
             if (para !== 'externo') {
                 updateObj[para] = firebase.firestore.FieldValue.increment(qtd);
             }
 
-            // Grava Histórico
             const log = { id: Date.now().toString(), timestamp: new Date().toISOString(), executante: op, turno: turno, de: de, para: para, qtd: qtd, obs: obs };
             updateObj.historico = firebase.firestore.FieldValue.arrayUnion(log);
 
@@ -538,6 +566,7 @@
         // ==========================================
         function initRealtimeListeners() { 
             Object.keys(LINE_CONFIGS).forEach(line => { 
+                if(line==='Placas') return; // Ignora o mock das placas aqui
                 db.collection('lines').doc(line).collection('valves').onSnapshot(snap => { 
                     if (!globalDB[line]) globalDB[line] = {}; 
                     snap.docs.forEach(doc => { const d = doc.data(); d.docId = doc.id; globalDB[line][doc.id] = d; }); 
@@ -546,11 +575,9 @@
             }); 
             db.collection('oportunidades').onSnapshot(snap => { opportunitiesDB = {}; snap.forEach(doc => { const d = doc.data(); if(!opportunitiesDB[d.linha]) opportunitiesDB[d.linha] =[]; opportunitiesDB[d.linha].push({ id: doc.id, ...d }); }); if(state.mode === 'register' && state.step === 'line') render(false); }); 
             
-            // NOVO: Listener de Placas
             db.collection('placas').onSnapshot(snap => {
                 placasDB = {};
                 snap.forEach(doc => { placasDB[doc.id] = { id: doc.id, ...doc.data() }; });
-                // Atualiza a tela se estiver na área de placas
                 if (state.step === 'line' || state.step === 'placas_list' || state.step === 'placa_detail') render(false);
             });
         }
@@ -643,8 +670,8 @@
         function openLinePicker() { showOptionPicker("Filtrar Linha",[{label:'Todas',value:'all'},{label:'512',value:'512'},{label:'513',value:'513'},{label:'514',value:'514'}], (v)=>{ state.filters.line=v; document.getElementById('hl-txt').innerText=v; loadHistory(); }); }
         function openTypePicker() { showOptionPicker("Filtrar Tipo",[{label:'Todos',value:'all'},{label:'Preventiva',value:'preventiva'},{label:'Corretiva',value:'corretiva'},{label:'Inspeção',value:'inspecao'},{label:'Sonda',value:'sonda'},{label:'Falhas Enchedora',value:'falha_geral'},{label:'Oportunidades Pendentes',value:'ops_abertas'}], (v)=>{ state.filters.historyType=v; document.getElementById('ht-txt').innerText=v; loadHistory(); }); }
         function renderHistoryView(c) { c.innerHTML = `<div class="space-y-4 animate-pop-in"><div class="card-industrial p-4 space-y-3"><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Local</label><button onclick="openLinePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="hl-txt" class="text-sm font-bold">Todas</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div><div><label class="label-industrial">Tipo</label><button onclick="openTypePicker()" class="w-full text-left p-2 rounded bg-secondary border border-gray-700 flex justify-between"><span id="ht-txt" class="text-sm font-bold">Todos</span><i data-lucide="chevron-down" class="w-4 h-4"></i></button></div></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Válvula (Nº)</label><input type="number" placeholder="Todas" class="input-industrial" oninput="state.filters.valve=this.value; loadHistory()"></div></div><div class="grid grid-cols-2 gap-3"><div><label class="label-industrial">Início</label><input type="date" id="d-ini" class="input-industrial text-xs py-2"></div><div><label class="label-industrial">Fim</label><input type="date" id="d-fim" class="input-industrial text-xs py-2"></div></div><div class="grid grid-cols-2 gap-3 mt-4"><button onclick="exportData('excel')" class="btn-industrial bg-green-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel</button><button onclick="exportData('pdf')" class="btn-industrial bg-red-700 text-white text-xs py-3 flex justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button></div></div><div id="h-list" class="space-y-2 pb-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>`; loadHistory(); }
-        function loadHistory() { const el = document.getElementById('h-list'); const {line, valve, historyType} = state.filters; let res =[]; const lines = (line === 'all') ? Object.keys(LINE_CONFIGS) : [line]; if(historyType !== 'ops_abertas') { lines.forEach(l => { const ld = globalDB[l]||{}; Object.values(ld).forEach(v => { if(valve && String(v.valveNumber) !== String(valve)) return; if(v.historico) v.historico.forEach(h => { const f = historyType; if(f !== 'all') { if(f === 'sonda' && h.subset !== 'SONDA') return; if(f === 'falha_geral' && h.type !== 'falha_geral') return; if(f !== 'sonda' && f !== 'falha_geral' && h.type !== f) return; } res.push({...h, line: l, valve: v.valveNumber, docId: v.docId}); }); }); }); } if(historyType === 'ops_abertas') { lines.forEach(l => { const ops = opportunitiesDB[l] ||[]; ops.forEach(o => { if(valve && String(o.valvula) !== String(valve)) return; res.push({ id: o.id, timestamp: new Date().toISOString(), line: l, valve: o.valvula, type: 'oportunidade', description: `PENDENTE: ${o.texto} (${o.subset || 'Geral'}) - Solicitante: ${o.nome}`, isOp: true }); }); }); } res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)); el.innerHTML = res.map(r => { const btnDel = `<button onclick="${r.isOp ? `askDelOp('${r.id}')` : `askDel('${r.line}','${r.docId}','${r.id}')`}" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span>${btnDel}</div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`; const d = new Date(r.timestamp); const isSonda = r.isSonda || r.subset === 'SONDA'; const isFalhaGeral = r.type === 'falha_geral'; let icon = 'wrench'; let color = 'text-primary'; let cardStyle = "card-industrial p-4 border relative border-gray-700"; if(r.isCritical) { icon = 'flame'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500/80"; } else if(isSonda) { icon = 'zap'; color = 'text-yellow-500'; cardStyle = "card-industrial p-4 border relative border-yellow-500 bg-yellow-500/10"; } else if(isFalhaGeral) { icon = 'alert-triangle'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500 bg-red-500/10"; } const valveDisplay = (r.valve === 0 || r.valve === 'GERAL') ? 'GERAL' : `V${r.valve}`; return `<div class="${cardStyle}">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/${valveDisplay}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>${btnDel}</div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.subset} - ${r.description}</p></div></div>`; }).join(''); lucide.createIcons(); }
-        async function exportData(fmt) { const start=document.getElementById('d-ini').value, end=document.getElementById('d-fim').value; let data =[]; const lines = (state.filters.line==='all') ? Object.keys(LINE_CONFIGS) :[state.filters.line]; lines.forEach(l => { const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.historico) v.historico.forEach(h=>{ const d=h.timestamp.split('T')[0]; if((!start||d>=start)&&(!end||d<=end)) data.push({Data:new Date(h.timestamp).toLocaleDateString(), Local:l, Válvula:v.valveNumber, Tipo:h.type, Desc:h.description}); }); }); }); const snap = await db.collection('historico_oportunidades').get(); snap.forEach(d => { const r=d.data(); if((state.filters.line==='all'||r.linha===state.filters.line)) { const dt=r.dataConclusao.split('T')[0]; if((!start||dt>=start)&&(!end||dt<=end)) data.push({Data:new Date(r.dataConclusao).toLocaleDateString(), Local:r.linha, Válvula:'-', Tipo:'Melhoria', Desc:`Solução: ${r.solucao} (Exec: ${r.executante})`}); } }); if(!data.length) { showToast("Sem dados.", "error"); return; } if(fmt==='excel') { const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); XLSX.writeFile(wb, "Relatorio.xlsx"); } else { const doc=new window.jspdf.jsPDF(); doc.setFillColor(15,23,42); doc.rect(0,0,210,297,'F'); doc.setTextColor(255); doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); doc.save("Relatorio.pdf"); } }
+        function loadHistory() { const el = document.getElementById('h-list'); const {line, valve, historyType} = state.filters; let res =[]; const lines = (line === 'all') ? Object.keys(LINE_CONFIGS).filter(k=>k!=='Placas') : [line]; if(historyType !== 'ops_abertas') { lines.forEach(l => { const ld = globalDB[l]||{}; Object.values(ld).forEach(v => { if(valve && String(v.valveNumber) !== String(valve)) return; if(v.historico) v.historico.forEach(h => { const f = historyType; if(f !== 'all') { if(f === 'sonda' && h.subset !== 'SONDA') return; if(f === 'falha_geral' && h.type !== 'falha_geral') return; if(f !== 'sonda' && f !== 'falha_geral' && h.type !== f) return; } res.push({...h, line: l, valve: v.valveNumber, docId: v.docId}); }); }); }); } if(historyType === 'ops_abertas') { lines.forEach(l => { const ops = opportunitiesDB[l] ||[]; ops.forEach(o => { if(valve && String(o.valvula) !== String(valve)) return; res.push({ id: o.id, timestamp: new Date().toISOString(), line: l, valve: o.valvula, type: 'oportunidade', description: `PENDENTE: ${o.texto} (${o.subset || 'Geral'}) - Solicitante: ${o.nome}`, isOp: true }); }); }); } res.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)); el.innerHTML = res.map(r => { const btnDel = `<button onclick="${r.isOp ? `askDelOp('${r.id}')` : `askDel('${r.line}','${r.docId}','${r.id}')`}" class="text-red-500 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; if(r.isOp) return `<div class="card-industrial p-4 border border-blue-500/50 relative bg-blue-500/5"><div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] px-2 rounded-bl">PENDENTE</div><div class="flex justify-between mb-2"><span class="font-bold text-blue-400 font-mono">L${r.line}/V${r.valve}</span>${btnDel}</div><div class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i><p class="text-sm text-gray-300">${r.description}</p></div></div>`; const d = new Date(r.timestamp); const isSonda = r.isSonda || r.subset === 'SONDA'; const isFalhaGeral = r.type === 'falha_geral'; let icon = 'wrench'; let color = 'text-primary'; let cardStyle = "card-industrial p-4 border relative border-gray-700"; if(r.isCritical) { icon = 'flame'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500/80"; } else if(isSonda) { icon = 'zap'; color = 'text-yellow-500'; cardStyle = "card-industrial p-4 border relative border-yellow-500 bg-yellow-500/10"; } else if(isFalhaGeral) { icon = 'alert-triangle'; color = 'text-red-500'; cardStyle = "card-industrial p-4 border relative border-red-500 bg-red-500/10"; } const valveDisplay = (r.valve === 0 || r.valve === 'GERAL') ? 'GERAL' : `V${r.valve}`; return `<div class="${cardStyle}">${r.isCritical ? '<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-2 rounded-bl">CRÍTICA</div>' : ''}<div class="flex justify-between mb-2"><span class="font-bold text-primary font-mono">L${r.line}/${valveDisplay}</span><div class="flex items-center gap-2"><span class="text-xs text-gray-400">${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>${btnDel}</div></div><div class="flex gap-2"><i data-lucide="${icon}" class="w-4 h-4 ${color}"></i><p class="text-sm text-gray-300">${r.subset} - ${r.description}</p></div></div>`; }).join(''); lucide.createIcons(); }
+        async function exportData(fmt) { const start=document.getElementById('d-ini').value, end=document.getElementById('d-fim').value; let data =[]; const lines = (state.filters.line==='all') ? Object.keys(LINE_CONFIGS).filter(k=>k!=='Placas') :[state.filters.line]; lines.forEach(l => { const ld=globalDB[l]||{}; Object.values(ld).forEach(v=>{ if(v.historico) v.historico.forEach(h=>{ const d=h.timestamp.split('T')[0]; if((!start||d>=start)&&(!end||d<=end)) data.push({Data:new Date(h.timestamp).toLocaleDateString(), Local:l, Válvula:v.valveNumber, Tipo:h.type, Desc:h.description}); }); }); }); const snap = await db.collection('historico_oportunidades').get(); snap.forEach(d => { const r=d.data(); if((state.filters.line==='all'||r.linha===state.filters.line)) { const dt=r.dataConclusao.split('T')[0]; if((!start||dt>=start)&&(!end||dt<=end)) data.push({Data:new Date(r.dataConclusao).toLocaleDateString(), Local:r.linha, Válvula:'-', Tipo:'Melhoria', Desc:`Solução: ${r.solucao} (Exec: ${r.executante})`}); } }); if(!data.length) { showToast("Sem dados.", "error"); return; } if(fmt==='excel') { const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Relatório"); XLSX.writeFile(wb, "Relatorio.xlsx"); } else { const doc=new window.jspdf.jsPDF(); doc.setFillColor(15,23,42); doc.rect(0,0,210,297,'F'); doc.setTextColor(255); doc.text("CERVEJARIA JACAREÍ",105,20,null,null,"center"); doc.autoTable({startY:40, head:[Object.keys(data[0])], body:data.map(Object.values)}); doc.save("Relatorio.pdf"); } }
 
         render();
     </script>
