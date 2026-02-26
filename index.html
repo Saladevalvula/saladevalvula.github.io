@@ -108,7 +108,7 @@
             '512': { valveCount: 175, subsets:['V1', 'V2', 'V3', 'V5', 'V6', 'V7', 'V8', 'Tulipa', 'Caixa de ar', 'SMC'], hasProbe: true }, 
             '513': { valveCount: 175, subsets:['V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'Tulipa', 'Caixa de ar', 'SMC'], hasProbe: true }, 
             '514': { valveCount: 72, subsets: null, hasProbe: false },
-            'Placas': { valveCount: 0, isPlaca: true, items: ['MC9', 'EA10'], subsets: null, hasProbe: false }
+            'Placas': { valveCount: 0, isPlaca: true, items:['MC9', 'EA10'], subsets: null, hasProbe: false }
         };
 
         const MANUAL_HTML = `
@@ -228,7 +228,7 @@
             // TELA 1: DASHBOARD PRINCIPAL (LINHAS E PLACAS)
             // ==========================================
             else if (state.step === 'line') {
-                const html = Object.keys(LINE_CONFIGS).map(line => {
+                const html = Object.keys(LINE_CONFIGS).filter(l => l !== 'Placas').map(line => {
                     const cfg = LINE_CONFIGS[line]; 
                     let pg=0, pt=0, co=0, j=[]; 
                     const ld = globalDB[line]||{}; 
@@ -482,13 +482,11 @@
             const exists = Object.values(placasDB).find(p => p.nome === nome);
             if(exists) return showToast("Este modelo já existe na lista!", "error");
 
-            // Pega o nome do operador gravado na memória, se não tiver, grava como Sistema
             const opName = localStorage.getItem('sala_valvulas_nome') || "Sistema";
             const shift = localStorage.getItem('sala_valvulas_turno') || "-";
 
             let hist =[];
             
-            // Se o usuário digitou qualquer valor no estoque inicial, salva o histórico automático
             if(boas > 0 || ruins > 0 || lab > 0) {
                 hist.push({
                     id: Date.now().toString(),
