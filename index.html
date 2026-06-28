@@ -583,7 +583,7 @@
             else if (state.step === 'valve' || state.step === 'subset') {
                 const cfg = LINE_CONFIGS[state.selectedLine];
                 if(state.step==='valve') {
-                    let b=''; for(let i=1;i<=cfg.valveCount;i++)b+=`<button id="vbtn-${i}" onclick="selectValve(${i})" class="card-industrial aspect-square flex flex-col items-center justify-center font-mono font-bold text-lg hover:bg-primary/10">${i}</button>`;
+                    let b=''; for(let i=1;i<=cfg.valveCount;i++)b+=`<button id="vbtn-${i}" onclick="selectValve(${i})" onmousedown="startLongPress(${i})" onmouseup="cancelLongPress()" onmouseleave="cancelLongPress()" oncontextmenu="return false" ontouchstart="startLongPress(${i})" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()" class="card-industrial aspect-square flex flex-col items-center justify-center font-mono font-bold text-lg hover:bg-primary/10">${i}</button>`;
                     const falhaGeralBtn = `<button onclick="openFalhaGeral()" class="w-full bg-red-600/10 border border-red-600 text-red-500 hover:bg-red-600 hover:text-white p-3 rounded-lg font-bold mb-4 flex items-center justify-center gap-2 transition-colors"><i data-lucide="alert-triangle" class="w-5 h-5"></i> ⚠ REGISTRAR FALHA GERAL</button>`;
                     c.innerHTML=`<div class="space-y-4 animate-pop-in"><button onclick="window.history.back()" class="flex items-center text-gray-400 mb-4"><i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar</button><div class="text-center mb-6"><h2 class="text-xl font-bold uppercase text-foreground">Linha ${state.selectedLine}</h2></div>${falhaGeralBtn}<div class="relative mb-4"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i><input type="number" placeholder="Buscar..." class="input-industrial pl-10" oninput="filterValves(this.value)"></div><div id="vgrid" class="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-12 xl:grid-cols-15 2xl:grid-cols-18 gap-3 max-h-[65vh] overflow-y-auto pr-1 pb-10 custom-scrollbar">${b}</div></div>`;
                     loadGridStatus();
@@ -671,7 +671,7 @@
         initRealtimeListeners();
 
         function selectLine(l) { state.selectedLine = l; navigateTo('valve'); }
-        function selectValve(v) { state.selectedValve = v; state.selectedSubsets =[]; const c = LINE_CONFIGS[state.selectedLine]; if(!c.subsets) { state.selectedSubsets =['Geral']; navigateTo('form'); } else navigateTo('subset'); }
+        function selectValve(v) { if (window._lpFired) { window._lpFired = false; return; } state.selectedValve = v; state.selectedSubsets =[]; const c = LINE_CONFIGS[state.selectedLine]; if(!c.subsets) { state.selectedSubsets =['Geral']; navigateTo('form'); } else navigateTo('subset'); }
         function toggleSubset(s) { if(state.selectedSubsets.includes(s)) { state.selectedSubsets = state.selectedSubsets.filter(x => x !== s); } else { state.selectedSubsets.push(s); } render(false); }
         function filterValves(v) { const b = document.getElementById('vgrid').children; for(let x of b) { x.style.display = x.innerText.includes(v) ? 'flex' : 'none'; } }
         function setType(t) { if(t==='preventiva') showPasswordPrompt(() => { state.form.type=t; render(false); }); else { state.form.type=t; render(false); } }
@@ -1057,6 +1057,47 @@
         });
 
         render();
-    </script>
+    
+// ── Long-press: abre historico da valvula ──
+var _lpTimer = null; window._lpFired = false;
+function startLongPress(v) {
+  window._lpFired = false;
+  _lpTimer = setTimeout(function(){ window._lpFired = true; showValveHistory(v); }, 600);
+}
+function cancelLongPress() { if (_lpTimer) { clearTimeout(_lpTimer); _lpTimer = null; } }
+function closeHistoryModal() { document.getElementById("history-modal").style.display = "none"; }
+function showValveHistory(vNum) {
+  var line = state.selectedLine;
+  var vd = globalDB[line] && globalDB[line][String(vNum)];
+  var hist = vd ? (vd.historico || []) : [];
+  var sorted = hist.slice().sort(function(a,b){ return new Date(b.timestamp) - new Date(a.timestamp); });
+  var lbl = { corretiva:"Corretiva", preventiva:"Preventiva", sonda_event:"Sonda", falha_geral:"Falha", inspecao:"Inspeção" };
+  var h = "<div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:14px\">" +
+    "<span style=\"font-weight:700;font-size:1.1rem;color:var(--color-text-primary,#e2e8f0)\">Válvula " + vNum + " — L" + line + "</span>" +
+    "<button onclick=\"closeHistoryModal()\" style=\"font-size:1.6rem;line-height:1;background:none;border:none;cursor:pointer;color:var(--color-text-muted,#94a3b8)\">×</button></div>";
+  if (!sorted.length) {
+    h += "<p style=\"text-align:center;padding:28px 0;color:var(--color-text-muted,#94a3b8)\">Nenhum registro encontrado.</p>";
+  } else {
+    sorted.forEach(function(e) {
+      var dt = new Date(e.timestamp);
+      var ds = dt.toLocaleDateString("pt-BR") + " " + dt.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+      var clr = e.status === "ok" ? "#4ade80" : "#facc15";
+      var stTxt = e.status === "ok" ? "✅ Concluído" : "⏳ Pendente";
+      h += "<div style=\"border:1px solid var(--color-border,#2d3a5a);border-radius:12px;padding:12px;margin-bottom:8px\">" +
+        "<div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:4px\">" +
+        "<span style=\"font-size:.75rem;font-weight:600;color:var(--color-primary,#60a5fa)\">" + (lbl[e.type] || e.type) + "</span>" +
+        "<span style=\"font-size:.72rem;color:var(--color-text-muted,#94a3b8)\">" + ds + "</span></div>" +
+        "<div style=\"font-size:.875rem;font-weight:600;color:var(--color-text-primary,#e2e8f0);margin-bottom:2px\">" + (e.subset || "Geral") + "</div>" +
+        "<div style=\"font-size:.75rem;color:var(--color-text-muted,#94a3b8);line-height:1.4\">" + (e.description || "") + "</div>" +
+        (e.status ? "<div style=\"font-size:.72rem;margin-top:5px;color:" + clr + "\">" + stTxt + "</div>" : "") +
+        "</div>";
+    });
+  }
+  document.getElementById("history-content").innerHTML = h;
+  var m = document.getElementById("history-modal");
+  m.style.display = "flex"; m.style.flexDirection = "column";
+}
+</script>
+<div id="history-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);flex-direction:column"><div style="flex:1" onclick="closeHistoryModal()"></div><div id="history-content" style="background:var(--color-surface,#1a2035);border-top:1px solid var(--color-border,#2d3a5a);border-radius:16px 16px 0 0;padding:16px;max-height:70vh;overflow-y:auto"></div></div>
 </body>
 </html>
