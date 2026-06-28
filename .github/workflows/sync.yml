@@ -1,0 +1,26 @@
+name: Sync Notion to Firebase
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # a cada 15 minutos
+  workflow_dispatch:          # trigger manual tambem
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run sync
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: python sync_firebase.py 10
