@@ -302,7 +302,7 @@
             }
         });
 
-        function navigateTo(step) { if (typeof closeHistoryModal === "function") closeHistoryModal(); state.step = step; window.history.pushState({ mode: state.mode, step: step }, null, ''); render(false); }
+        function navigateTo(step) { var _m = document.getElementById("history-modal"); if (_m && _m.style.display !== "none") { closeHistoryModal(); return; }, null, ''); render(false); }
         function setMode(m) { state.mode = m; window.history.pushState({ mode: m, step: state.step }, null, ''); render(); }
 
         function showToast(msg, type='error') {
