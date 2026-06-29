@@ -302,7 +302,7 @@
             }
         });
 
-        function navigateTo(step) { var _m = document.getElementById("history-modal"); if (_m && _m.style.display !== "none") { closeHistoryModal(); return; }, null, ''); render(false); }
+        function navigateTo(step) { state.step = step; window.history.pushState({ mode: state.mode, step: step }, null, ''); render(false); }
         function setMode(m) { state.mode = m; window.history.pushState({ mode: m, step: state.step }, null, ''); render(); }
 
         function showToast(msg, type='error') {
@@ -1096,7 +1096,13 @@ function showValveHistory(vNum) {
   document.getElementById("history-content").innerHTML = h;
   var m = document.getElementById("history-modal");
   m.style.display = "flex"; m.style.flexDirection = "column";
+  history.pushState({valveModal:true}, "");
 }
+
+window.addEventListener("popstate", function(e) {
+  var m = document.getElementById("history-modal");
+  if (m && m.style.display !== "none") { m.style.display = "none"; }
+});
 </script>
 <div id="history-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);flex-direction:column"><div style="flex:1" onclick="closeHistoryModal()"></div><div id="history-content" style="background:var(--color-surface,#1a2035);border-top:1px solid var(--color-border,#2d3a5a);border-radius:16px 16px 0 0;padding:16px;max-height:70vh;overflow-y:auto"></div></div>
 </body>
