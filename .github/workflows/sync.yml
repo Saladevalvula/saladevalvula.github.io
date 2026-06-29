@@ -2,7 +2,7 @@ name: Sync Notion to Firebase
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # a cada 15 minutos
+    - cron: '*/5 * * * *'  # a cada 15 minutos
   workflow_dispatch:          # trigger manual tambem
 
 jobs:
