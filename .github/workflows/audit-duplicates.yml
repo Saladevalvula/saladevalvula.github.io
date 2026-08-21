@@ -1,0 +1,32 @@
+name: Audit history duplicates
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'cleanup_duplicates.py'
+      - '.github/workflows/audit-duplicates.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Audit duplicate history entries
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          APPLY: '0'
+        run: python cleanup_duplicates.py
