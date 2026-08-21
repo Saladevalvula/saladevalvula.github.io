@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Remove duplicate history entries
+      - name: Verify duplicate history entries
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-          APPLY: '1'
+          APPLY: '0'
         run: python cleanup_duplicates.py
