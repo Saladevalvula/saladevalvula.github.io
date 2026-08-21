@@ -330,6 +330,74 @@ def build_records(page):
     return line_id, valve_id, records
 
 
+def verify_page_history(line_id, valve_id, page_id, records):
+    history, _, response = read_history(line_id, valve_id)
+    if history is None:
+        raise RuntimeError(
+            f"Falha ao verificar Firebase: HTTP {response.status_code} "
+            f"{response.text[:300]}"
+        )
+
+    page_items = [
+        value
+        for value in history
+        if field_string(value, "notionPageId") == page_id
+    ]
+    if len(page_items) != len(records):
+        raise RuntimeError(
+            f"Verificação falhou: página {page_id} deveria ter {len(records)} "
+            f"registro(s), mas o Firebase contém {len(page_items)}"
+        )
+
+    verified = []
+    for record in records:
+        matches = [
+            value
+            for value in page_items
+            if field_string(value, "subset") == record["subset"]
+        ]
+        if len(matches) != 1:
+            raise RuntimeError(
+                f"Verificação falhou no subset {record['subset']}: "
+                f"esperado 1 registro, encontrado {len(matches)}"
+            )
+
+        saved = matches[0]
+        checks = {
+            "id": record["id"],
+            "type": record["type"],
+            "description": record["description"],
+            "status": record["status"],
+        }
+        for field_name, expected in checks.items():
+            actual = field_string(saved, field_name)
+            if actual != expected:
+                raise RuntimeError(
+                    f"Verificação falhou em {record['subset']}/{field_name}: "
+                    f"esperado {expected!r}, encontrado {actual!r}"
+                )
+
+        verified.append(
+            {
+                "subset": record["subset"],
+                "type": record["type"],
+                "count": 1,
+            }
+        )
+
+    indexed = read_index(page_id)
+    if not indexed:
+        raise RuntimeError("Verificação falhou: sync_index não encontrado")
+    if indexed.get("line") != line_id or indexed.get("valve") != valve_id:
+        raise RuntimeError(
+            "Verificação falhou: sync_index aponta para "
+            f"L{indexed.get('line')} V{indexed.get('valve')} em vez de "
+            f"L{line_id} V{valve_id}"
+        )
+
+    return verified
+
+
 def register_page(page_id):
     page = fetch_notion_page(page_id)
     canonical_page_id = page.get("id", page_id)
@@ -366,27 +434,71 @@ def register_page(page_id):
             f"{index_response.text[:300]}"
         )
 
+    verified_records = verify_page_history(
+        line_id, valve_id, canonical_page_id, records
+    )
+
     print(
-        f"OK L{line_id} V{valve_id} "
+        f"VERIFICADO L{line_id} V{valve_id} "
         f"[{', '.join(r['subset'] for r in records)}] "
         f"page={canonical_page_id}"
     )
 
+    return {
+        "pageId": canonical_page_id,
+        "line": line_id,
+        "valve": valve_id,
+        "records": verified_records,
+    }
+
+
+def write_result(path, data):
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(data, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+
 
 def main():
     dispatch_path = sys.argv[1] if len(sys.argv) > 1 else "maintenance_dispatch.json"
+    result_path = (
+        sys.argv[2] if len(sys.argv) > 2 else "maintenance_dispatch_status.json"
+    )
+
     with open(dispatch_path, "r", encoding="utf-8") as handle:
         dispatch = json.load(handle)
 
     if not dispatch.get("enabled", False):
-        print("Dispatch desativado: nada a registrar.")
+        print("Dispatch desativado: nada a registrar e status anterior preservado.")
         return
 
     page_id = str(dispatch.get("pageId", "")).strip()
+    requested_at = str(dispatch.get("requestedAt", "")).strip()
     if not page_id:
         raise SystemExit("pageId ausente no dispatch")
 
-    register_page(page_id)
+    try:
+        summary = register_page(page_id)
+        result = {
+            "status": "verified",
+            "pageId": summary["pageId"],
+            "requestedAt": requested_at,
+            "verifiedAt": datetime.now(timezone.utc).isoformat(),
+            "line": summary["line"],
+            "valve": summary["valve"],
+            "records": summary["records"],
+            "message": "Firebase confirmado após leitura: exatamente um registro por subset.",
+        }
+        write_result(result_path, result)
+    except Exception as exc:
+        result = {
+            "status": "failed",
+            "pageId": page_id,
+            "requestedAt": requested_at,
+            "verifiedAt": datetime.now(timezone.utc).isoformat(),
+            "error": str(exc),
+        }
+        write_result(result_path, result)
+        raise
 
 
 if __name__ == "__main__":
