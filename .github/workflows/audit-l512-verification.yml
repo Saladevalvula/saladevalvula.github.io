@@ -1,0 +1,89 @@
+name: Audit L512 dispatch verification
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-l512-verification.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Verify L512 V71 V107 V137 in Firebase
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          python - <<'PY'
+          import os
+          import sys
+          import requests
+
+          project = 'sala-valvulas-ow-163b3'
+          key = os.environ['FIREBASE_KEY']
+          base = f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents'
+
+          expected = {
+              '71': '3c3c5fcf-62b4-81ac-8bd4-e556c6169925',
+              '107': '3c3c5fcf-62b4-812a-a6e2-d5347d1126b0',
+              '137': '3c3c5fcf-62b4-811b-aeca-e06d95c0395c',
+          }
+
+          failures = []
+          for valve, page_id in expected.items():
+              url = f'{base}/lines/512/valves/{valve}?key={key}'
+              r = requests.get(url, timeout=30)
+              if r.status_code != 200:
+                  failures.append(f'V{valve}: HTTP {r.status_code}')
+                  print(f'V{valve}: documento não encontrado/erro HTTP {r.status_code}')
+                  continue
+
+              values = (
+                  r.json().get('fields', {})
+                  .get('historico', {})
+                  .get('arrayValue', {})
+                  .get('values', [])
+              )
+
+              matches = []
+              for item in values:
+                  fields = item.get('mapValue', {}).get('fields', {})
+                  pid = fields.get('notionPageId', {}).get('stringValue', '')
+                  if pid == page_id:
+                      matches.append({
+                          'subset': fields.get('subset', {}).get('stringValue', ''),
+                          'type': fields.get('type', {}).get('stringValue', ''),
+                          'description': fields.get('description', {}).get('stringValue', ''),
+                      })
+
+              print(f'V{valve}: matches={len(matches)} {matches}')
+              if len(matches) != 1:
+                  failures.append(f'V{valve}: esperado 1 registro, encontrado {len(matches)}')
+                  continue
+              if matches[0]['subset'] != 'V3':
+                  failures.append(f"V{valve}: subset esperado V3, encontrado {matches[0]['subset']}")
+              if matches[0]['type'] != 'corretiva':
+                  failures.append(f"V{valve}: type esperado corretiva, encontrado {matches[0]['type']}")
+
+          if failures:
+              print('FALHAS:')
+              for f in failures:
+                  print('-', f)
+              sys.exit(1)
+
+          print('OK: os três registros estão confirmados no Firebase, exatamente uma vez cada.')
+          PY
