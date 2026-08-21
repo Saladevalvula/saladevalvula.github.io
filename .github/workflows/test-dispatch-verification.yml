@@ -1,12 +1,7 @@
-name: Test dispatch verification
+name: Manual dispatch verification test
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'register_notion_page.py'
-      - '.github/workflows/register-maintenance.yml'
-      - '.github/workflows/test-dispatch-verification.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -35,7 +30,7 @@ jobs:
           {
             "enabled": true,
             "pageId": "3c3c5fcf-62b4-81ac-8bd4-e556c6169925",
-            "requestedAt": "2026-08-21T20:44:00-03:00"
+            "requestedAt": "manual-diagnostic-test"
           }
           JSON
 
