@@ -1,0 +1,54 @@
+name: Test dispatch verification
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'register_notion_page.py'
+      - '.github/workflows/register-maintenance.yml'
+      - '.github/workflows/test-dispatch-verification.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Test existing V71 idempotently and verify result file
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          cat > /tmp/test_dispatch.json <<'JSON'
+          {
+            "enabled": true,
+            "pageId": "3c3c5fcf-62b4-81ac-8bd4-e556c6169925",
+            "requestedAt": "2026-08-21T20:44:00-03:00"
+          }
+          JSON
+
+          python register_notion_page.py /tmp/test_dispatch.json /tmp/test_status.json
+          cat /tmp/test_status.json
+
+          python - <<'PY'
+          import json
+          with open('/tmp/test_status.json', encoding='utf-8') as f:
+              status = json.load(f)
+          assert status['status'] == 'verified', status
+          assert status['line'] == '512', status
+          assert status['valve'] == '71', status
+          assert status['records'] == [{'subset': 'V3', 'type': 'corretiva', 'count': 1}], status
+          print('OK: status pós-Firebase confirmado e legível.')
+          PY
