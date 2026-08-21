@@ -1,5 +1,16 @@
 {
-  "status": "idle",
-  "message": "Aguardando o próximo dispatch verificado no Firebase.",
-  "updatedAt": "2026-08-21T23:43:00Z"
+  "status": "verified",
+  "pageId": "3c3c5fcf-62b4-81ac-8bd4-e556c6169925",
+  "requestedAt": "2026-08-21T20:46:00-03:00",
+  "verifiedAt": "2026-08-21T23:46:17.473174+00:00",
+  "line": "512",
+  "valve": "71",
+  "records": [
+    {
+      "subset": "V3",
+      "type": "corretiva",
+      "count": 1
+    }
+  ],
+  "message": "Firebase confirmado após leitura: exatamente um registro por subset."
 }
