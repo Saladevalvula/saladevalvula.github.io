@@ -1,6 +1,6 @@
 /* Sala de Válvulas - estado do ciclo preventivo
- * Mostra onde cada enchedora parou e a programação mensal confirmada,
- * sem transformar a posição do ciclo em intervenções históricas artificiais.
+ * Mostra onde cada enchedora parou, a programação mensal confirmada e
+ * conta no Painel Geral as válvulas concluídas pelas ordens preventivas SAP.
  */
 (() => {
   'use strict';
@@ -29,12 +29,22 @@
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
   }
 
-  function cycleCompleted(line) {
+  function cycleThrough(line) {
     const s = cycleState[line];
     if (!s) return null;
     const max = Number(LINE_CONFIGS?.[line]?.valveCount || 0);
-    const raw = Number(s.lastCompletedValve || s.completedThrough || 0);
+    const raw = Number(s.lastCompletedValve ?? s.completedThrough ?? 0);
     if (!Number.isFinite(raw) || raw < 0) return 0;
+    return max ? Math.min(max, raw) : raw;
+  }
+
+  function cycleCount(line) {
+    const s = cycleState[line];
+    if (!s) return null;
+    const max = Number(LINE_CONFIGS?.[line]?.valveCount || 0);
+    const fallback = cycleThrough(line) ?? 0;
+    const raw = Number(s.completedCount ?? fallback);
+    if (!Number.isFinite(raw) || raw < 0) return fallback;
     return max ? Math.min(max, raw) : raw;
   }
 
@@ -49,7 +59,7 @@
   function applyCycleCountsToPanel(container) {
     if (state.mode !== 'register' || state.step !== 'line') return;
     ['512', '513', '514'].forEach(line => {
-      const completed = cycleCompleted(line);
+      const completed = cycleCount(line);
       if (completed == null) return;
       const clickTarget = [...container.querySelectorAll('[onclick]')]
         .find(el => el.getAttribute('onclick') === `selectLine('${line}')`);
@@ -74,7 +84,8 @@
     const sapHtml = linkedSapOrderIds.length
       ? `<div class="mt-2 flex flex-wrap items-center gap-2"><span class="text-[10px] uppercase tracking-wider text-gray-500 font-bold">${sapLabel}</span>${linkedSapOrderIds.map(id => `<span class="cmms-badge warn font-mono">${esc(id)}</span>`).join('')}</div>`
       : `<div class="mt-2 text-[10px] uppercase tracking-wider text-gray-600 font-bold">Ordem SAP não vinculada</div>`;
-    return `<div class="mt-3 rounded-lg border border-primary/30 bg-primary/10 p-3"><div class="text-[10px] uppercase tracking-wider text-primary font-bold">Programado${date ? ` · ${date}` : ''} · ${valves.length} válvulas</div>${sapHtml}<div class="font-mono text-sm text-foreground mt-2">${range}</div></div>`;
+    const done = Array.isArray(p.completedValves) ? p.completedValves.length : 0;
+    return `<div class="mt-3 rounded-lg border border-primary/30 bg-primary/10 p-3"><div class="text-[10px] uppercase tracking-wider text-primary font-bold">Programado${date ? ` · ${date}` : ''} · ${valves.length} válvulas</div>${sapHtml}<div class="font-mono text-sm text-foreground mt-2">${range}</div>${done ? `<div class="text-[10px] text-green-400 font-bold mt-2">${done}/${valves.length} preventivas concluídas</div>` : ''}</div>`;
   }
 
   function injectCycleState(container) {
@@ -83,9 +94,11 @@
     const rows = ['512', '513', '514'].map(line => {
       const s = cycleState[line];
       if (!s) return `<div class="cmms-order-card"><strong>L${line}</strong><div class="text-xs text-gray-500 mt-2">Sequência ainda não informada.</div>${plannedHtml(line)}</div>`;
-      const last = cycleCompleted(line) || 0;
+      const last = cycleThrough(line) || 0;
+      const count = cycleCount(line) || 0;
       const next = Number(s.nextValve || (last + 1));
-      return `<div class="cmms-order-card"><div class="flex justify-between items-start gap-2"><div><strong>L${line}</strong><div class="text-xs text-gray-500 mt-1">Ciclo preventivo</div></div><span class="cmms-badge ok">até V${last}</span></div><div class="font-mono text-sm text-primary mt-3">Próxima no ciclo: V${next}</div>${plannedHtml(line)}${s.note?`<div class="text-[10px] text-gray-600 mt-2">${esc(s.note)}</div>`:''}</div>`;
+      const countInfo = count !== last ? `<div class="text-[10px] text-green-400 font-bold mt-1">${count} válvulas preventivas concluídas no ciclo</div>` : '';
+      return `<div class="cmms-order-card"><div class="flex justify-between items-start gap-2"><div><strong>L${line}</strong><div class="text-xs text-gray-500 mt-1">Ciclo preventivo</div></div><span class="cmms-badge ok">até V${last}</span></div><div class="font-mono text-sm text-primary mt-3">Próxima no ciclo: V${next}</div>${countInfo}${plannedHtml(line)}${s.note?`<div class="text-[10px] text-gray-600 mt-2">${esc(s.note)}</div>`:''}</div>`;
     }).join('');
 
     const block = document.createElement('div');
