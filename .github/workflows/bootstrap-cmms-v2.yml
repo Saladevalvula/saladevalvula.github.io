@@ -6,6 +6,11 @@ on:
     paths:
       - '.cmms-bootstrap/**'
       - '.github/workflows/bootstrap-cmms-v2.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.cmms-bootstrap/**'
+      - '.github/workflows/bootstrap-cmms-v2.yml'
 
 permissions:
   contents: write
@@ -20,6 +25,8 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
       - name: Extract prepared CMMS V2 files
         run: |
           cat .cmms-bootstrap/part-00 .cmms-bootstrap/part-01 .cmms-bootstrap/part-02 .cmms-bootstrap/part-03 .cmms-bootstrap/part-04 .cmms-bootstrap/part-05a > /tmp/cmms-v2.b64
