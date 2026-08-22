@@ -1,0 +1,66 @@
+name: Test monthly dashboard reporting
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'dashboard-reporting.js'
+      - 'install_dashboard_reporting.py'
+      - '.github/workflows/install-dashboard-reporting.yml'
+      - '.github/workflows/test-dashboard-reporting.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          node --check dashboard-reporting.js
+          python -m py_compile install_dashboard_reporting.py
+      - name: Test installer idempotency
+        run: |
+          python install_dashboard_reporting.py
+          grep -q '<script src="dashboard-reporting.js"></script>' index.html
+          python - <<'PY'
+          from pathlib import Path
+          t=Path('index.html').read_text(encoding='utf-8')
+          a=t.index('<script src="cmms-v2.js"></script>')
+          b=t.index('<script src="dashboard-reporting.js"></script>')
+          assert a < b, 'dashboard-reporting.js deve carregar depois do CMMS V2'
+          PY
+          python install_dashboard_reporting.py
+          test "$(grep -c '<script src="dashboard-reporting.js"></script>' index.html)" -eq 1
+      - name: Runtime smoke test
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'), vm=require('vm');
+          global.window=global;
+          global.state={mode:'register',cmms:{},filters:{}};
+          global.globalDB={'512':{},'513':{},'514':{}};
+          global.render=()=>{};
+          global.showToast=()=>{};
+          global.document={
+            body:{classList:{toggle(){}}},
+            head:{appendChild(){}},
+            getElementById(){return null;},
+            createElement(){return {id:'',textContent:''};}
+          };
+          const collection={onSnapshot(cb){cb({forEach(){}});return ()=>{};}};
+          global.db={collection(){return collection;}};
+          vm.runInThisContext(fs.readFileSync('dashboard-reporting.js','utf8'),{filename:'dashboard-reporting.js'});
+          if(typeof global.renderDashboardView!=='function') throw new Error('renderDashboardView não foi sobrescrito');
+          if(typeof global.exportDashboardPDF!=='function') throw new Error('exportDashboardPDF ausente');
+          if(typeof global.togglePresentationMode!=='function') throw new Error('modo apresentação ausente');
+          console.log('OK: dashboard mensal inicializa.');
+          NODE
