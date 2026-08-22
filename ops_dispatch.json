@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "requestId": "sap-100003759812-20260822-confirmada",
   "requestedAt": "2026-08-22T19:00:00-03:00",
   "operation": "sap_order_upsert",
