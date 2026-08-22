@@ -1,5 +1,5 @@
-const CACHE='sala-valvulas-cmms-v2-v2';
-const CORE=['./','./index.html','./cmms-v2-prelude.js','./cmms-v2.js','./manifest.webmanifest','./app-icon.svg'];
+const CACHE='sala-valvulas-cmms-v2-v3';
+const CORE=['./','./index.html','./cmms-v2-prelude.js','./cmms-v2.js','./preventive-cycle-ui.js','./manifest.webmanifest','./app-icon.svg'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
@@ -35,7 +35,7 @@ self.addEventListener('fetch',event=>{
     return;
   }
 
-  if(['cmms-v2.js','cmms-v2-prelude.js','manifest.webmanifest','service-worker.js'].some(name=>url.pathname.endsWith('/'+name))){
+  if(['cmms-v2.js','cmms-v2-prelude.js','preventive-cycle-ui.js','dashboard-reporting.js','dashboard-reporting-pdf.js','manifest.webmanifest','service-worker.js'].some(name=>url.pathname.endsWith('/'+name))){
     event.respondWith(networkFirst(event.request));
     return;
   }
