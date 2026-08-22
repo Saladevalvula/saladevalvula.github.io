@@ -1,0 +1,53 @@
+name: Test operational dispatch
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apply_ops_dispatch.py'
+      - 'ops_dispatch.json'
+      - 'ops_dispatch_status.json'
+      - 'preventive-cycle-ui.js'
+      - 'install_preventive_cycle_ui.py'
+      - '.github/workflows/apply-ops-dispatch.yml'
+      - '.github/workflows/install-preventive-cycle-ui.yml'
+      - '.github/workflows/test-ops-dispatch.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          python -m py_compile apply_ops_dispatch.py install_preventive_cycle_ui.py
+          node --check preventive-cycle-ui.js
+      - name: Test installer idempotency
+        run: |
+          python install_preventive_cycle_ui.py
+          grep -q '<script src="preventive-cycle-ui.js"></script>' index.html
+          python install_preventive_cycle_ui.py
+          test "$(grep -c '<script src="preventive-cycle-ui.js"></script>' index.html)" -eq 1
+      - name: Validate dispatch contract
+        run: |
+          python - <<'PY'
+          import json
+          c=json.load(open('ops_dispatch.json', encoding='utf-8'))
+          assert c['operation']=='preventive_cycle_plan'
+          assert c['line']=='512'
+          assert c['completedThrough']==41
+          assert c['plannedValves']==[42,43,44,45,46,47,48]
+          assert c['plannedDate']=='2026-08-24'
+          assert c['month']=='2026-08'
+          print('OK: contrato do plano preventivo válido.')
+          PY
