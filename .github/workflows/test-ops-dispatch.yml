@@ -51,13 +51,28 @@ jobs:
           }
           assert a.validate_preventive_plan(plan)==('512',41,[42,43,44,45,46,47,48],'2026-08')
           sap={
-            'sapOrderNumber':'100003759812','line':'513','month':'2026-08','status':'concluida'
+            'sapOrderNumber':'100003759812','line':'513','month':'2026-08','status':'concluida',
+            'linkedValves':[1,2,3,4,5,6,7]
           }
           assert a.validate_sap_order(sap)==('100003759812','513','2026-08','concluida')
+          assert a.normalize_valves([1,2,2,3],'513')==[1,2,3]
           assert a.safe_id('100003759812')=='100003759812'
-          print('OK: contratos de plano preventivo e ordem SAP válidos.')
+          try:
+            a.normalize_valves([176],'513')
+            raise AssertionError('deveria rejeitar V176 na L513')
+          except ValueError:
+            pass
+          print('OK: contratos de plano e preventivas SAP válidos.')
           PY
-      - name: Validate UI exposes SAP linkage
+      - name: Validate UI exposes SAP linkage and preventive count
         run: |
           grep -q 'linkedSapOrderIds' preventive-cycle-ui.js
           grep -q 'Ordem SAP não vinculada' preventive-cycle-ui.js
+          grep -q 'completedCount' preventive-cycle-ui.js
+          grep -q 'válvulas preventivas concluídas no ciclo' preventive-cycle-ui.js
+      - name: Validate SAP completion writes preventive history
+        run: |
+          grep -q 'write_valve_preventive_history' apply_ops_dispatch.py
+          grep -q 'update_plan_completion' apply_ops_dispatch.py
+          grep -q 'update_cycle_from_sap' apply_ops_dispatch.py
+          grep -q 'sapCompletedValves' apply_ops_dispatch.py
