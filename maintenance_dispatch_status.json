@@ -1,8 +1,9 @@
 {
   "status": "verified",
+  "schema": "history_v2",
   "pageId": "3c3c5fcf-62b4-81ac-8bd4-e556c6169925",
-  "requestedAt": "2026-08-21T20:46:00-03:00",
-  "verifiedAt": "2026-08-21T23:46:17.473174+00:00",
+  "requestedAt": "2026-08-21T22:47:00-03:00",
+  "verifiedAt": "2026-08-22T01:47:51.504114+00:00",
   "line": "512",
   "valve": "71",
   "records": [
@@ -12,5 +13,5 @@
       "count": 1
     }
   ],
-  "message": "Firebase confirmado após leitura: exatamente um registro por subset."
+  "message": "Firebase V2 confirmado após leitura: exatamente um documento por subset."
 }
