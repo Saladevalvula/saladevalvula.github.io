@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'cmms-v2-prelude.js'
       - 'cmms-v2.js'
       - 'install_cmms_v2.py'
       - 'manifest.webmanifest'
