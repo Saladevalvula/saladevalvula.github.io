@@ -1,12 +1,17 @@
 {
-  "status": "dry_run_verified",
+  "status": "verified",
+  "requestedAt": "2026-08-21T22:29:00-03:00",
   "legacyHistoryItems": 301,
   "uniqueHistoryDocuments": 301,
   "alreadyExistingHistoryDocuments": 0,
+  "wouldCreateOrUpdate": 301,
+  "workOrdersToMirror": 0,
   "perLine": {
     "512": 188,
     "513": 91,
     "514": 22
   },
-  "message": "Auditoria somente leitura aprovada. Migração real preparada para o merge do CMMS V2."
+  "generatedAt": "2026-08-22T01:42:43.203229+00:00",
+  "verifiedAt": "2026-08-22T01:45:28.460149+00:00",
+  "message": "Histórico V2 migrado e verificado sem apagar o array legado."
 }
