@@ -1,5 +1,18 @@
 {
-  "status": "pending",
+  "status": "verified",
   "requestedAt": "2026-08-21T23:44:00-03:00",
-  "message": "Aguardando normalização e verificação no Firebase."
+  "canonicalLabel": "SONDA",
+  "candidates": 7,
+  "before": {
+    "SONDA": 75,
+    "Sonda": 7
+  },
+  "generatedAt": "2026-08-22T02:49:14.645602+00:00",
+  "updatedDocuments": 7,
+  "after": {
+    "SONDA": 82
+  },
+  "totalSonda": 82,
+  "verifiedAt": "2026-08-22T02:49:57.670321+00:00",
+  "message": "Rótulos de Sonda normalizados e verificados no histórico V2."
 }
