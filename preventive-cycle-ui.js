@@ -67,7 +67,14 @@
     if (!p || !valves.length) return '';
     const date = formatDate(p.plannedDate);
     const range = valves.map(v => `V${v}`).join(' · ');
-    return `<div class="mt-3 rounded-lg border border-primary/30 bg-primary/10 p-3"><div class="text-[10px] uppercase tracking-wider text-primary font-bold">Programado${date ? ` · ${date}` : ''} · ${valves.length} válvulas</div><div class="font-mono text-sm text-foreground mt-2">${range}</div></div>`;
+    const linkedSapOrderIds = Array.isArray(p.linkedSapOrderIds)
+      ? p.linkedSapOrderIds.map(v => String(v || '').trim()).filter(Boolean)
+      : (p.sapOrderId ? [String(p.sapOrderId)] : []);
+    const sapLabel = linkedSapOrderIds.length === 1 ? 'Ordem SAP' : 'Ordens SAP';
+    const sapHtml = linkedSapOrderIds.length
+      ? `<div class="mt-2 flex flex-wrap items-center gap-2"><span class="text-[10px] uppercase tracking-wider text-gray-500 font-bold">${sapLabel}</span>${linkedSapOrderIds.map(id => `<span class="cmms-badge warn font-mono">${esc(id)}</span>`).join('')}</div>`
+      : `<div class="mt-2 text-[10px] uppercase tracking-wider text-gray-600 font-bold">Ordem SAP não vinculada</div>`;
+    return `<div class="mt-3 rounded-lg border border-primary/30 bg-primary/10 p-3"><div class="text-[10px] uppercase tracking-wider text-primary font-bold">Programado${date ? ` · ${date}` : ''} · ${valves.length} válvulas</div>${sapHtml}<div class="font-mono text-sm text-foreground mt-2">${range}</div></div>`;
   }
 
   function injectCycleState(container) {
