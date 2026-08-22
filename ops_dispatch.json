@@ -1,7 +1,7 @@
 {
-  "enabled": false,
-  "requestId": "",
-  "requestedAt": "",
+  "enabled": true,
+  "requestId": "pcm-512-20260824-v42-v48",
+  "requestedAt": "2026-08-22T18:10:00-03:00",
   "operation": "preventive_cycle_plan",
   "line": "512",
   "completedThrough": 41,
