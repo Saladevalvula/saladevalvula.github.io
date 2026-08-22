@@ -1,0 +1,60 @@
+name: Bootstrap CMMS V2 branch
+
+on:
+  push:
+    branches: ['feat/cmms-v2']
+    paths:
+      - '.cmms-bootstrap/**'
+      - '.github/workflows/bootstrap-cmms-v2.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bootstrap-cmms-v2
+  cancel-in-progress: true
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract prepared CMMS V2 files
+        run: |
+          cat .cmms-bootstrap/part-00 .cmms-bootstrap/part-01 .cmms-bootstrap/part-02 .cmms-bootstrap/part-03 .cmms-bootstrap/part-04 .cmms-bootstrap/part-05a > /tmp/cmms-v2.b64
+          python - <<'PYHEX'
+          from pathlib import Path
+          h=Path('.cmms-bootstrap/part-05b.hex').read_text().strip()
+          with open('/tmp/cmms-v2.b64','ab') as f:
+              f.write(bytes.fromhex(h))
+          PYHEX
+          cat .cmms-bootstrap/part-06 >> /tmp/cmms-v2.b64
+          python - <<'PY'
+          import base64, io, tarfile
+          from pathlib import Path
+          data=base64.b64decode(Path('/tmp/cmms-v2.b64').read_text())
+          with tarfile.open(fileobj=io.BytesIO(data), mode='r:gz') as tar:
+              for member in tar.getmembers():
+                  target=Path(member.name)
+                  if target.is_absolute() or '..' in target.parts:
+                      raise SystemExit(f'unsafe path: {member.name}')
+              tar.extractall('.')
+          print('CMMS V2 extracted')
+          PY
+      - name: Validate generated sources
+        run: |
+          node --check cmms-v2.js
+          python -m py_compile register_notion_page.py sync_firebase.py migrate_history_v2.py install_cmms_v2.py
+          python install_cmms_v2.py
+          grep -q '<script src="cmms-v2.js"></script>' index.html
+          git checkout -- index.html
+      - name: Commit generated feature files
+        run: |
+          rm -rf .cmms-bootstrap
+          rm -f .github/workflows/bootstrap-cmms-v2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: preparar CMMS V2 [skip ci]"
+          git push origin HEAD:feat/cmms-v2
