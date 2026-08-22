@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'dashboard-reporting.js'
+      - 'dashboard-reporting-pdf.js'
       - 'install_dashboard_reporting.py'
 
 permissions:
@@ -27,11 +28,11 @@ jobs:
       - name: Publish index update
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "4189823+github-actions[bot]@users.noreply.github.com"
           git add index.html
           if git diff --cached --quiet; then
-            echo "index.html já contém o dashboard mensal."
+            echo "index.html já contém o dashboard mensal e PDF."
             exit 0
           fi
-          git commit -m "feat: ativar dashboard mensal [skip ci]"
+          git commit -m "feat: ativar dashboard mensal e PDF [skip ci]"
           git push origin HEAD:main
