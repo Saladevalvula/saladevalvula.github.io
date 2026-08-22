@@ -1,0 +1,48 @@
+name: Migrate history to V2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'history_v2_migration.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: history-v2-migration
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Run migration/audit
+        id: migration
+        continue-on-error: true
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: python migrate_history_v2.py history_v2_migration.json history_v2_migration_status.json
+      - name: Publish migration status
+        if: always()
+        run: |
+          if [ ! -f history_v2_migration_status.json ]; then exit 0; fi
+          cp history_v2_migration_status.json /tmp/history_v2_migration_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B publish-history-v2-status origin/main
+          cp /tmp/history_v2_migration_status.json history_v2_migration_status.json
+          git add history_v2_migration_status.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "status: auditoria histórico V2 [skip ci]"
+          git push origin HEAD:main
+      - name: Fail when migration failed
+        if: steps.migration.outcome == 'failure'
+        run: exit 1
