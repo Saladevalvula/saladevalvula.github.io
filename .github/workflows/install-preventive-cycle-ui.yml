@@ -1,0 +1,37 @@
+name: Install preventive cycle UI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preventive-cycle-ui.js'
+      - 'install_preventive_cycle_ui.py'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: install-preventive-cycle-ui
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python install_preventive_cycle_ui.py
+      - name: Publish index update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "index.html já contém preventive-cycle-ui.js."
+            exit 0
+          fi
+          git commit -m "feat: ativar posição do ciclo preventivo [skip ci]"
+          git push origin HEAD:main
