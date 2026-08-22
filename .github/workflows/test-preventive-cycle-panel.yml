@@ -24,22 +24,24 @@ jobs:
         run: |
           node --check preventive-cycle-ui.js
           node --check service-worker.js
-      - name: Validate L512 cycle count in panel
+      - name: Validate L512 cycle count and full planned range
         run: |
           node - <<'NODE'
           const fs=require('fs'), vm=require('vm');
           global.window=global;
           global.state={mode:'register',step:'line'};
           global.LINE_CONFIGS={'512':{valveCount:175},'513':{valveCount:175},'514':{valveCount:72}};
+          global.render=()=>{};
           global.renderOrdersView=()=>{};
           global.renderRegisterFlow=()=>{};
-          global.render=()=>{};
-          global.document={getElementById(){return null;}};
-          let listener=null;
-          global.db={collection(name){
-            if(name!=='maintenance_cycle_state') throw new Error('coleção inesperada: '+name);
-            return {onSnapshot(cb){listener=cb;}};
-          }};
+          global.lucide={createIcons(){}};
+          const listeners={};
+          global.db={collection(name){return {onSnapshot(cb){listeners[name]=cb;}};}};
+          let lastBlock=null;
+          global.document={
+            getElementById(){return null;},
+            createElement(){return {id:'',className:'',innerHTML:'',remove(){}};}
+          };
 
           const pendLabel={textContent:'Pendentes'};
           const pendValue={textContent:'169'};
@@ -52,15 +54,33 @@ jobs:
             getAttribute(name){return name==='onclick'?"selectLine('512')":null;},
             closest(sel){return sel==='.card-industrial'?card:null;}
           };
-          const container={querySelectorAll(sel){return sel==='[onclick]'?[clickTarget]:[];}};
+          const registerContainer={querySelectorAll(sel){return sel==='[onclick]'?[clickTarget]:[];}};
+          const root={querySelector(){return null;},appendChild(block){lastBlock=block;}};
+          const ordersContainer={
+            querySelectorAll(){return [];},
+            querySelector(sel){return sel==='.space-y-4'?root:null;},
+            firstElementChild:null
+          };
 
           vm.runInThisContext(fs.readFileSync('preventive-cycle-ui.js','utf8'),{filename:'preventive-cycle-ui.js'});
-          if(!listener) throw new Error('listener do ciclo não registrado');
-          listener({forEach(cb){cb({id:'512',data(){return {completedThrough:41,nextValve:42};}});}});
-          global.renderRegisterFlow(container);
+          if(!listeners.maintenance_cycle_state) throw new Error('listener do ciclo não registrado');
+          if(!listeners.maintenance_plans) throw new Error('listener dos planos não registrado');
+
+          listeners.maintenance_cycle_state({forEach(cb){cb({id:'512',data(){return {completedThrough:41,nextValve:42};}});}});
+          global.renderRegisterFlow(registerContainer);
           if(prevValue.textContent!=='41') throw new Error('Preventivas deveria ser 41, veio '+prevValue.textContent);
           if(pendValue.textContent!=='134') throw new Error('Pendentes deveria ser 134, veio '+pendValue.textContent);
-          console.log('OK: L512 mostra 41 preventivas concluídas e 134 pendentes.');
+
+          const now=new Date();
+          const month=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+          listeners.maintenance_plans({forEach(cb){cb({id:month+'-512',data(){return {month,line:'512',plannedDate:'2026-08-24',valves:[42,43,44,45,46,47,48]};}});}});
+          global.state.mode='orders';
+          global.renderOrdersView(ordersContainer);
+          const html=lastBlock?.innerHTML||'';
+          for(const v of [42,43,44,45,46,47,48]) if(!html.includes('V'+v)) throw new Error('programação não mostra V'+v);
+          if(!html.includes('7 válvulas')) throw new Error('programação não mostra total de 7 válvulas');
+          if(!html.includes('Próxima no ciclo: V42')) throw new Error('posição do ciclo não está clara');
+          console.log('OK: L512 mostra 41 preventivas, 134 pendentes e programação V42-V48 completa.');
           NODE
       - name: Validate fresh-cache path
         run: |
