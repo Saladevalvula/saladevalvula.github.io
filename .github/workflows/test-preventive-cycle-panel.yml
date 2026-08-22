@@ -1,0 +1,68 @@
+name: Test preventive cycle panel
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'preventive-cycle-ui.js'
+      - 'service-worker.js'
+      - '.github/workflows/test-preventive-cycle-panel.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          node --check preventive-cycle-ui.js
+          node --check service-worker.js
+      - name: Validate L512 cycle count in panel
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'), vm=require('vm');
+          global.window=global;
+          global.state={mode:'register',step:'line'};
+          global.LINE_CONFIGS={'512':{valveCount:175},'513':{valveCount:175},'514':{valveCount:72}};
+          global.renderOrdersView=()=>{};
+          global.renderRegisterFlow=()=>{};
+          global.render=()=>{};
+          global.document={getElementById(){return null;}};
+          let listener=null;
+          global.db={collection(name){
+            if(name!=='maintenance_cycle_state') throw new Error('coleção inesperada: '+name);
+            return {onSnapshot(cb){listener=cb;}};
+          }};
+
+          const pendLabel={textContent:'Pendentes'};
+          const pendValue={textContent:'169'};
+          const prevLabel={textContent:'Preventivas'};
+          const prevValue={textContent:'20'};
+          pendLabel.nextElementSibling=pendValue;
+          prevLabel.nextElementSibling=prevValue;
+          const card={querySelectorAll(sel){return sel==='span'?[pendLabel,pendValue,prevLabel,prevValue]:[];}};
+          const clickTarget={
+            getAttribute(name){return name==='onclick'?"selectLine('512')":null;},
+            closest(sel){return sel==='.card-industrial'?card:null;}
+          };
+          const container={querySelectorAll(sel){return sel==='[onclick]'?[clickTarget]:[];}};
+
+          vm.runInThisContext(fs.readFileSync('preventive-cycle-ui.js','utf8'),{filename:'preventive-cycle-ui.js'});
+          if(!listener) throw new Error('listener do ciclo não registrado');
+          listener({forEach(cb){cb({id:'512',data(){return {completedThrough:41,nextValve:42};}});}});
+          global.renderRegisterFlow(container);
+          if(prevValue.textContent!=='41') throw new Error('Preventivas deveria ser 41, veio '+prevValue.textContent);
+          if(pendValue.textContent!=='134') throw new Error('Pendentes deveria ser 134, veio '+pendValue.textContent);
+          console.log('OK: L512 mostra 41 preventivas concluídas e 134 pendentes.');
+          NODE
+      - name: Validate fresh-cache path
+        run: |
+          grep -q "preventive-cycle-ui.js" service-worker.js
+          grep -q "sala-valvulas-cmms-v2-v3" service-worker.js
