@@ -28,6 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: pip install requests
       - name: Syntax checks
         run: |
           python -m py_compile apply_ops_dispatch.py install_preventive_cycle_ui.py
