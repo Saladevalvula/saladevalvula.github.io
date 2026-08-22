@@ -38,16 +38,25 @@ jobs:
           grep -q '<script src="preventive-cycle-ui.js"></script>' index.html
           python install_preventive_cycle_ui.py
           test "$(grep -c '<script src="preventive-cycle-ui.js"></script>' index.html)" -eq 1
-      - name: Validate dispatch contract
+      - name: Validate dispatcher contracts
+        env:
+          FIREBASE_KEY: dummy
         run: |
           python - <<'PY'
-          import json
-          c=json.load(open('ops_dispatch.json', encoding='utf-8'))
-          assert c['operation']=='preventive_cycle_plan'
-          assert c['line']=='512'
-          assert c['completedThrough']==41
-          assert c['plannedValves']==[42,43,44,45,46,47,48]
-          assert c['plannedDate']=='2026-08-24'
-          assert c['month']=='2026-08'
-          print('OK: contrato do plano preventivo válido.')
+          import apply_ops_dispatch as a
+          plan={
+            'line':'512','completedThrough':41,'plannedValves':[42,43,44,45,46,47,48],
+            'plannedDate':'2026-08-24','month':'2026-08','linkedSapOrderIds':['100003749068','100003749070']
+          }
+          assert a.validate_preventive_plan(plan)==('512',41,[42,43,44,45,46,47,48],'2026-08')
+          sap={
+            'sapOrderNumber':'100003759812','line':'513','month':'2026-08','status':'concluida'
+          }
+          assert a.validate_sap_order(sap)==('100003759812','513','2026-08','concluida')
+          assert a.safe_id('100003759812')=='100003759812'
+          print('OK: contratos de plano preventivo e ordem SAP válidos.')
           PY
+      - name: Validate UI exposes SAP linkage
+        run: |
+          grep -q 'linkedSapOrderIds' preventive-cycle-ui.js
+          grep -q 'Ordem SAP não vinculada' preventive-cycle-ui.js
