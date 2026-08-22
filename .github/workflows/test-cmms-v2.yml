@@ -1,0 +1,62 @@
+name: Test CMMS V2
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'cmms-v2.js'
+      - 'register_notion_page.py'
+      - 'sync_firebase.py'
+      - 'migrate_history_v2.py'
+      - 'manifest.webmanifest'
+      - 'service-worker.js'
+      - 'app-icon.svg'
+      - 'install_cmms_v2.py'
+      - '.github/workflows/install-cmms-v2.yml'
+      - '.github/workflows/migrate-history-v2.yml'
+      - '.github/workflows/test-cmms-v2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install requests
+      - name: Syntax checks
+        run: |
+          node --check cmms-v2.js
+          python -m py_compile register_notion_page.py sync_firebase.py migrate_history_v2.py install_cmms_v2.py
+      - name: Test shell installer
+        run: |
+          python install_cmms_v2.py
+          grep -q '<script src="cmms-v2.js"></script>' index.html
+          python install_cmms_v2.py
+          test "$(grep -c '<script src="cmms-v2.js"></script>' index.html)" -eq 1
+      - name: Read-only migration audit
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          cat > /tmp/migration.json <<'JSON'
+          {"enabled":true,"apply":false,"requestedAt":"pr-test"}
+          JSON
+          python migrate_history_v2.py /tmp/migration.json /tmp/migration-status.json
+          cat /tmp/migration-status.json
+          python - <<'PY'
+          import json
+          s=json.load(open('/tmp/migration-status.json'))
+          assert s['status']=='dry_run', s
+          assert s['legacyHistoryItems'] > 0, s
+          assert s['uniqueHistoryDocuments'] > 0, s
+          print('OK: auditoria V2 somente leitura.')
+          PY
