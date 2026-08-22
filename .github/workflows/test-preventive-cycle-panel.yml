@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'preventive-cycle-ui.js'
+      - 'mobile-polish.js'
+      - 'install_preventive_cycle_ui.py'
       - 'service-worker.js'
       - '.github/workflows/test-preventive-cycle-panel.yml'
 
@@ -20,10 +22,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Syntax checks
         run: |
           node --check preventive-cycle-ui.js
+          node --check mobile-polish.js
           node --check service-worker.js
+          python -m py_compile install_preventive_cycle_ui.py
+      - name: Validate mobile plan modal installation
+        run: |
+          python install_preventive_cycle_ui.py
+          grep -q '<script src="mobile-polish.js"></script>' index.html
+          test "$(grep -c '<script src="mobile-polish.js"></script>' index.html)" -eq 1
+          python install_preventive_cycle_ui.py
+          test "$(grep -c '<script src="mobile-polish.js"></script>' index.html)" -eq 1
+          grep -q 'cmms-plan-fields' mobile-polish.js
+          grep -q '@media(max-width:520px)' mobile-polish.js
+          grep -q 'cmms-month-field' mobile-polish.js
       - name: Validate L512 cycle count and full planned range
         run: |
           node - <<'NODE'
@@ -85,4 +102,5 @@ jobs:
       - name: Validate fresh-cache path
         run: |
           grep -q "preventive-cycle-ui.js" service-worker.js
-          grep -q "sala-valvulas-cmms-v2-v3" service-worker.js
+          grep -q "mobile-polish.js" service-worker.js
+          grep -q "sala-valvulas-cmms-v2-v4" service-worker.js
