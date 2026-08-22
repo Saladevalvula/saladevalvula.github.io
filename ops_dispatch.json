@@ -1,0 +1,11 @@
+{
+  "enabled": false,
+  "requestId": "",
+  "requestedAt": "",
+  "operation": "preventive_cycle_plan",
+  "line": "512",
+  "completedThrough": 41,
+  "plannedValves": [42, 43, 44, 45, 46, 47, 48],
+  "plannedDate": "2026-08-24",
+  "month": "2026-08"
+}
