@@ -1,0 +1,12 @@
+{
+  "status": "dry_run_verified",
+  "legacyHistoryItems": 301,
+  "uniqueHistoryDocuments": 301,
+  "alreadyExistingHistoryDocuments": 0,
+  "perLine": {
+    "512": 188,
+    "513": 91,
+    "514": 22
+  },
+  "message": "Auditoria somente leitura aprovada. Migração real preparada para o merge do CMMS V2."
+}

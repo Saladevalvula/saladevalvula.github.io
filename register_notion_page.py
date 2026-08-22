@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
+"""Registra uma única página do Notion no histórico V2 do Firestore.
+
+Histórico V2:
+  lines/{linha}/valves/{valvula}/history/{recordId}
+
+A página do Notion continua sendo a identidade lógica. O sync_index guarda
+linha, válvula e recordIds para permitir edição de componente ou mudança de
+válvula sem deixar cópias antigas.
+"""
 import hashlib
 import json
 import os
 import re
 import sys
-import time
 from datetime import datetime, timezone
 
 import requests
@@ -12,43 +20,21 @@ import requests
 NOTION_TOKEN = os.environ["NOTION_TOKEN"]
 FIREBASE_KEY = os.environ["FIREBASE_KEY"]
 FIREBASE_PROJ = os.environ.get("FIREBASE_PROJ", "sala-valvulas-ow-163b3")
-
-FIREBASE_ROOT = (
-    f"https://firestore.googleapis.com/v1/projects/{FIREBASE_PROJ}"
-    f"/databases/(default)/documents"
-)
-FIREBASE_COMMIT_URL = (
-    f"https://firestore.googleapis.com/v1/projects/{FIREBASE_PROJ}"
-    f"/databases/(default)/documents:commit?key={FIREBASE_KEY}"
-)
-DOC_BASE = f"projects/{FIREBASE_PROJ}/databases/(default)/documents"
-
-PROP_VALVULA = "Válvula"
-PROP_INTERVENCAO = "Intervenção"
-PROP_OBSERVACAO = "Observação"
+ROOT = f"https://firestore.googleapis.com/v1/projects/{FIREBASE_PROJ}/databases/(default)/documents"
 
 MAX_VALVES = {"512": 175, "513": 175, "514": 72}
-TYPE_MAP = {
-    "corretiva": "corretiva",
-    "preventiva": "preventiva",
-    "diagnóstico": "inspecao",
-    "diagnostico": "inspecao",
-}
+TYPE_MAP = {"corretiva": "corretiva", "preventiva": "preventiva", "diagnóstico": "inspecao", "diagnostico": "inspecao"}
 
 
 def notion_headers():
-    return {
-        "Authorization": f"Bearer {NOTION_TOKEN}",
-        "Notion-Version": "2022-06-28",
-        "Content-Type": "application/json",
-    }
+    return {"Authorization": f"Bearer {NOTION_TOKEN}", "Notion-Version": "2022-06-28", "Content-Type": "application/json"}
 
 
 def txt(prop):
     if not prop:
         return ""
-    prop_type = prop.get("type", "")
-    return "".join(item.get("plain_text", "") for item in prop.get(prop_type, []))
+    t = prop.get("type", "")
+    return "".join(x.get("plain_text", "") for x in prop.get(t, []))
 
 
 def sel(prop):
@@ -56,7 +42,7 @@ def sel(prop):
 
 
 def msel(prop):
-    return [item["name"] for item in (prop or {}).get("multi_select", [])]
+    return [x["name"] for x in (prop or {}).get("multi_select", [])]
 
 
 def dat(prop):
@@ -73,431 +59,226 @@ def normalize_timestamp(value):
 
 
 def normalize_subset(component):
-    value = (component or "Geral").strip()
-    if value.casefold() in {"sonda", "jumper"}:
-        return "SONDA"
-    return value
+    v = (component or "Geral").strip()
+    return "SONDA" if v.casefold() in {"sonda", "jumper"} else v
 
 
 def stable_record_id(page_id, subset):
-    raw = f"{page_id}:{subset}".encode("utf-8")
-    return "notion-" + hashlib.sha1(raw).hexdigest()[:20]
+    return "notion-" + hashlib.sha1(f"{page_id}:{subset}".encode()).hexdigest()[:20]
 
 
-def record_value(record):
-    fields = {
-        "id": {"stringValue": record["id"]},
-        "notionPageId": {"stringValue": record["notionPageId"]},
-        "source": {"stringValue": "chatgpt_notion_dispatch"},
-        "timestamp": {"stringValue": record["timestamp"]},
-        "subset": {"stringValue": record["subset"]},
-        "type": {"stringValue": record["type"]},
-        "description": {"stringValue": record["description"]},
-        "executante": {"stringValue": ""},
-        "turno": {"stringValue": ""},
-        "status": {"stringValue": record["status"]},
-        "isCritical": {"booleanValue": False},
-        "photos": {"arrayValue": {"values": []}},
-    }
-    return {"mapValue": {"fields": fields}}
+def s(v): return {"stringValue": str(v)}
+def b(v): return {"booleanValue": bool(v)}
+def arr_s(values): return {"arrayValue": {"values": [s(v) for v in values]}}
 
 
-def field_string(value, field_name):
-    try:
-        return (
-            value["mapValue"]["fields"]
-            .get(field_name, {})
-            .get("stringValue", "")
-        )
-    except (KeyError, TypeError):
-        return ""
+def doc_url(path):
+    return f"{ROOT}/{path}?key={FIREBASE_KEY}"
 
 
-def firebase_doc_url(line_id, valve_id):
-    return f"{FIREBASE_ROOT}/lines/{line_id}/valves/{valve_id}?key={FIREBASE_KEY}"
+def get_doc(path):
+    return requests.get(doc_url(path), timeout=30)
 
 
-def read_history(line_id, valve_id):
-    response = requests.get(firebase_doc_url(line_id, valve_id), timeout=30)
-    if response.status_code == 404:
-        return [], None, response
-    if response.status_code != 200:
-        return None, None, response
-
-    body = response.json()
-    history = (
-        body.get("fields", {})
-        .get("historico", {})
-        .get("arrayValue", {})
-        .get("values", [])
-    )
-    return history, body.get("updateTime"), response
+def patch_doc(path, fields, update_mask=None):
+    url = doc_url(path)
+    if update_mask:
+        # Rebuild URL because the key is already present.
+        masks = "&".join(f"updateMask.fieldPaths={m}" for m in update_mask)
+        url += "&" + masks
+    return requests.patch(url, json={"fields": fields}, timeout=30)
 
 
-def commit_history(line_id, valve_id, history, update_time=None):
-    doc_name = f"{DOC_BASE}/lines/{line_id}/valves/{valve_id}"
-    write = {
-        "update": {
-            "name": doc_name,
-            "fields": {
-                "valveNumber": {"integerValue": int(valve_id)},
-                "historico": {"arrayValue": {"values": history}},
-            },
-        },
-        "updateMask": {"fieldPaths": ["valveNumber", "historico"]},
-    }
-    if update_time:
-        write["currentDocument"] = {"updateTime": update_time}
-
-    return requests.post(
-        FIREBASE_COMMIT_URL,
-        json={"writes": [write]},
-        timeout=30,
-    )
+def delete_doc(path):
+    return requests.delete(doc_url(path), timeout=30)
 
 
-def replace_page_history(line_id, valve_id, page_id, records):
-    last_response = None
-    for attempt in range(1, 4):
-        history, update_time, read_response = read_history(line_id, valve_id)
-        if history is None:
-            return read_response
-
-        history = [
-            value
-            for value in history
-            if field_string(value, "notionPageId") != page_id
-        ]
-        history.extend(record_value(record) for record in records)
-
-        last_response = commit_history(line_id, valve_id, history, update_time)
-        if last_response.status_code in (200, 201):
-            return last_response
-
-        if last_response.status_code in (409, 412) and attempt < 3:
-            time.sleep(0.5 * attempt)
-            continue
-        return last_response
-
-    return last_response
+def list_history(line, valve):
+    url = f"{ROOT}/lines/{line}/valves/{valve}/history?pageSize=500&key={FIREBASE_KEY}"
+    r = requests.get(url, timeout=30)
+    if r.status_code == 404:
+        return []
+    r.raise_for_status()
+    return r.json().get("documents", [])
 
 
-def remove_page_from_old_location(line_id, valve_id, page_id):
-    for attempt in range(1, 4):
-        history, update_time, read_response = read_history(line_id, valve_id)
-        if history is None:
-            return read_response
-
-        cleaned = [
-            value
-            for value in history
-            if field_string(value, "notionPageId") != page_id
-        ]
-        if len(cleaned) == len(history):
-            return read_response
-
-        response = commit_history(line_id, valve_id, cleaned, update_time)
-        if response.status_code in (200, 201):
-            return response
-        if response.status_code in (409, 412) and attempt < 3:
-            time.sleep(0.5 * attempt)
-            continue
-        return response
-
-    return response
-
-
-def index_url(page_id):
-    return f"{FIREBASE_ROOT}/sync_index/{page_id}?key={FIREBASE_KEY}"
+def field_string(doc_or_fields, name):
+    fields = doc_or_fields.get("fields", doc_or_fields)
+    return fields.get(name, {}).get("stringValue", "")
 
 
 def read_index(page_id):
-    response = requests.get(index_url(page_id), timeout=30)
-    if response.status_code == 404:
+    r = get_doc(f"sync_index/{page_id}")
+    if r.status_code == 404:
         return None
-    response.raise_for_status()
-    fields = response.json().get("fields", {})
-    return {
-        "line": fields.get("line", {}).get("stringValue", ""),
-        "valve": fields.get("valve", {}).get("stringValue", ""),
-    }
+    r.raise_for_status()
+    f = r.json().get("fields", {})
+    ids = [v.get("stringValue", "") for v in f.get("recordIds", {}).get("arrayValue", {}).get("values", [])]
+    return {"line": field_string(f, "line"), "valve": field_string(f, "valve"), "recordIds": [x for x in ids if x]}
 
 
-def write_index(page_id, line_id, valve_id):
-    name = f"{DOC_BASE}/sync_index/{page_id}"
-    body = {
-        "writes": [
-            {
-                "update": {
-                    "name": name,
-                    "fields": {
-                        "line": {"stringValue": line_id},
-                        "valve": {"stringValue": valve_id},
-                        "updatedAt": {
-                            "timestampValue": datetime.now(timezone.utc).isoformat()
-                        },
-                    },
-                },
-                "updateMask": {"fieldPaths": ["line", "valve", "updatedAt"]},
-            }
-        ]
-    }
-    return requests.post(FIREBASE_COMMIT_URL, json=body, timeout=30)
+def write_index(page_id, line, valve, record_ids):
+    fields = {"line": s(line), "valve": s(valve), "recordIds": arr_s(record_ids), "updatedAt": s(datetime.now(timezone.utc).isoformat()), "schemaVersion": s("history_v2")}
+    r = patch_doc(f"sync_index/{page_id}", fields)
+    if r.status_code not in (200, 201):
+        raise RuntimeError(f"Falha no sync_index: {r.status_code} {r.text[:300]}")
 
 
 def fetch_notion_page(page_id):
-    response = requests.get(
-        f"https://api.notion.com/v1/pages/{page_id}",
-        headers=notion_headers(),
-        timeout=30,
-    )
-    response.raise_for_status()
-    return response.json()
+    r = requests.get(f"https://api.notion.com/v1/pages/{page_id}", headers=notion_headers(), timeout=30)
+    r.raise_for_status()
+    return r.json()
 
 
 def build_records(page):
     props = page.get("properties", {})
     page_id = page.get("id", "")
-
     line_raw = sel(props.get("Linha")).strip()
-    valve_raw = txt(props.get(PROP_VALVULA)).strip()
+    valve_raw = txt(props.get("Válvula")).strip()
     type_raw = sel(props.get("Tipo")).strip()
-
     if not line_raw or not valve_raw:
         raise ValueError("Linha ou Válvula vazia")
-
-    line_id = line_raw[1:] if line_raw.upper().startswith("L") else line_raw
-    if line_id not in MAX_VALVES:
+    line = line_raw[1:] if line_raw.upper().startswith("L") else line_raw
+    if line not in MAX_VALVES:
         raise ValueError(f"Linha não suportada: {line_raw}")
-
     if not re.fullmatch(r"\d+", valve_raw):
         raise ValueError(f"Válvula deve conter apenas número: {valve_raw}")
-
-    valve_id = str(int(valve_raw))
-    valve_number = int(valve_id)
-    if valve_number < 1 or valve_number > MAX_VALVES[line_id]:
-        raise ValueError(
-            f"Válvula fora da faixa da L{line_id}: {valve_number} "
-            f"(máx. {MAX_VALVES[line_id]})"
-        )
-
+    valve = str(int(valve_raw))
+    if not 1 <= int(valve) <= MAX_VALVES[line]:
+        raise ValueError(f"Válvula fora da faixa da L{line}: {valve} (máx. {MAX_VALVES[line]})")
     app_type = TYPE_MAP.get(type_raw.casefold())
     if not app_type:
         raise ValueError(f"Tipo não mapeado: {type_raw}")
-
     status_raw = sel(props.get("Status"))
-    status = (
-        "pendente"
-        if "jumper" in status_raw.casefold() or "pend" in status_raw.casefold()
-        else "ok"
-    )
-
-    timestamp = normalize_timestamp(
-        dat(props.get("Data"))
-        or page.get("last_edited_time")
-        or page.get("created_time")
-    )
-
-    intervention = txt(props.get(PROP_INTERVENCAO))
-    cause = txt(props.get("Causa"))
-    observation = txt(props.get(PROP_OBSERVACAO))
-    parts = (
-        ([f"[{intervention}]"] if intervention else [])
-        + ([cause] if cause else [])
-        + ([observation] if observation else [])
-    )
+    status = "pendente" if ("jumper" in status_raw.casefold() or "pend" in status_raw.casefold()) else "ok"
+    timestamp = normalize_timestamp(dat(props.get("Data")) or page.get("last_edited_time") or page.get("created_time"))
+    intervention, cause, observation = txt(props.get("Intervenção")), txt(props.get("Causa")), txt(props.get("Observação"))
+    parts = ([f"[{intervention}]"] if intervention else []) + ([cause] if cause else []) + ([observation] if observation else [])
     description = " | ".join(parts) or "Manutenção"
-
     subsets = []
-    for component in msel(props.get("Componente")) or ["Geral"]:
-        subset = normalize_subset(component)
-        if subset and subset not in subsets:
-            subsets.append(subset)
-
-    records = [
-        {
-            "id": stable_record_id(page_id, subset),
-            "notionPageId": page_id,
-            "timestamp": timestamp,
-            "subset": subset,
-            "type": app_type,
-            "description": description,
-            "status": status,
-        }
-        for subset in subsets
-    ]
-
-    return line_id, valve_id, records
+    for comp in msel(props.get("Componente")) or ["Geral"]:
+        sub = normalize_subset(comp)
+        if sub and sub not in subsets:
+            subsets.append(sub)
+    now = datetime.now(timezone.utc).isoformat()
+    records = []
+    for subset in subsets:
+        rid = stable_record_id(page_id, subset)
+        records.append({"id": rid, "notionPageId": page_id, "timestamp": timestamp, "subset": subset, "type": app_type, "description": description, "executante": "", "turno": "", "status": status, "isCritical": False, "source": "chatgpt_notion_dispatch", "line": line, "valve": valve, "updatedAt": now})
+    return line, valve, records
 
 
-def verify_page_history(line_id, valve_id, page_id, records):
-    history, _, response = read_history(line_id, valve_id)
-    if history is None:
-        raise RuntimeError(
-            f"Falha ao verificar Firebase: HTTP {response.status_code} "
-            f"{response.text[:300]}"
-        )
+def record_fields(record, existing_created_at=None):
+    return {
+        "id": s(record["id"]), "notionPageId": s(record["notionPageId"]), "source": s(record["source"]),
+        "timestamp": s(record["timestamp"]), "subset": s(record["subset"]), "type": s(record["type"]),
+        "description": s(record["description"]), "executante": s(record.get("executante", "")), "turno": s(record.get("turno", "")),
+        "status": s(record["status"]), "isCritical": b(record.get("isCritical", False)), "line": s(record["line"]), "valve": s(record["valve"]),
+        "createdAt": s(existing_created_at or record.get("updatedAt") or datetime.now(timezone.utc).isoformat()), "updatedAt": s(record.get("updatedAt") or datetime.now(timezone.utc).isoformat())
+    }
 
-    page_items = [
-        value
-        for value in history
-        if field_string(value, "notionPageId") == page_id
-    ]
-    if len(page_items) != len(records):
-        raise RuntimeError(
-            f"Verificação falhou: página {page_id} deveria ter {len(records)} "
-            f"registro(s), mas o Firebase contém {len(page_items)}"
-        )
 
+def matching_page_record_ids(line, valve, page_id):
+    out = []
+    for doc in list_history(line, valve):
+        if field_string(doc, "notionPageId") == page_id:
+            out.append(doc["name"].split("/")[-1])
+    return out
+
+
+def upsert_records(line, valve, page_id, records, previous):
+    # Parent doc only keeps metadata/status; history is now a subcollection.
+    parent = patch_doc(f"lines/{line}/valves/{valve}", {"valveNumber": {"integerValue": int(valve)}}, ["valveNumber"])
+    if parent.status_code not in (200, 201):
+        raise RuntimeError(f"Falha ao preparar válvula: {parent.status_code} {parent.text[:300]}")
+
+    new_ids = [r["id"] for r in records]
+    old_line = previous.get("line") if previous else line
+    old_valve = previous.get("valve") if previous else valve
+    old_ids = list(previous.get("recordIds", [])) if previous else []
+    if previous and not old_ids and old_line and old_valve:
+        old_ids = matching_page_record_ids(old_line, old_valve, page_id)
+    if not previous:
+        old_ids = matching_page_record_ids(line, valve, page_id)
+
+    # Remove stale docs if line/valve/subsets changed.
+    for rid in old_ids:
+        if old_line != line or old_valve != valve or rid not in new_ids:
+            dr = delete_doc(f"lines/{old_line}/valves/{old_valve}/history/{rid}")
+            if dr.status_code not in (200, 404):
+                raise RuntimeError(f"Falha ao remover registro antigo {rid}: {dr.status_code} {dr.text[:200]}")
+
+    for rec in records:
+        path = f"lines/{line}/valves/{valve}/history/{rec['id']}"
+        existing = get_doc(path)
+        created_at = None
+        if existing.status_code == 200:
+            created_at = field_string(existing.json(), "createdAt") or None
+        elif existing.status_code != 404:
+            raise RuntimeError(f"Falha ao ler registro atual: {existing.status_code} {existing.text[:200]}")
+        wr = patch_doc(path, record_fields(rec, created_at))
+        if wr.status_code not in (200, 201):
+            raise RuntimeError(f"Firebase retornou {wr.status_code}: {wr.text[:500]}")
+
+    write_index(page_id, line, valve, new_ids)
+    return new_ids
+
+
+def verify(line, valve, page_id, records):
+    docs = list_history(line, valve)
+    page_docs = [d for d in docs if field_string(d, "notionPageId") == page_id]
+    if len(page_docs) != len(records):
+        raise RuntimeError(f"Verificação falhou: esperado {len(records)} registro(s), encontrado {len(page_docs)}")
     verified = []
-    for record in records:
-        matches = [
-            value
-            for value in page_items
-            if field_string(value, "subset") == record["subset"]
-        ]
-        if len(matches) != 1:
-            raise RuntimeError(
-                f"Verificação falhou no subset {record['subset']}: "
-                f"esperado 1 registro, encontrado {len(matches)}"
-            )
-
-        saved = matches[0]
-        checks = {
-            "id": record["id"],
-            "type": record["type"],
-            "description": record["description"],
-            "status": record["status"],
-        }
-        for field_name, expected in checks.items():
-            actual = field_string(saved, field_name)
+    by_id = {d["name"].split("/")[-1]: d for d in page_docs}
+    for r in records:
+        d = by_id.get(r["id"])
+        if not d:
+            raise RuntimeError(f"Verificação falhou: documento {r['id']} ausente")
+        checks = {"id": r["id"], "notionPageId": page_id, "subset": r["subset"], "type": r["type"], "description": r["description"], "status": r["status"], "line": line, "valve": valve}
+        for k, expected in checks.items():
+            actual = field_string(d, k)
             if actual != expected:
-                raise RuntimeError(
-                    f"Verificação falhou em {record['subset']}/{field_name}: "
-                    f"esperado {expected!r}, encontrado {actual!r}"
-                )
-
-        verified.append(
-            {
-                "subset": record["subset"],
-                "type": record["type"],
-                "count": 1,
-            }
-        )
-
-    indexed = read_index(page_id)
-    if not indexed:
-        raise RuntimeError("Verificação falhou: sync_index não encontrado")
-    if indexed.get("line") != line_id or indexed.get("valve") != valve_id:
-        raise RuntimeError(
-            "Verificação falhou: sync_index aponta para "
-            f"L{indexed.get('line')} V{indexed.get('valve')} em vez de "
-            f"L{line_id} V{valve_id}"
-        )
-
+                raise RuntimeError(f"Verificação falhou em {r['subset']}/{k}: esperado {expected!r}, encontrado {actual!r}")
+        verified.append({"subset": r["subset"], "type": r["type"], "count": 1})
+    idx = read_index(page_id)
+    if not idx or idx["line"] != line or idx["valve"] != valve or set(idx.get("recordIds", [])) != {r["id"] for r in records}:
+        raise RuntimeError("Verificação falhou: sync_index inconsistente")
     return verified
 
 
 def register_page(page_id):
     page = fetch_notion_page(page_id)
-    canonical_page_id = page.get("id", page_id)
-    line_id, valve_id, records = build_records(page)
-
-    previous = read_index(canonical_page_id)
-    if previous and (
-        previous.get("line") != line_id or previous.get("valve") != valve_id
-    ):
-        old_line = previous.get("line", "")
-        old_valve = previous.get("valve", "")
-        if old_line in MAX_VALVES and old_valve.isdigit():
-            response = remove_page_from_old_location(
-                old_line, old_valve, canonical_page_id
-            )
-            if response.status_code not in (200, 201, 404):
-                raise RuntimeError(
-                    f"Falha ao remover local antigo: {response.status_code} "
-                    f"{response.text[:300]}"
-                )
-
-    response = replace_page_history(
-        line_id, valve_id, canonical_page_id, records
-    )
-    if response is None or response.status_code not in (200, 201):
-        code = getattr(response, "status_code", "sem resposta")
-        text = getattr(response, "text", "")[:500]
-        raise RuntimeError(f"Firebase retornou {code}: {text}")
-
-    index_response = write_index(canonical_page_id, line_id, valve_id)
-    if index_response.status_code not in (200, 201):
-        raise RuntimeError(
-            f"Histórico salvo, mas índice falhou: {index_response.status_code} "
-            f"{index_response.text[:300]}"
-        )
-
-    verified_records = verify_page_history(
-        line_id, valve_id, canonical_page_id, records
-    )
-
-    print(
-        f"VERIFICADO L{line_id} V{valve_id} "
-        f"[{', '.join(r['subset'] for r in records)}] "
-        f"page={canonical_page_id}"
-    )
-
-    return {
-        "pageId": canonical_page_id,
-        "line": line_id,
-        "valve": valve_id,
-        "records": verified_records,
-    }
+    canonical = page.get("id", page_id)
+    line, valve, records = build_records(page)
+    previous = read_index(canonical)
+    upsert_records(line, valve, canonical, records, previous)
+    verified = verify(line, valve, canonical, records)
+    print(f"VERIFICADO V2 L{line} V{valve} [{', '.join(r['subset'] for r in records)}] page={canonical}")
+    return {"pageId": canonical, "line": line, "valve": valve, "records": verified}
 
 
 def write_result(path, data):
-    with open(path, "w", encoding="utf-8") as handle:
-        json.dump(data, handle, ensure_ascii=False, indent=2)
-        handle.write("\n")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2); f.write("\n")
 
 
 def main():
     dispatch_path = sys.argv[1] if len(sys.argv) > 1 else "maintenance_dispatch.json"
-    result_path = (
-        sys.argv[2] if len(sys.argv) > 2 else "maintenance_dispatch_status.json"
-    )
-
-    with open(dispatch_path, "r", encoding="utf-8") as handle:
-        dispatch = json.load(handle)
-
+    result_path = sys.argv[2] if len(sys.argv) > 2 else "maintenance_dispatch_status.json"
+    with open(dispatch_path, encoding="utf-8") as f:
+        dispatch = json.load(f)
     if not dispatch.get("enabled", False):
         print("Dispatch desativado: nada a registrar e status anterior preservado.")
         return
-
-    page_id = str(dispatch.get("pageId", "")).strip()
-    requested_at = str(dispatch.get("requestedAt", "")).strip()
+    page_id = str(dispatch.get("pageId", "")).strip(); requested = str(dispatch.get("requestedAt", "")).strip()
     if not page_id:
         raise SystemExit("pageId ausente no dispatch")
-
     try:
         summary = register_page(page_id)
-        result = {
-            "status": "verified",
-            "pageId": summary["pageId"],
-            "requestedAt": requested_at,
-            "verifiedAt": datetime.now(timezone.utc).isoformat(),
-            "line": summary["line"],
-            "valve": summary["valve"],
-            "records": summary["records"],
-            "message": "Firebase confirmado após leitura: exatamente um registro por subset.",
-        }
-        write_result(result_path, result)
+        write_result(result_path, {"status":"verified","schema":"history_v2","pageId":summary["pageId"],"requestedAt":requested,"verifiedAt":datetime.now(timezone.utc).isoformat(),"line":summary["line"],"valve":summary["valve"],"records":summary["records"],"message":"Firebase V2 confirmado após leitura: exatamente um documento por subset."})
     except Exception as exc:
-        result = {
-            "status": "failed",
-            "pageId": page_id,
-            "requestedAt": requested_at,
-            "verifiedAt": datetime.now(timezone.utc).isoformat(),
-            "error": str(exc),
-        }
-        write_result(result_path, result)
+        write_result(result_path, {"status":"failed","schema":"history_v2","pageId":page_id,"requestedAt":requested,"verifiedAt":datetime.now(timezone.utc).isoformat(),"error":str(exc)})
         raise
 
 

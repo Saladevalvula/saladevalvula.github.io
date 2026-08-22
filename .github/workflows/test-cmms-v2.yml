@@ -1,0 +1,102 @@
+name: Test CMMS V2
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'cmms-v2-prelude.js'
+      - 'cmms-v2.js'
+      - 'register_notion_page.py'
+      - 'sync_firebase.py'
+      - 'migrate_history_v2.py'
+      - 'manifest.webmanifest'
+      - 'service-worker.js'
+      - 'app-icon.svg'
+      - 'install_cmms_v2.py'
+      - '.github/workflows/install-cmms-v2.yml'
+      - '.github/workflows/migrate-history-v2.yml'
+      - '.github/workflows/test-cmms-v2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install requests
+      - name: Syntax checks
+        run: |
+          node --check cmms-v2-prelude.js
+          node --check cmms-v2.js
+          node --check service-worker.js
+          python -m py_compile register_notion_page.py sync_firebase.py migrate_history_v2.py install_cmms_v2.py
+      - name: Runtime smoke test
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'), vm=require('vm');
+          global.window=global;
+          global.navigator={};
+          global.document={
+            head:{appendChild(){}},body:{appendChild(){}},
+            getElementById(){return null;},querySelector(){return null;},querySelectorAll(){return [];},
+            createElement(){return {classList:{add(){},remove(){},toggle(){}},appendChild(){},setAttribute(){}};}
+          };
+          global.history={pushState(){}};
+          global.localStorage={getItem(){return null;},setItem(){}};
+          global.lucide={createIcons(){}};
+          global.openModal=()=>{}; global.closeModal=()=>{}; global.showToast=()=>{}; global.showPasswordPrompt=()=>{};
+          global.globalDB={'512':{},'513':{},'514':{}}; global.opportunitiesDB={}; global.placasDB={};
+          global.LINE_CONFIGS={'512':{subsets:['V1','V2','V3']},'513':{subsets:['V1','V2','V3']},'514':{subsets:null}};
+          global.state={filters:{},cmms:{},mode:'register',step:'line',form:{name:'',shift:'',type:'corretiva',description:'',photos:[]},selectedSubsets:[],selectedLine:'512',selectedValve:'1',sondaForm:{},sondaAction:'jumper'};
+          ['renderRegisterFlow','getFilteredData','exportData','renderOps','setMode','render','renderHistoryView','loadHistory','doSubmit','submitSonda','submitFalhaGeral','askDel','openManual'].forEach(n=>global[n]=()=>{});
+          const listenerDoc={onSnapshot(cb){cb({exists:false,data(){return {};}});return ()=>{};},set(){return Promise.resolve();},update(){return Promise.resolve();},delete(){return Promise.resolve();},collection(){return collectionObj;}};
+          const collectionObj={doc(){return listenerDoc;},onSnapshot(cb){cb({forEach(){}});return ()=>{};},add(){return Promise.resolve();}};
+          global.db={collection(){return collectionObj;},collectionGroup(){return collectionObj;},doc(){return listenerDoc;},batch(){return {set(){},delete(){},commit(){return Promise.resolve();}};}};
+          vm.runInThisContext(fs.readFileSync('cmms-v2-prelude.js','utf8'),{filename:'cmms-v2-prelude.js'});
+          vm.runInThisContext(fs.readFileSync('cmms-v2.js','utf8'),{filename:'cmms-v2.js'});
+          if(typeof renderOrdersView!=='function'||typeof renderWorkOrdersView!=='function'||typeof renderDashboardView!=='function') throw new Error('Telas V2 não inicializadas');
+          console.log('OK: CMMS V2 inicializa sem ReferenceError.');
+          NODE
+      - name: Test shell installer
+        run: |
+          python install_cmms_v2.py
+          grep -q '<script src="cmms-v2-prelude.js"></script>' index.html
+          grep -q '<script src="cmms-v2.js"></script>' index.html
+          python - <<'PY'
+          from pathlib import Path
+          t=Path('index.html').read_text(encoding='utf-8')
+          a=t.index('<script src="cmms-v2-prelude.js"></script>')
+          b=t.index('<script src="cmms-v2.js"></script>')
+          assert a < b, 'prelude deve carregar antes do CMMS V2'
+          PY
+          python install_cmms_v2.py
+          test "$(grep -c '<script src="cmms-v2-prelude.js"></script>' index.html)" -eq 1
+          test "$(grep -c '<script src="cmms-v2.js"></script>' index.html)" -eq 1
+      - name: Read-only migration audit
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          cat > /tmp/migration.json <<'JSON'
+          {"enabled":true,"apply":false,"requestedAt":"pr-test"}
+          JSON
+          python migrate_history_v2.py /tmp/migration.json /tmp/migration-status.json
+          cat /tmp/migration-status.json
+          python - <<'PY'
+          import json
+          s=json.load(open('/tmp/migration-status.json'))
+          assert s['status']=='dry_run', s
+          assert s['legacyHistoryItems'] > 0, s
+          assert s['uniqueHistoryDocuments'] > 0, s
+          assert s['legacyHistoryItems'] == s['uniqueHistoryDocuments'], s
+          print('OK: auditoria V2 somente leitura.')
+          PY
