@@ -1,12 +1,13 @@
 /* Sala de Válvulas - estado do ciclo preventivo
- * Mostra onde cada enchedora parou sem transformar uma informação de sequência
- * em intervenções históricas artificiais.
+ * Mostra onde cada enchedora parou e a programação mensal confirmada,
+ * sem transformar a posição do ciclo em intervenções históricas artificiais.
  */
 (() => {
   'use strict';
   if (typeof renderOrdersView !== 'function' || typeof renderRegisterFlow !== 'function' || typeof db === 'undefined') return;
 
   const cycleState = {};
+  const currentPlans = {};
   const baseRenderOrdersView = renderOrdersView;
   const baseRenderRegisterFlow = renderRegisterFlow;
 
@@ -14,6 +15,18 @@
     return String(v ?? '')
       .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+  }
+
+  function currentMonthKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  function formatDate(value) {
+    if (!value) return '';
+    const parts = String(value).slice(0, 10).split('-');
+    if (parts.length !== 3) return String(value);
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
   }
 
   function cycleCompleted(line) {
@@ -48,15 +61,24 @@
     });
   }
 
+  function plannedHtml(line) {
+    const p = currentPlans[line];
+    const valves = Array.isArray(p?.valves) ? p.valves.map(Number).filter(Number.isFinite) : [];
+    if (!p || !valves.length) return '';
+    const date = formatDate(p.plannedDate);
+    const range = valves.map(v => `V${v}`).join(' · ');
+    return `<div class="mt-3 rounded-lg border border-primary/30 bg-primary/10 p-3"><div class="text-[10px] uppercase tracking-wider text-primary font-bold">Programado${date ? ` · ${date}` : ''} · ${valves.length} válvulas</div><div class="font-mono text-sm text-foreground mt-2">${range}</div></div>`;
+  }
+
   function injectCycleState(container) {
     const old = document.getElementById('preventive-cycle-state-card');
     if (old) old.remove();
     const rows = ['512', '513', '514'].map(line => {
       const s = cycleState[line];
-      if (!s) return `<div class="cmms-order-card"><strong>L${line}</strong><div class="text-xs text-gray-500 mt-2">Sequência ainda não informada.</div></div>`;
+      if (!s) return `<div class="cmms-order-card"><strong>L${line}</strong><div class="text-xs text-gray-500 mt-2">Sequência ainda não informada.</div>${plannedHtml(line)}</div>`;
       const last = cycleCompleted(line) || 0;
       const next = Number(s.nextValve || (last + 1));
-      return `<div class="cmms-order-card"><div class="flex justify-between items-start gap-2"><div><strong>L${line}</strong><div class="text-xs text-gray-500 mt-1">Ciclo preventivo</div></div><span class="cmms-badge ok">até V${last}</span></div><div class="font-mono text-sm text-primary mt-3">Próxima: V${next}</div>${s.note?`<div class="text-[10px] text-gray-600 mt-2">${esc(s.note)}</div>`:''}</div>`;
+      return `<div class="cmms-order-card"><div class="flex justify-between items-start gap-2"><div><strong>L${line}</strong><div class="text-xs text-gray-500 mt-1">Ciclo preventivo</div></div><span class="cmms-badge ok">até V${last}</span></div><div class="font-mono text-sm text-primary mt-3">Próxima no ciclo: V${next}</div>${plannedHtml(line)}${s.note?`<div class="text-[10px] text-gray-600 mt-2">${esc(s.note)}</div>`:''}</div>`;
     }).join('');
 
     const block = document.createElement('div');
@@ -86,4 +108,15 @@
     snap.forEach(doc => { cycleState[doc.id] = { id: doc.id, ...doc.data() }; });
     if (state.mode === 'orders' || (state.mode === 'register' && state.step === 'line')) render(false);
   }, err => console.warn('maintenance_cycle_state listener', err));
+
+  db.collection('maintenance_plans').onSnapshot(snap => {
+    Object.keys(currentPlans).forEach(k => delete currentPlans[k]);
+    const month = currentMonthKey();
+    snap.forEach(doc => {
+      const d = { id: doc.id, ...doc.data() };
+      const line = String(d.line || '');
+      if (d.month === month && ['512', '513', '514'].includes(line)) currentPlans[line] = d;
+    });
+    if (state.mode === 'orders') render(false);
+  }, err => console.warn('maintenance_plans listener', err));
 })();
