@@ -1,0 +1,37 @@
+name: Test component normalization
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'normalize_component_labels.py'
+      - 'component_normalization.json'
+      - '.github/workflows/normalize-component-labels.yml'
+      - '.github/workflows/test-normalize-component-labels.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax and config checks
+        run: |
+          python -m py_compile normalize_component_labels.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          cfg=json.loads(Path('component_normalization.json').read_text(encoding='utf-8'))
+          assert cfg['enabled'] is True
+          assert cfg['apply'] is True
+          src=Path('normalize_component_labels.py').read_text(encoding='utf-8')
+          assert 'CANONICAL = "SONDA"' in src
+          assert 'subset.casefold() == "sonda"' in src
+          print('OK: normalização é restrita a variantes de Sonda.')
+          PY

@@ -1,0 +1,55 @@
+name: Normalize component labels
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'normalize_component_labels.py'
+      - 'component_normalization.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: normalize-component-labels
+  cancel-in-progress: false
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+      FIREBASE_PROJ: sala-valvulas-ow-163b3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install requests
+      - name: Normalize and verify
+        run: python normalize_component_labels.py component_normalization.json component_normalization_status.json
+      - name: Disable request after verified run
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          status=json.loads(Path('component_normalization_status.json').read_text(encoding='utf-8'))
+          if status.get('status') != 'verified':
+              raise SystemExit('Normalização não foi verificada; configuração permanecerá ativa.')
+          cfg=json.loads(Path('component_normalization.json').read_text(encoding='utf-8'))
+          cfg['enabled']=False
+          cfg['apply']=False
+          Path('component_normalization.json').write_text(json.dumps(cfg, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+          PY
+      - name: Publish receipt
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add component_normalization.json component_normalization_status.json
+          if git diff --cached --quiet; then
+            echo "Nenhum recibo novo para publicar."
+            exit 0
+          fi
+          git commit -m "status: normalizar rótulos de componentes [skip ci]"
+          git push origin HEAD:main
