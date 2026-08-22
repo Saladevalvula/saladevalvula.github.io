@@ -1,0 +1,47 @@
+name: Audit CMMS V2 live
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-cmms-v2-live.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify V2 marker and V71 history
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          key=os.environ['FIREBASE_KEY']
+          root='https://firestore.googleapis.com/v1/projects/sala-valvulas-ow-163b3/databases/(default)/documents'
+          def get(path):
+              with urllib.request.urlopen(root+'/'+path+'?key='+urllib.parse.quote(key), timeout=30) as r:
+                  return json.load(r)
+          marker=get('system/history_v2').get('fields',{})
+          completed=marker.get('completed',{}).get('booleanValue',False)
+          docs=int(marker.get('historyDocuments',{}).get('integerValue','0'))
+          legacy=int(marker.get('legacyHistoryItems',{}).get('integerValue','0'))
+          print('marker completed=',completed,'historyDocuments=',docs,'legacy=',legacy)
+          assert completed is True, 'history_v2 marker ainda não está completed=true'
+          assert docs==301 and legacy==301, (docs,legacy)
+          data=get('lines/512/valves/71/history')
+          page='3c3c5fcf-62b4-81ac-8bd4-e556c6169925'
+          matches=[]
+          for d in data.get('documents',[]):
+              f=d.get('fields',{})
+              if f.get('notionPageId',{}).get('stringValue')==page:
+                  matches.append({k:v.get('stringValue') for k,v in f.items() if k in ('id','subset','type','notionPageId')})
+          print('V71 matches=',matches)
+          assert len(matches)==1, matches
+          assert matches[0].get('subset')=='V3', matches
+          assert matches[0].get('type')=='corretiva', matches
+          print('OK: CMMS V2 live confirmado no Firebase.')
+          PY
