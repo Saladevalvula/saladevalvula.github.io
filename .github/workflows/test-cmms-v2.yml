@@ -7,7 +7,6 @@ on:
       - 'index.html'
       - 'cmms-v2-prelude.js'
       - 'cmms-v2.js'
-      - 'dashboard-reporting.js'
       - 'register_notion_page.py'
       - 'sync_firebase.py'
       - 'migrate_history_v2.py'
@@ -39,7 +38,6 @@ jobs:
         run: |
           node --check cmms-v2-prelude.js
           node --check cmms-v2.js
-          node --check dashboard-reporting.js
           node --check service-worker.js
           python -m py_compile register_notion_page.py sync_firebase.py migrate_history_v2.py install_cmms_v2.py
       - name: Runtime smoke test
@@ -101,35 +99,4 @@ jobs:
           assert s['uniqueHistoryDocuments'] > 0, s
           assert s['legacyHistoryItems'] == s['uniqueHistoryDocuments'], s
           print('OK: auditoria V2 somente leitura.')
-          PY
-      - name: Dashboard count audit
-        env:
-          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
-        run: |
-          python - <<'PY'
-          import os, requests, collections
-          project='sala-valvulas-ow-163b3'
-          key=os.environ['FIREBASE_KEY']
-          u=f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents:runQuery?key={key}'
-          body={'structuredQuery':{'from':[{'collectionId':'history','allDescendants':True}]}}
-          r=requests.post(u,json=body,timeout=60); r.raise_for_status()
-          rows=[]
-          for item in r.json():
-              doc=item.get('document')
-              if not doc: continue
-              f=doc.get('fields',{})
-              def sv(n): return f.get(n,{}).get('stringValue','')
-              rows.append((sv('line'),sv('valve'),sv('type'),sv('timestamp'),sv('subset'),doc['name']))
-          print('TOTAL HISTORY DOCS',len(rows))
-          bytype=collections.Counter(x[2] or '(blank)' for x in rows)
-          print('BY TYPE',dict(sorted(bytype.items())))
-          bymonth=collections.Counter((x[3] or '')[:7] for x in rows)
-          print('BY MONTH',dict(sorted(bymonth.items())))
-          aug=[x for x in rows if (x[3] or '')[:7]=='2026-08']
-          print('AUG TOTAL',len(aug))
-          print('AUG BY TYPE',dict(sorted(collections.Counter(x[2] or '(blank)' for x in aug).items())))
-          print('AUG BY LINE+TYPE',dict(sorted(collections.Counter((x[0],x[2] or '(blank)') for x in aug).items())))
-          invalid=[x for x in rows if not x[3] or len(x[3])<7 or x[3][4:5]!='-']
-          print('INVALID TIMESTAMPS',len(invalid))
-          for x in invalid[:20]: print('INVALID',x[:5])
           PY
