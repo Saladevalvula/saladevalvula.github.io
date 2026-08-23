@@ -106,3 +106,13 @@
     showToast('Relatório PDF gerado.', 'success');
   };
 })();
+
+// Módulo independente de materiais/estoque. Mantido fora do núcleo para reduzir risco no CMMS.
+(() => {
+  if (document.querySelector('script[data-inventory-ui]')) return;
+  const script = document.createElement('script');
+  script.src = './inventory-ui.js';
+  script.defer = true;
+  script.dataset.inventoryUi = '1';
+  document.body.appendChild(script);
+})();
