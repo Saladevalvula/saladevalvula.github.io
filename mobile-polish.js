@@ -1,4 +1,4 @@
-/* Sala de Válvulas - acabamento visual mobile */
+/* Sala de Válvulas - acabamento visual mobile e terminologia operacional */
 (() => {
   'use strict';
 
@@ -11,6 +11,14 @@
 
   function currentMonthKey() {
     const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  function monthOf(value) {
+    if (!value) return '';
+    if (typeof value.toDate === 'function') value = value.toDate();
+    const d = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(d.getTime())) return String(value).slice(0, 7);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
   }
 
@@ -70,6 +78,10 @@
     return Object.values(dashboardHistory).filter(r => selectedLine === 'all' || String(r.line) === selectedLine);
   }
 
+  function dashboardMonthRows(month, line) {
+    return dashboardHistoryRows(line).filter(r => monthOf(r.timestamp) === String(month || ''));
+  }
+
   function installStyles() {
     if (document.getElementById(STYLE_ID)) return;
     const style = document.createElement('style');
@@ -114,6 +126,18 @@
         padding-right:38px!important;
         text-overflow:clip!important;
       }
+      .cmms-stat-label-long{font-size:.68rem!important;line-height:1.15!important}
+      .cmms-definition-note{
+        margin:10px 0 12px;
+        padding:9px 11px;
+        border:1px solid #243247;
+        border-radius:11px;
+        background:#0a1019;
+        color:#8190a5;
+        font-size:10px;
+        line-height:1.45;
+      }
+      .cmms-definition-note strong{color:#e8b800}
       #cmms-cycle-dashboard-kpi strong{color:#86efac!important}
       #cmms-history-accumulated{margin-top:12px}
       #cmms-history-accumulated .report-kpi{min-height:96px}
@@ -141,6 +165,7 @@
           font-size:15px!important;
           padding-right:40px!important;
         }
+        .cmms-stat-label-long{font-size:.62rem!important}
       }
 
       @media(max-width:380px){
@@ -155,29 +180,63 @@
     const month = document.getElementById('pl-month');
     if (!month) return;
 
-    const firstGrid = month.closest('.grid');
+    const firstGrid = month.closest?.('.grid');
     if (firstGrid) firstGrid.classList.add('cmms-plan-fields');
 
-    month.classList.add('cmms-month-field');
-    document.getElementById('pl-count')?.classList.add('cmms-plan-number');
-    document.getElementById('pl-start')?.classList.add('cmms-plan-number');
-    document.getElementById('pl-preview')?.classList.add('cmms-plan-preview');
+    month.classList?.add('cmms-month-field');
+    document.getElementById('pl-count')?.classList?.add('cmms-plan-number');
+    document.getElementById('pl-start')?.classList?.add('cmms-plan-number');
+    document.getElementById('pl-preview')?.classList?.add('cmms-plan-preview');
 
-    const saveButton = [...document.querySelectorAll('button')]
+    const saveButton = [...(document.querySelectorAll?.('button') || [])]
       .find(btn => String(btn.textContent || '').trim().toUpperCase() === 'SALVAR PROGRAMAÇÃO');
-    saveButton?.classList.add('cmms-plan-save');
+    saveButton?.classList?.add('cmms-plan-save');
   }
 
-  function polishRegisterTitle() {
+  function polishRegisterTerminology() {
     const root = document.getElementById('main-container');
-    if (!root || state?.mode !== 'register' || state?.step !== 'line') return;
-    const heading = [...root.querySelectorAll('h2')]
-      .find(el => String(el.textContent || '').trim().toLowerCase() === 'painel geral');
-    if (heading) heading.textContent = 'Dash Sala de Válvulas';
+    if (!root) return;
+
+    if (state?.mode === 'register' && state?.step === 'line') {
+      const heading = [...(root.querySelectorAll?.('h2') || [])]
+        .find(el => ['painel geral', 'dash sala de válvulas'].includes(String(el.textContent || '').trim().toLowerCase()));
+      if (heading) heading.textContent = 'Dash Sala de Válvulas';
+
+      [...(root.querySelectorAll?.('.card-industrial span') || [])].forEach(el => {
+        const label = String(el.textContent || '').trim().toLowerCase();
+        if (label === 'pendentes') {
+          el.textContent = 'Restantes no ciclo';
+          el.classList?.add('cmms-stat-label-long');
+        } else if (label === 'preventivas') {
+          el.textContent = 'Ciclo preventivo';
+          el.classList?.add('cmms-stat-label-long');
+        } else if (label === 'corretivas') {
+          el.textContent = 'Corretivas em produção';
+          el.classList?.add('cmms-stat-label-long');
+        }
+      });
+    }
+
+    if (state?.mode === 'register' || state?.mode === 'history') {
+      [...(root.querySelectorAll?.('option[value="corretiva"]') || [])].forEach(el => {
+        el.textContent = 'Corretiva em produção';
+      });
+      [...(root.querySelectorAll?.('button') || [])].forEach(el => {
+        if (String(el.textContent || '').trim() === 'Corretiva') el.textContent = 'Corretiva em produção';
+      });
+    }
+
+    if (state?.mode === 'history') {
+      [...(root.querySelectorAll?.('.cmms-kpi small') || [])].forEach(el => {
+        if (String(el.textContent || '').trim().toLowerCase() === 'corretivas') {
+          el.textContent = 'Corretivas em produção';
+        }
+      });
+    }
   }
 
   function renderAccumulatedHistory(container) {
-    container.querySelector('#cmms-history-accumulated')?.remove();
+    container.querySelector?.('#cmms-history-accumulated')?.remove?.();
     if (!dashboardHistoryReady) return;
 
     const selectedLine = String(state?.cmms?.dashboardLine || 'all');
@@ -197,37 +256,96 @@
       </div>
       <div class="report-kpis">
         <div class="report-kpi"><small>Intervenções acumuladas</small><strong>${rows.length}</strong><span>histórico completo</span></div>
-        <div class="report-kpi"><small>Corretivas acumuladas</small><strong>${corrective}</strong><span>histórico completo</span></div>
+        <div class="report-kpi"><small>Corretivas em produção</small><strong>${corrective}</strong><span>atuações em subconjuntos</span></div>
         <div class="report-kpi good"><small>Preventivas acumuladas</small><strong>${preventive}</strong><span>registros com data</span></div>
         <div class="report-kpi"><small>Eventos de sonda</small><strong>${sonda}</strong><span>histórico completo</span></div>
       </div>`;
 
-    const monthlyGrid = container.querySelector('.report-kpis');
-    if (monthlyGrid) monthlyGrid.insertAdjacentElement('afterend', panel);
+    const monthlyGrid = container.querySelector?.('.report-kpis');
+    if (monthlyGrid) monthlyGrid.insertAdjacentElement?.('afterend', panel);
+  }
+
+  function renderDefinitionNote(container) {
+    container.querySelector?.('#cmms-maintenance-definition')?.remove?.();
+    const grid = container.querySelector?.('.report-kpis');
+    if (!grid) return;
+    const note = document.createElement('div');
+    note.id = 'cmms-maintenance-definition';
+    note.className = 'cmms-definition-note';
+    note.innerHTML = '<strong>Regra de contagem:</strong> corretiva = 1 atuação/troca de subconjunto com a linha em produção. Preventiva = válvula executada no PCM.';
+    grid.insertAdjacentElement?.('beforebegin', note);
   }
 
   function polishDashboard(container) {
     if (!container) return;
 
-    const monthInput = container.querySelector('.report-toolbar input[type="month"]');
+    const monthInput = container.querySelector?.('.report-toolbar input[type="month"]');
     if (monthInput) {
-      monthInput.classList.add('cmms-report-month-input');
-      monthInput.closest('.report-field')?.classList.add('cmms-report-month-field');
+      monthInput.classList?.add('cmms-report-month-input');
+      monthInput.closest?.('.report-field')?.classList?.add('cmms-report-month-field');
     }
 
-    const kpis = [...container.querySelectorAll('.report-kpi')];
+    const kpis = [...(container.querySelectorAll?.('.report-kpi') || [])];
+    let interventionsCard = null;
+    let preventiveCard = null;
     kpis.forEach(card => {
-      const label = String(card.querySelector('small')?.textContent || '').trim().toLowerCase();
-      if (label === 'intervenções') card.querySelector('small').textContent = 'Intervenções no mês';
-      if (label === 'corretivas') card.querySelector('small').textContent = 'Corretivas no mês';
-      if (label === 'preventivas') card.querySelector('small').textContent = 'Preventivas no mês';
+      const labelEl = card.querySelector?.('small');
+      const label = String(labelEl?.textContent || '').trim().toLowerCase();
+      if (label === 'intervenções' || label === 'intervenções no mês') {
+        if (labelEl) labelEl.textContent = 'Intervenções no mês';
+        interventionsCard = card;
+      }
+      if (label === 'corretivas' || label === 'corretivas no mês' || label === 'corretivas em produção') {
+        if (labelEl) labelEl.textContent = 'Corretivas em produção';
+      }
+      if (label === 'preventivas' || label === 'preventivas no mês') {
+        if (labelEl) labelEl.textContent = 'Preventivas no mês';
+        preventiveCard = card;
+      }
     });
-
-    renderAccumulatedHistory(container);
-    container.querySelector('#cmms-cycle-dashboard-kpi')?.remove();
 
     const selectedMonth = String(state?.cmms?.dashboardMonth || currentMonthKey());
     const selectedLine = String(state?.cmms?.dashboardLine || 'all');
+
+    if (dashboardHistoryReady && interventionsCard) {
+      const rows = dashboardMonthRows(selectedMonth, selectedLine);
+      const corr = rows.filter(r => r.type === 'corretiva').length;
+      const prev = rows.filter(r => r.type === 'preventiva').length;
+      const sonda = rows.filter(r => r.type === 'sonda_event').length;
+      const falhas = rows.filter(r => r.type === 'falha_geral').length;
+      const other = Math.max(0, rows.length - corr - prev - sonda - falhas);
+      const parts = [];
+      if (corr) parts.push(`${corr} corretivas em produção`);
+      if (prev) parts.push(`${prev} preventivas`);
+      if (sonda) parts.push(`${sonda} eventos de sonda`);
+      if (falhas) parts.push(`${falhas} falhas enchedora`);
+      if (other) parts.push(`${other} outros`);
+      const sub = interventionsCard.querySelector?.('span');
+      if (sub) sub.textContent = parts.length ? parts.join(' + ') : 'sem intervenções no período';
+    }
+
+    [...(container.querySelectorAll?.('.report-compare-row .name') || [])].forEach(el => {
+      if (String(el.textContent || '').trim().toLowerCase() === 'corretivas') {
+        el.textContent = 'Corretivas em produção';
+      }
+    });
+
+    [...(container.querySelectorAll?.('.report-panel-title h3') || [])].forEach(title => {
+      const current = String(title.textContent || '').trim().toLowerCase();
+      const subtitle = title.parentElement?.querySelector?.('span');
+      if (current.startsWith('pareto · válvulas')) {
+        title.textContent = 'Pareto · válvulas em produção';
+        if (subtitle) subtitle.textContent = 'atuações corretivas do período';
+      } else if (current.startsWith('pareto · componentes') || current.startsWith('pareto · subconjuntos')) {
+        title.textContent = 'Pareto · subconjuntos';
+        if (subtitle) subtitle.textContent = 'trocas/atuações em produção';
+      }
+    });
+
+    renderDefinitionNote(container);
+    renderAccumulatedHistory(container);
+    container.querySelector?.('#cmms-cycle-dashboard-kpi')?.remove?.();
+
     if (selectedMonth !== currentMonthKey() || !DASH_LINES.includes(selectedLine)) return;
 
     const completed = cycleCompleted(selectedLine);
@@ -240,12 +358,14 @@
     card.className = 'report-kpi good';
     card.innerHTML = `<small>Ciclo preventivo</small><strong>${completed}</strong><span>de ${max} · concluído até V${completed} · próxima V${next}</span>`;
 
-    const grid = container.querySelector('.report-kpis');
+    const grid = container.querySelector?.('.report-kpis');
     if (!grid) return;
-    const preventiveCard = [...grid.querySelectorAll('.report-kpi')]
-      .find(k => String(k.querySelector('small')?.textContent || '').trim().toLowerCase() === 'preventivas no mês');
-    if (preventiveCard) preventiveCard.insertAdjacentElement('afterend', card);
-    else grid.appendChild(card);
+    if (!preventiveCard) {
+      preventiveCard = [...(grid.querySelectorAll?.('.report-kpi') || [])]
+        .find(k => String(k.querySelector?.('small')?.textContent || '').trim().toLowerCase() === 'preventivas no mês');
+    }
+    if (preventiveCard) preventiveCard.insertAdjacentElement?.('afterend', card);
+    else grid.appendChild?.(card);
   }
 
   function wrapDashboardWhenReady(attempt = 0) {
@@ -279,7 +399,7 @@
   if (typeof baseOpenPlanModal === 'function') {
     window.openPlanModal = function(...args) {
       const result = baseOpenPlanModal.apply(this, args);
-      requestAnimationFrame(polishPlanModal);
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(polishPlanModal);
       setTimeout(polishPlanModal, 0);
       return result;
     };
@@ -287,7 +407,7 @@
 
   const mainContainer = document.getElementById('main-container');
   if (mainContainer && typeof MutationObserver !== 'undefined') {
-    const observer = new MutationObserver(polishRegisterTitle);
+    const observer = new MutationObserver(polishRegisterTerminology);
     observer.observe(mainContainer, { childList: true, subtree: true });
   }
 
@@ -315,6 +435,6 @@
     }
   }
 
-  setTimeout(polishRegisterTitle, 0);
+  setTimeout(polishRegisterTerminology, 0);
   setTimeout(() => wrapDashboardWhenReady(0), 0);
 })();
