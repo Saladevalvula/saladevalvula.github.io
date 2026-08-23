@@ -1,0 +1,40 @@
+name: Test inventory UI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'inventory-ui.js'
+      - 'dashboard-reporting-pdf.js'
+      - 'service-worker.js'
+      - '.github/workflows/test-inventory-ui.yml'
+  pull_request:
+    paths:
+      - 'inventory-ui.js'
+      - 'dashboard-reporting-pdf.js'
+      - 'service-worker.js'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Syntax check
+        run: |
+          node --check inventory-ui.js
+          node --check dashboard-reporting-pdf.js
+          node --check service-worker.js
+      - name: Verify module wiring
+        run: |
+          grep -q "inventory-ui.js" dashboard-reporting-pdf.js
+          grep -q "inventory-ui.js" service-worker.js
+          grep -q "Materiais & Estoque" inventory-ui.js
+          grep -q "db.collection('materials')" inventory-ui.js
+          echo "OK: módulo de materiais carregado e conectado ao Firestore."
