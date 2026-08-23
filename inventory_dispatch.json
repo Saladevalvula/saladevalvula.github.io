@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "requestId": "material-tulipa-512-513-20260823",
   "requestedAt": "2026-08-23T13:29:00-03:00",
   "operation": "material_profile_upsert",
