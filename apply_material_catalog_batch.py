@@ -43,7 +43,6 @@ def sv(v): return {"stringValue": str(v)}
 def dv(v): return {"doubleValue": float(v)}
 def iv(v): return {"integerValue": str(int(v))}
 def bv(v): return {"booleanValue": bool(v)}
-def nv(): return {"nullValue": None}
 def av(values): return {"arrayValue": {"values": values}}
 def strings(values): return av([sv(v) for v in values])
 
@@ -150,7 +149,8 @@ def apply(cfg):
             "applicationNotes": strings(applications),
             "referenceSapOrders": strings(orders),
             "associationStatus": sv(item.get("associationStatus", old_dec.get("associationStatus", "confirmed"))),
-            "active": bv(True),
+            "active": bv(bool(item.get("active", old_dec.get("active", True)))),
+            "aliasOf": sv(item.get("aliasOf", old_dec.get("aliasOf", ""))),
             "source": sv(item.get("source", source)),
             "createdAt": preserve(old, "createdAt", sv(timestamp)),
             "updatedAt": sv(timestamp),
@@ -185,6 +185,8 @@ def apply(cfg):
             "subsets": data.get("applicableSubsets") or [],
             "bannerRefs": data.get("bannerRefs") or [],
             "associationStatus": data.get("associationStatus"),
+            "active": data.get("active"),
+            "aliasOf": data.get("aliasOf"),
             "stockQty": data.get("stockQty"),
             "unitCost": data.get("unitCost"),
             "path": path,
