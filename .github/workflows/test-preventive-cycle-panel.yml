@@ -31,7 +31,7 @@ jobs:
           node --check mobile-polish.js
           node --check service-worker.js
           python -m py_compile install_preventive_cycle_ui.py
-      - name: Validate mobile plan modal installation
+      - name: Validate mobile plan and dashboard polish
         run: |
           python install_preventive_cycle_ui.py
           grep -q '<script src="mobile-polish.js"></script>' index.html
@@ -39,8 +39,12 @@ jobs:
           python install_preventive_cycle_ui.py
           test "$(grep -c '<script src="mobile-polish.js"></script>' index.html)" -eq 1
           grep -q 'cmms-plan-fields' mobile-polish.js
+          grep -q 'cmms-report-month-field' mobile-polish.js
+          grep -q 'cmms-report-month-input' mobile-polish.js
+          grep -q 'Ciclo preventivo' mobile-polish.js
+          grep -q 'Preventivas no mês' mobile-polish.js
+          grep -q 'completed}/${max}' mobile-polish.js
           grep -q '@media(max-width:520px)' mobile-polish.js
-          grep -q 'cmms-month-field' mobile-polish.js
       - name: Validate L512 cycle count and full planned range
         run: |
           node - <<'NODE'
@@ -103,4 +107,4 @@ jobs:
         run: |
           grep -q "preventive-cycle-ui.js" service-worker.js
           grep -q "mobile-polish.js" service-worker.js
-          grep -q "sala-valvulas-cmms-v2-v4" service-worker.js
+          grep -q "sala-valvulas-cmms-v2-v5" service-worker.js
