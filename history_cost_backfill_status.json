@@ -1,9 +1,9 @@
 {
   "status": "verified",
-  "requestId": "history-cost-dryrun-20260823-1412-v2",
-  "requestedAt": "2026-08-23T14:12:00-03:00",
+  "requestId": "history-cost-apply-20260823-1415",
+  "requestedAt": "2026-08-23T14:15:00-03:00",
   "operation": "history_material_cost_backfill",
-  "mode": "dry_run",
+  "mode": "apply",
   "materialsLoaded": 20,
   "profilesLoaded": 1,
   "historyTotal": 301,
@@ -11,7 +11,7 @@
   "matchedRecords": 114,
   "pricedRecords": 5,
   "pendingPriceRecords": 109,
-  "updatedRecords": 0,
+  "updatedRecords": 114,
   "estimatedCostTotal": 613.91,
   "byType": {
     "corretiva": 183,
@@ -424,6 +424,6 @@
   ],
   "stockChanged": false,
   "actualCostChanged": false,
-  "verifiedAt": "2026-08-23T17:20:40.538181+00:00",
+  "verifiedAt": "2026-08-23T17:23:01.774673+00:00",
   "message": "Histórico correlacionado com o catálogo. Custos gravados são estimativas retroativas; estoque e custo SAP real não foram alterados."
 }
