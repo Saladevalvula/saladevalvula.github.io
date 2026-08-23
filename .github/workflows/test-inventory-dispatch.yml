@@ -1,0 +1,51 @@
+name: Test inventory dispatch
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apply_inventory_dispatch.py'
+      - 'inventory_dispatch.json'
+      - '.github/workflows/apply-inventory-dispatch.yml'
+      - '.github/workflows/test-inventory-dispatch.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install requests
+
+      - name: Syntax and payload validation
+        run: |
+          python -m py_compile apply_inventory_dispatch.py
+          python - <<'PY'
+          import json
+          import apply_inventory_dispatch as inv
+          with open('inventory_dispatch.json', encoding='utf-8') as f:
+              cfg=json.load(f)
+          profile, subset, lines, materials, value = inv.validate_material_profile(cfg)
+          assert profile == 'tulipa-512-513'
+          assert subset == 'Tulipa'
+          assert lines == ['512','513']
+          assert [m['sapCode'] for m in materials] == ['1229520590','0169900924','0901737819']
+          assert [m['referenceQty'] for m in materials] == [7,7,7]
+          assert abs(value - 859.47) < 0.001
+          print('OK: perfil Tulipa L512/L513 validado sem lançar consumo.')
+          PY
+
+      - name: Safety rules
+        run: |
+          grep -q 'consumeOnlyOnMaintenance' apply_inventory_dispatch.py
+          grep -q 'recipeConfirmed' apply_inventory_dispatch.py
+          grep -q 'nenhum consumo foi lançado' apply_inventory_dispatch.py
