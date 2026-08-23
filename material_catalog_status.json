@@ -1,0 +1,929 @@
+{
+  "status": "verified",
+  "requestId": "catalogo-materiais-20260823-v1",
+  "requestedAt": "2026-08-23T13:46:00-03:00",
+  "operation": "material_catalog_batch_upsert",
+  "materialsVerified": 51,
+  "materials": [
+    {
+      "sapCode": "50287131",
+      "description": "ANEL O; 10X1MM; NBR; 70 SHA",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V8",
+        "V4"
+      ],
+      "bannerRefs": [
+        "A-INFERIOR"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50287131"
+    },
+    {
+      "sapCode": "50286073",
+      "description": "ANEL O; 8X1; NBR ATOX; 70 SHA",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V8",
+        "V4"
+      ],
+      "bannerRefs": [
+        "A-INFERIOR"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50286073"
+    },
+    {
+      "sapCode": "50052410",
+      "description": "MOLA;KRONES/1099044360",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V8",
+        "V4"
+      ],
+      "bannerRefs": [
+        "A-INFERIOR"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50052410"
+    },
+    {
+      "sapCode": "50063003",
+      "description": "ANEL O;26X2;50MM;NBR;70 SHA",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V8",
+        "V4",
+        "V3"
+      ],
+      "bannerRefs": [
+        "A-3",
+        "C-3"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50063003"
+    },
+    {
+      "sapCode": "50052294",
+      "description": "BUCHA;KRONES/0129905118",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V8",
+        "V4",
+        "V3"
+      ],
+      "bannerRefs": [
+        "A-1",
+        "C-2"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50052294"
+    },
+    {
+      "sapCode": "50266584",
+      "description": "BUCHA;IGUS/XSM121406",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V8",
+        "V4",
+        "V3"
+      ],
+      "bannerRefs": [
+        "A/C-INTERNO"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50266584"
+    },
+    {
+      "sapCode": "50062887",
+      "description": "ANEL;RETHEC/DR6319",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V8",
+        "V4",
+        "V3"
+      ],
+      "bannerRefs": [
+        "A-2",
+        "C-1"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50062887"
+    },
+    {
+      "sapCode": "50212646",
+      "description": "BUCHA;RETHEC/DR3398",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "Tulipa"
+      ],
+      "bannerRefs": [
+        "B-1"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50212646"
+    },
+    {
+      "sapCode": "50062737",
+      "description": "MEMBRANA;KRONES/0026095000",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V1",
+        "V2",
+        "V5/V6"
+      ],
+      "bannerRefs": [
+        "D1-2",
+        "D2-2"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50062737"
+    },
+    {
+      "sapCode": "50062749",
+      "description": "MOLA;RETHEC/DR3363",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V1",
+        "V2",
+        "V5/V6"
+      ],
+      "bannerRefs": [
+        "D1-3",
+        "D2-3"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50062749"
+    },
+    {
+      "sapCode": "50328067",
+      "description": "DIAFRAGMA;RETHEC/DR3186",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V1",
+        "V2",
+        "V5/V6"
+      ],
+      "bannerRefs": [
+        "D1-1",
+        "D2-1"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50328067"
+    },
+    {
+      "sapCode": "50052573",
+      "description": "ANEL O; KRONES/0162117112",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V5/V6"
+      ],
+      "bannerRefs": [
+        "D2-INTERNO"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50052573"
+    },
+    {
+      "sapCode": "50059349",
+      "description": "ANEL O;4X2MM;NBR;70 SHA",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V5/V6"
+      ],
+      "bannerRefs": [
+        "D2-INTERNO"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50059349"
+    },
+    {
+      "sapCode": "50050750",
+      "description": "ANEL O;8X2MM;NBR;70 SHA",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V5/V6"
+      ],
+      "bannerRefs": [
+        "D2-INTERNO"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50050750"
+    },
+    {
+      "sapCode": "50306127",
+      "description": "PEÇA KRONES",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "V7"
+      ],
+      "bannerRefs": [
+        "E-1"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50306127"
+    },
+    {
+      "sapCode": "50075039",
+      "description": "ADAPTADOR TUB/MACH;4MM;SMC/1081514",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "SMC"
+      ],
+      "bannerRefs": [
+        "E-2",
+        "AUX"
+      ],
+      "associationStatus": "confirmed_source_variation",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50075039"
+    },
+    {
+      "sapCode": "50267756",
+      "description": "BUCHA;KRONES/0901737819",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "Tulipa"
+      ],
+      "bannerRefs": [
+        "F-4"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50267756"
+    },
+    {
+      "sapCode": "50061622",
+      "description": "VEDAÇÃO;KRONES/0169900924",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "Tulipa"
+      ],
+      "bannerRefs": [
+        "F-2"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50061622"
+    },
+    {
+      "sapCode": "50120790",
+      "description": "VEDAÇÃO;KRONES/1229520590",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "Tulipa"
+      ],
+      "bannerRefs": [
+        "F-3"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50120790"
+    },
+    {
+      "sapCode": "50052574",
+      "description": "TULIPA LATA 49, 40X50, 40X58, 60X5,90",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "Tulipa"
+      ],
+      "bannerRefs": [
+        "F-3"
+      ],
+      "associationStatus": "confirmed",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50052574"
+    },
+    {
+      "sapCode": "50062857",
+      "description": "DIAFRAGMA;KRONES/0026095257",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [],
+      "bannerRefs": [
+        "PENDENTE"
+      ],
+      "associationStatus": "pending_application",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50062857"
+    },
+    {
+      "sapCode": "50062736",
+      "description": "DIAFRAGMA;RETENGAX/9822",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [],
+      "bannerRefs": [
+        "PENDENTE"
+      ],
+      "associationStatus": "pending_application",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50062736"
+    },
+    {
+      "sapCode": "50282795",
+      "description": "DISCO;KRONES/1224500310",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [],
+      "associationStatus": "pending_application",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50282795"
+    },
+    {
+      "sapCode": "50072635",
+      "description": "ROLETE;KRONES/1229520700",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [],
+      "associationStatus": "pending_application",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/50072635"
+    },
+    {
+      "sapCode": "50008703",
+      "description": "ANEL EL.E 17,0X1,0 DIN471 AÇO M",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-1"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50008703"
+    },
+    {
+      "sapCode": "50091950",
+      "description": "ANEL EL.I 35X1,5 DIN472 AÇO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-2"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50091950"
+    },
+    {
+      "sapCode": "50082882",
+      "description": "ROLO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-3"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 1.0,
+      "unitCost": 48.4,
+      "path": "materials/50082882"
+    },
+    {
+      "sapCode": "50082687",
+      "description": "CAPA",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-4"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 10.0,
+      "unitCost": 15.31,
+      "path": "materials/50082687"
+    },
+    {
+      "sapCode": "50002034",
+      "description": "ROL.FIXO 6003-2RS DIN625 AÇO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-5"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 44.0,
+      "unitCost": 6.31,
+      "path": "materials/50002034"
+    },
+    {
+      "sapCode": "50082904",
+      "description": "ANEL INTERMEDIARIO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-7"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50082904"
+    },
+    {
+      "sapCode": "50082653",
+      "description": "BUCHA A. LUB. 10/12/15 BZ",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-8"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50082653"
+    },
+    {
+      "sapCode": "50051520",
+      "description": "SUPORTE DO ROLO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-9"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50051520"
+    },
+    {
+      "sapCode": "50008707",
+      "description": "ANEL EL. 7 DIN6799 INOX",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-11"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 185.0,
+      "unitCost": 1.46,
+      "path": "materials/50008707"
+    },
+    {
+      "sapCode": "50083355",
+      "description": "MOLA DE COMPRESSÃO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-12"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 47.0,
+      "unitCost": 22.43,
+      "path": "materials/50083355"
+    },
+    {
+      "sapCode": "50083091",
+      "description": "GARFO DA TULIPA",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-13"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50083091"
+    },
+    {
+      "sapCode": "50043256",
+      "description": "CARCAÇA",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-14"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50043256"
+    },
+    {
+      "sapCode": "50082955",
+      "description": "ARTICULAÇÃO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-15"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50082955"
+    },
+    {
+      "sapCode": "50083159",
+      "description": "GUIA DA MOLA DO ACIONAMENTO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-16"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 86.0,
+      "unitCost": 64.92,
+      "path": "materials/50083159"
+    },
+    {
+      "sapCode": "50084647",
+      "description": "PINO (GRANDE)",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-17"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50084647"
+    },
+    {
+      "sapCode": "50083439",
+      "description": "PINO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-18"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50083439"
+    },
+    {
+      "sapCode": "50082695",
+      "description": "PINO (PARAFUSO TRAVA)",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "B-19"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 40.0,
+      "unitCost": 10.13,
+      "path": "materials/50082695"
+    },
+    {
+      "sapCode": "50120424",
+      "description": "BUCHA",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "A-21"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 20.0,
+      "unitCost": 33.96,
+      "path": "materials/50120424"
+    },
+    {
+      "sapCode": "50082577",
+      "description": "PARAFUSO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "A-22"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50082577"
+    },
+    {
+      "sapCode": "50001761",
+      "description": "RETENTOR 4,8X8,0X3,0 72NBR 708",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "C-1"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 133.0,
+      "unitCost": 1.83,
+      "path": "materials/50001761"
+    },
+    {
+      "sapCode": "50001829",
+      "description": "PINO DE COMANDO",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "C-2"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 39.0,
+      "unitCost": 92.21,
+      "path": "materials/50001829"
+    },
+    {
+      "sapCode": "50001764",
+      "description": "JUNTA",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "C-3"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 546.0,
+      "unitCost": 0.42,
+      "path": "materials/50001764"
+    },
+    {
+      "sapCode": "50002612",
+      "description": "O RING 13,0X2,5 BORR. EB-362",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "C-4"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 190.0,
+      "unitCost": 0.28,
+      "path": "materials/50002612"
+    },
+    {
+      "sapCode": "50083181",
+      "description": "CARCAÇA",
+      "lines": [],
+      "subsets": [],
+      "bannerRefs": [
+        "C-5"
+      ],
+      "associationStatus": "line_pending",
+      "active": true,
+      "aliasOf": "",
+      "stockQty": 0.0,
+      "unitCost": null,
+      "path": "materials/50083181"
+    },
+    {
+      "sapCode": "1229520590",
+      "description": "Referência fabricante Krones/1229520590, não código SAP",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "Tulipa"
+      ],
+      "bannerRefs": [],
+      "associationStatus": "legacy_alias",
+      "active": false,
+      "aliasOf": "50120790",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/1229520590"
+    },
+    {
+      "sapCode": "0169900924",
+      "description": "Referência fabricante Krones/0169900924, não código SAP",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "Tulipa"
+      ],
+      "bannerRefs": [],
+      "associationStatus": "legacy_alias",
+      "active": false,
+      "aliasOf": "50061622",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/0169900924"
+    },
+    {
+      "sapCode": "0901737819",
+      "description": "Referência fabricante Krones/0901737819, não código SAP",
+      "lines": [
+        "512",
+        "513"
+      ],
+      "subsets": [
+        "Tulipa"
+      ],
+      "bannerRefs": [],
+      "associationStatus": "legacy_alias",
+      "active": false,
+      "aliasOf": "50267756",
+      "stockQty": null,
+      "unitCost": null,
+      "path": "materials/0901737819"
+    }
+  ],
+  "orderReferences": [
+    {
+      "sapOrderNumber": "100003656998",
+      "plannedMaterialValue": 859.47,
+      "path": "material_order_references/100003656998"
+    },
+    {
+      "sapOrderNumber": "100003656999",
+      "plannedMaterialValue": 10095.91,
+      "path": "material_order_references/100003656999"
+    },
+    {
+      "sapOrderNumber": "100001137249",
+      "plannedMaterialValue": 4035.54,
+      "path": "material_order_references/100001137249"
+    }
+  ],
+  "consumeOnlyOnMaintenance": true,
+  "verifiedAt": "2026-08-23T16:59:14.096086+00:00",
+  "message": "Catálogo de materiais relido e verificado no Firebase; nenhum consumo foi lançado."
+}
