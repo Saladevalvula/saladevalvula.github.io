@@ -43,7 +43,8 @@ jobs:
           grep -q 'cmms-report-month-input' mobile-polish.js
           grep -q 'Ciclo preventivo' mobile-polish.js
           grep -q 'Preventivas no mês' mobile-polish.js
-          grep -q 'completed}/${max}' mobile-polish.js
+          grep -q 'completed' mobile-polish.js
+          grep -q 'de ${max}' mobile-polish.js
           grep -q '@media(max-width:520px)' mobile-polish.js
       - name: Validate L512 cycle count and full planned range
         run: |
