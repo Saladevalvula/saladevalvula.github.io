@@ -1,5 +1,5 @@
-const CACHE='sala-valvulas-cmms-v2-v7';
-const CORE=['./','./index.html','./cmms-v2-prelude.js','./cmms-v2.js','./preventive-cycle-ui.js','./mobile-polish.js','./inventory-ui.js','./manifest.webmanifest','./app-icon.svg'];
+const CACHE='sala-valvulas-cmms-v2-v8';
+const CORE=['./','./index.html','./cmms-v2-prelude.js','./cmms-v2.js','./preventive-cycle-ui.js','./mobile-polish.js','./inventory-ui.js','./history-cost-ui.js','./manifest.webmanifest','./app-icon.svg'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
@@ -34,7 +34,7 @@ self.addEventListener('fetch',event=>{
     return;
   }
 
-  if(['cmms-v2.js','cmms-v2-prelude.js','preventive-cycle-ui.js','mobile-polish.js','inventory-ui.js','dashboard-reporting.js','dashboard-reporting-pdf.js','manifest.webmanifest','service-worker.js'].some(name=>url.pathname.endsWith('/'+name))){
+  if(['cmms-v2.js','cmms-v2-prelude.js','preventive-cycle-ui.js','mobile-polish.js','inventory-ui.js','history-cost-ui.js','dashboard-reporting.js','dashboard-reporting-pdf.js','manifest.webmanifest','service-worker.js'].some(name=>url.pathname.endsWith('/'+name))){
     event.respondWith(networkFirst(event.request));
     return;
   }
