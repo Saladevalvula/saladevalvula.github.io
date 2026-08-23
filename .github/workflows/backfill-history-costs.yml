@@ -1,0 +1,55 @@
+name: Backfill maintenance material costs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'history_cost_backfill.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: history-cost-backfill
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Validate Firebase secret
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: test -n "$FIREBASE_KEY" || (echo "FIREBASE_KEY ausente" && exit 1)
+      - name: Correlate history and material costs
+        id: backfill
+        continue-on-error: true
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: python apply_history_cost_backfill.py history_cost_backfill.json history_cost_backfill_status.json
+      - name: Publish verification receipt
+        if: always()
+        run: |
+          if [ ! -f history_cost_backfill_status.json ]; then
+            echo "Nenhum recibo gerado."
+            exit 0
+          fi
+          cp history_cost_backfill_status.json /tmp/history_cost_backfill_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B publish-history-cost-status origin/main
+          cp /tmp/history_cost_backfill_status.json history_cost_backfill_status.json
+          git add history_cost_backfill_status.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "status: confirmar backfill de custos [skip ci]"
+          git push origin HEAD:main
+      - name: Fail when backfill failed
+        if: steps.backfill.outcome == 'failure'
+        run: exit 1

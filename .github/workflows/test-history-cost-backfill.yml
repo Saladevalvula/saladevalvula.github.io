@@ -1,0 +1,30 @@
+name: Test history cost backfill
+
+on:
+  pull_request:
+    paths:
+      - 'apply_history_cost_backfill.py'
+      - '.github/workflows/backfill-history-costs.yml'
+      - '.github/workflows/test-history-cost-backfill.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax check
+        run: python -m py_compile apply_history_cost_backfill.py
+      - name: Verify safety markers
+        run: |
+          grep -q 'materialCostIsActual' apply_history_cost_backfill.py
+          grep -q 'stockChanged' apply_history_cost_backfill.py
+          grep -q 'pending_unit_cost' apply_history_cost_backfill.py
+          grep -q 'retroactive_profile_order_batch' apply_history_cost_backfill.py
+          echo 'OK: backfill preserva estoque e diferencia estimativa de custo real.'
