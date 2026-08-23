@@ -1,0 +1,413 @@
+{
+  "status": "verified",
+  "requestId": "history-cost-dryrun-20260823-1409",
+  "requestedAt": "2026-08-23T14:09:00-03:00",
+  "operation": "history_material_cost_backfill",
+  "mode": "dry_run",
+  "materialsLoaded": 20,
+  "profilesLoaded": 1,
+  "historyTotal": 301,
+  "maintenanceCandidates": 219,
+  "matchedRecords": 114,
+  "pricedRecords": 5,
+  "pendingPriceRecords": 109,
+  "updatedRecords": 0,
+  "estimatedCostTotal": 613.91,
+  "byType": {
+    "corretiva": 183,
+    "preventiva": 36
+  },
+  "byLine": {
+    "512": 143,
+    "513": 54,
+    "514": 22
+  },
+  "topSubsets": [
+    [
+      "Geral",
+      48
+    ],
+    [
+      "V8",
+      41
+    ],
+    [
+      "V3",
+      27
+    ],
+    [
+      "Tucho",
+      22
+    ],
+    [
+      "V2",
+      16
+    ],
+    [
+      "Acionamento V3",
+      15
+    ],
+    [
+      "V7",
+      10
+    ],
+    [
+      "V1",
+      6
+    ],
+    [
+      "Tulipa",
+      5
+    ],
+    [
+      "Subconjunto",
+      5
+    ],
+    [
+      "V4",
+      5
+    ],
+    [
+      "V5/V6",
+      3
+    ],
+    [
+      "Jumper",
+      3
+    ],
+    [
+      "V6",
+      3
+    ],
+    [
+      "V5",
+      3
+    ],
+    [
+      "O-ring",
+      2
+    ],
+    [
+      "Caixa de ar",
+      2
+    ],
+    [
+      "Membrana",
+      1
+    ],
+    [
+      "SMC",
+      1
+    ],
+    [
+      "MC9",
+      1
+    ]
+  ],
+  "noMaterialMatch": [
+    [
+      "L514:Geral",
+      19
+    ],
+    [
+      "L512:Tucho",
+      18
+    ],
+    [
+      "L513:Geral",
+      15
+    ],
+    [
+      "L512:Geral",
+      14
+    ],
+    [
+      "L513:Acionamento V3",
+      9
+    ],
+    [
+      "L512:Acionamento V3",
+      6
+    ],
+    [
+      "L513:Tucho",
+      4
+    ],
+    [
+      "L512:Subconjunto",
+      3
+    ],
+    [
+      "L512:Jumper",
+      3
+    ],
+    [
+      "L512:Caixa de ar",
+      2
+    ],
+    [
+      "L512:V6",
+      2
+    ],
+    [
+      "L513:V5",
+      2
+    ],
+    [
+      "L514:Subconjunto",
+      2
+    ],
+    [
+      "L512:Membrana",
+      1
+    ],
+    [
+      "L512:O-ring",
+      1
+    ],
+    [
+      "L512:V5",
+      1
+    ],
+    [
+      "L513:MC9",
+      1
+    ],
+    [
+      "L513:V6",
+      1
+    ],
+    [
+      "L514:O-ring",
+      1
+    ]
+  ],
+  "monthlyEstimatedCost": {
+    "2026-01|L512": 122.78,
+    "2026-02|L513": 368.34,
+    "2026-06|L512": 122.78
+  },
+  "samples": [
+    {
+      "path": "lines/512/valves/05/history/legacy-8439f7dc1c8d393153e59f9b",
+      "line": "512",
+      "valve": "05",
+      "type": "corretiva",
+      "subset": "V8",
+      "date": "2026-07-03T00:00:00+00:00",
+      "materials": [
+        "50052294",
+        "50052410",
+        "50062887",
+        "50063003",
+        "50266584",
+        "50286073",
+        "50287131"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/1/history/legacy-af29d75ce125d6cdda646ce4",
+      "line": "512",
+      "valve": "1",
+      "type": "corretiva",
+      "subset": "V8",
+      "date": "2026-01-21T15:43:14.784Z",
+      "materials": [
+        "50052294",
+        "50052410",
+        "50062887",
+        "50063003",
+        "50266584",
+        "50286073",
+        "50287131"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/1/history/notion-0f7268089e57233b5921",
+      "line": "512",
+      "valve": "1",
+      "type": "preventiva",
+      "subset": "V1",
+      "date": "2026-01-03T00:00:00+00:00",
+      "materials": [
+        "50062737",
+        "50062749",
+        "50328067"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/1/history/notion-13010b6e1576f6600d6c",
+      "line": "512",
+      "valve": "1",
+      "type": "preventiva",
+      "subset": "Tulipa",
+      "date": "2026-01-03T00:00:00+00:00",
+      "materials": [
+        "50052574",
+        "50061622",
+        "50120790",
+        "50212646",
+        "50267756"
+      ],
+      "estimatedCost": 122.78,
+      "status": "estimated",
+      "basis": "retroactive_profile_order_batch"
+    },
+    {
+      "path": "lines/512/valves/1/history/notion-772b3c1c608b247115b3",
+      "line": "512",
+      "valve": "1",
+      "type": "preventiva",
+      "subset": "V7",
+      "date": "2026-01-03T00:00:00+00:00",
+      "materials": [
+        "50306127"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/1/history/notion-afaad165ebb86ce5879f",
+      "line": "512",
+      "valve": "1",
+      "type": "preventiva",
+      "subset": "V2",
+      "date": "2026-01-03T00:00:00+00:00",
+      "materials": [
+        "50062737",
+        "50062749",
+        "50328067"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/1/history/notion-c61f2ee392535f51e0b6",
+      "line": "512",
+      "valve": "1",
+      "type": "preventiva",
+      "subset": "V5/V6",
+      "date": "2026-01-03T00:00:00+00:00",
+      "materials": [
+        "50050750",
+        "50052573",
+        "50059349",
+        "50062737",
+        "50062749",
+        "50328067"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/1/history/notion-e815efaf497b2a2c6cda",
+      "line": "512",
+      "valve": "1",
+      "type": "preventiva",
+      "subset": "V8",
+      "date": "2026-01-03T00:00:00+00:00",
+      "materials": [
+        "50052294",
+        "50052410",
+        "50062887",
+        "50063003",
+        "50266584",
+        "50286073",
+        "50287131"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/10/history/legacy-8facdd0f75efdd16fa03f613",
+      "line": "512",
+      "valve": "10",
+      "type": "corretiva",
+      "subset": "V8",
+      "date": "2026-06-29T13:08:11.944Z",
+      "materials": [
+        "50052294",
+        "50052410",
+        "50062887",
+        "50063003",
+        "50266584",
+        "50286073",
+        "50287131"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/107/history/notion-029a090632b000eeec4c",
+      "line": "512",
+      "valve": "107",
+      "type": "corretiva",
+      "subset": "V3",
+      "date": "2026-08-20T00:00:00+00:00",
+      "materials": [
+        "50052294",
+        "50062887",
+        "50063003",
+        "50266584"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/108/history/legacy-9249f39d076a171a0c9c5a78",
+      "line": "512",
+      "valve": "108",
+      "type": "corretiva",
+      "subset": "V8",
+      "date": "2026-06-19T15:02:25.602Z",
+      "materials": [
+        "50052294",
+        "50052410",
+        "50062887",
+        "50063003",
+        "50266584",
+        "50286073",
+        "50287131"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    },
+    {
+      "path": "lines/512/valves/108/history/legacy-a42dacf04c1ccf6b9fc43491",
+      "line": "512",
+      "valve": "108",
+      "type": "corretiva",
+      "subset": "V3",
+      "date": "2026-02-19T09:48:18.886Z",
+      "materials": [
+        "50052294",
+        "50062887",
+        "50063003",
+        "50266584"
+      ],
+      "estimatedCost": 0.0,
+      "status": "pending_unit_cost",
+      "basis": "pending_unit_cost"
+    }
+  ],
+  "stockChanged": false,
+  "actualCostChanged": false,
+  "verifiedAt": "2026-08-23T17:17:52.810004+00:00",
+  "message": "Histórico correlacionado com o catálogo. Custos gravados são estimativas retroativas; estoque e custo SAP real não foram alterados."
+}
