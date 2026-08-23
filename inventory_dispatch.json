@@ -1,33 +1,8 @@
 {
-  "enabled": true,
+  "enabled": false,
   "requestId": "material-tulipa-512-513-20260823-v2",
   "requestedAt": "2026-08-23T13:49:00-03:00",
   "operation": "material_profile_upsert",
   "profileId": "tulipa-512-513",
-  "subset": "Tulipa",
-  "lines": ["512", "513"],
-  "referenceSapOrder": "100003656998",
-  "referencePlannedMaterialValue": 859.47,
-  "currency": "BRL",
-  "source": "catalogo_associacao_materiais_corrigido_chatgpt",
-  "materials": [
-    {
-      "sapCode": "50120790",
-      "description": "VEDAÇÃO;KRONES/1229520590",
-      "unit": "UN",
-      "referenceQty": 7
-    },
-    {
-      "sapCode": "50061622",
-      "description": "VEDAÇÃO;KRONES/0169900924",
-      "unit": "UN",
-      "referenceQty": 7
-    },
-    {
-      "sapCode": "50267756",
-      "description": "BUCHA;KRONES/0901737819",
-      "unit": "UN",
-      "referenceQty": 7
-    }
-  ]
+  "note": "Perfil corrigido e verificado no Firebase. Consulte inventory_dispatch_status.json."
 }
