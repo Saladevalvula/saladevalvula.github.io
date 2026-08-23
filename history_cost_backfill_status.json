@@ -1,7 +1,7 @@
 {
   "status": "verified",
-  "requestId": "history-cost-dryrun-20260823-1409",
-  "requestedAt": "2026-08-23T14:09:00-03:00",
+  "requestId": "history-cost-dryrun-20260823-1412-v2",
+  "requestedAt": "2026-08-23T14:12:00-03:00",
   "operation": "history_material_cost_backfill",
   "mode": "dry_run",
   "materialsLoaded": 20,
@@ -204,6 +204,7 @@
         "50286073",
         "50287131"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -224,6 +225,7 @@
         "50286073",
         "50287131"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -240,6 +242,7 @@
         "50062749",
         "50328067"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -258,8 +261,13 @@
         "50212646",
         "50267756"
       ],
+      "costedMaterials": [
+        "50061622",
+        "50120790",
+        "50267756"
+      ],
       "estimatedCost": 122.78,
-      "status": "estimated",
+      "status": "partial",
       "basis": "retroactive_profile_order_batch"
     },
     {
@@ -272,6 +280,7 @@
       "materials": [
         "50306127"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -288,6 +297,7 @@
         "50062749",
         "50328067"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -307,6 +317,7 @@
         "50062749",
         "50328067"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -327,6 +338,7 @@
         "50286073",
         "50287131"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -347,6 +359,7 @@
         "50286073",
         "50287131"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -364,6 +377,7 @@
         "50063003",
         "50266584"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -384,6 +398,7 @@
         "50286073",
         "50287131"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -401,6 +416,7 @@
         "50063003",
         "50266584"
       ],
+      "costedMaterials": [],
       "estimatedCost": 0.0,
       "status": "pending_unit_cost",
       "basis": "pending_unit_cost"
@@ -408,6 +424,6 @@
   ],
   "stockChanged": false,
   "actualCostChanged": false,
-  "verifiedAt": "2026-08-23T17:17:52.810004+00:00",
+  "verifiedAt": "2026-08-23T17:20:40.538181+00:00",
   "message": "Histórico correlacionado com o catálogo. Custos gravados são estimativas retroativas; estoque e custo SAP real não foram alterados."
 }
