@@ -107,6 +107,49 @@ jobs:
           if(!html.includes('Próxima no ciclo: V42')) throw new Error('posição do ciclo não está clara');
           console.log('OK: L512 mostra 41 preventivas, 134 pendentes e programação V42-V48 completa.');
           NODE
+      - name: Validate canonical dashboard history bridge
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'), vm=require('vm');
+          global.window=global;
+          global.state={mode:'register',step:'line',cmms:{dashboardLine:'all',dashboardMonth:'2026-08'}};
+          global.globalDB={'512':{'1':{valveNumber:1,historico:Array.from({length:26},(_,i)=>({id:'stale-'+i,type:'corretiva',timestamp:'2026-08-10T12:00:00Z'}))}},'513':{},'514':{}};
+          global.render=()=>{};
+          let historyCb=null;
+          global.db={
+            collection(){return {onSnapshot(cb){return ()=>{};}};},
+            collectionGroup(name){return {onSnapshot(cb){if(name==='history')historyCb=cb;return ()=>{};}};}
+          };
+          const styles={};
+          global.document={
+            head:{appendChild(el){if(el.id)styles[el.id]=el;}},
+            getElementById(id){return styles[id]||null;},
+            querySelectorAll(){return [];},
+            createElement(){return {id:'',className:'',innerHTML:'',classList:{add(){}},remove(){}};}
+          };
+          global.renderDashboardView=function(){
+            const rows=[];
+            for(const line of ['512','513','514']) for(const v of Object.values(globalDB[line]||{})) rows.push(...(v.historico||[]));
+            global.__dashboardCounts={total:rows.length,corr:rows.filter(r=>r.type==='corretiva').length,prev:rows.filter(r=>r.type==='preventiva').length};
+          };
+          vm.runInThisContext(fs.readFileSync('mobile-polish.js','utf8'),{filename:'mobile-polish.js'});
+          if(!historyCb) throw new Error('listener canônico do histórico não foi registrado');
+          const docs=[];
+          let n=0;
+          for(let i=0;i<25;i++,n++) docs.push({id:'c'+n,ref:{path:`lines/512/valves/${i+1}/history/c${n}`},data(){return {type:'corretiva',timestamp:'2026-08-12T12:00:00Z'};}});
+          for(let i=0;i<9;i++,n++) docs.push({id:'c'+n,ref:{path:`lines/513/valves/${i+1}/history/c${n}`},data(){return {type:'corretiva',timestamp:'2026-08-13T12:00:00Z'};}});
+          for(let i=0;i<2;i++,n++) docs.push({id:'s'+n,ref:{path:`lines/513/valves/${i+50}/history/s${n}`},data(){return {type:'sonda_event',timestamp:'2026-08-14T12:00:00Z'};}});
+          docs.push({id:'sap-event',ref:{path:'sap_orders/100003759812/history/event-1'},data(){return {type:'preventiva',timestamp:'2026-08-20T12:00:00Z'};}});
+          historyCb({forEach(cb){docs.forEach(cb);}});
+          state.mode='dashboard';
+          const container={querySelector(){return null;},querySelectorAll(){return [];}};
+          setTimeout(()=>{
+            global.renderDashboardView(container);
+            const c=global.__dashboardCounts;
+            if(c.total!==36||c.corr!==34||c.prev!==0) throw new Error('contagem canônica incorreta: '+JSON.stringify(c));
+            console.log('OK: dashboard ignora globalDB obsoleto e usa 36 registros canônicos (34 corretivas + 2 sonda).');
+          },30);
+          NODE
       - name: Validate fresh-cache path
         run: |
           grep -q "preventive-cycle-ui.js" service-worker.js
