@@ -116,3 +116,13 @@
   script.dataset.inventoryUi = '1';
   document.body.appendChild(script);
 })();
+
+// Painel de custos históricos estimados, separado do núcleo do dashboard.
+(() => {
+  if (document.querySelector('script[data-history-cost-ui]')) return;
+  const script = document.createElement('script');
+  script.src = './history-cost-ui.js';
+  script.defer = true;
+  script.dataset.historyCostUi = '1';
+  document.body.appendChild(script);
+})();
