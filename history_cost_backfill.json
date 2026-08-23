@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "requestId": "history-cost-apply-20260823-1415",
   "requestedAt": "2026-08-23T14:15:00-03:00",
   "operation": "history_material_cost_backfill",
