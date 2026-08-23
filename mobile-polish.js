@@ -3,11 +3,20 @@
   'use strict';
 
   const STYLE_ID = 'cmms-mobile-polish-style';
+  const REGISTER_TITLE = 'Plano de Manutenção Sala de Válvulas';
   const cycleState = {};
   const dashboardHistory = {};
   const DASH_LINES = ['512', '513', '514'];
   let dashboardWrapped = false;
   let dashboardHistoryReady = false;
+
+  function setTextIfChanged(el, value) {
+    if (!el) return false;
+    const next = String(value);
+    if (String(el.textContent || '') === next) return false;
+    el.textContent = next;
+    return true;
+  }
 
   function currentMonthKey() {
     const d = new Date();
@@ -198,20 +207,21 @@
     if (!root) return;
 
     if (state?.mode === 'register' && state?.step === 'line') {
+      const acceptedTitles = ['painel geral', 'dash sala de válvulas', REGISTER_TITLE.toLowerCase()];
       const heading = [...(root.querySelectorAll?.('h2') || [])]
-        .find(el => ['painel geral', 'dash sala de válvulas'].includes(String(el.textContent || '').trim().toLowerCase()));
-      if (heading) heading.textContent = 'Dash Sala de Válvulas';
+        .find(el => acceptedTitles.includes(String(el.textContent || '').trim().toLowerCase()));
+      setTextIfChanged(heading, REGISTER_TITLE);
 
       [...(root.querySelectorAll?.('.card-industrial span') || [])].forEach(el => {
         const label = String(el.textContent || '').trim().toLowerCase();
         if (label === 'pendentes') {
-          el.textContent = 'Restantes no ciclo';
+          setTextIfChanged(el, 'Restantes no ciclo');
           el.classList?.add('cmms-stat-label-long');
         } else if (label === 'preventivas') {
-          el.textContent = 'Ciclo preventivo';
+          setTextIfChanged(el, 'Ciclo preventivo');
           el.classList?.add('cmms-stat-label-long');
         } else if (label === 'corretivas') {
-          el.textContent = 'Corretivas em produção';
+          setTextIfChanged(el, 'Corretivas em produção');
           el.classList?.add('cmms-stat-label-long');
         }
       });
@@ -219,17 +229,17 @@
 
     if (state?.mode === 'register' || state?.mode === 'history') {
       [...(root.querySelectorAll?.('option[value="corretiva"]') || [])].forEach(el => {
-        el.textContent = 'Corretiva em produção';
+        setTextIfChanged(el, 'Corretiva em produção');
       });
       [...(root.querySelectorAll?.('button') || [])].forEach(el => {
-        if (String(el.textContent || '').trim() === 'Corretiva') el.textContent = 'Corretiva em produção';
+        if (String(el.textContent || '').trim() === 'Corretiva') setTextIfChanged(el, 'Corretiva em produção');
       });
     }
 
     if (state?.mode === 'history') {
       [...(root.querySelectorAll?.('.cmms-kpi small') || [])].forEach(el => {
         if (String(el.textContent || '').trim().toLowerCase() === 'corretivas') {
-          el.textContent = 'Corretivas em produção';
+          setTextIfChanged(el, 'Corretivas em produção');
         }
       });
     }
@@ -292,14 +302,14 @@
       const labelEl = card.querySelector?.('small');
       const label = String(labelEl?.textContent || '').trim().toLowerCase();
       if (label === 'intervenções' || label === 'intervenções no mês') {
-        if (labelEl) labelEl.textContent = 'Intervenções no mês';
+        setTextIfChanged(labelEl, 'Intervenções no mês');
         interventionsCard = card;
       }
       if (label === 'corretivas' || label === 'corretivas no mês' || label === 'corretivas em produção') {
-        if (labelEl) labelEl.textContent = 'Corretivas em produção';
+        setTextIfChanged(labelEl, 'Corretivas em produção');
       }
       if (label === 'preventivas' || label === 'preventivas no mês') {
-        if (labelEl) labelEl.textContent = 'Preventivas no mês';
+        setTextIfChanged(labelEl, 'Preventivas no mês');
         preventiveCard = card;
       }
     });
@@ -321,12 +331,12 @@
       if (falhas) parts.push(`${falhas} falhas enchedora`);
       if (other) parts.push(`${other} outros`);
       const sub = interventionsCard.querySelector?.('span');
-      if (sub) sub.textContent = parts.length ? parts.join(' + ') : 'sem intervenções no período';
+      if (sub) setTextIfChanged(sub, parts.length ? parts.join(' + ') : 'sem intervenções no período');
     }
 
     [...(container.querySelectorAll?.('.report-compare-row .name') || [])].forEach(el => {
       if (String(el.textContent || '').trim().toLowerCase() === 'corretivas') {
-        el.textContent = 'Corretivas em produção';
+        setTextIfChanged(el, 'Corretivas em produção');
       }
     });
 
@@ -334,11 +344,11 @@
       const current = String(title.textContent || '').trim().toLowerCase();
       const subtitle = title.parentElement?.querySelector?.('span');
       if (current.startsWith('pareto · válvulas')) {
-        title.textContent = 'Pareto · válvulas em produção';
-        if (subtitle) subtitle.textContent = 'atuações corretivas do período';
+        setTextIfChanged(title, 'Pareto · válvulas em produção');
+        if (subtitle) setTextIfChanged(subtitle, 'atuações corretivas do período');
       } else if (current.startsWith('pareto · componentes') || current.startsWith('pareto · subconjuntos')) {
-        title.textContent = 'Pareto · subconjuntos';
-        if (subtitle) subtitle.textContent = 'trocas/atuações em produção';
+        setTextIfChanged(title, 'Pareto · subconjuntos');
+        if (subtitle) setTextIfChanged(subtitle, 'trocas/atuações em produção');
       }
     });
 
