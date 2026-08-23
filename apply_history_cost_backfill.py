@@ -107,7 +107,6 @@ def get_all_history():
             continue
         doc = row["document"]
         path = doc_path_from_name(doc.get("name", ""))
-        # Só histórico de válvulas: lines/{linha}/valves/{valvula}/history/{id}
         parts = path.split("/")
         if len(parts) == 6 and parts[0] == "lines" and parts[2] == "valves" and parts[4] == "history":
             docs.append(doc)
@@ -235,10 +234,14 @@ def calculate(history_docs, materials, profiles, mode, request_id):
 
         if profile:
             cost = float(profile["unitProfileCost"])
+            profile_codes = sorted(set(profile["materialCodes"]) & set(codes))
+            priced_codes = profile_codes
             basis = "retroactive_profile_order_batch"
-            confidence = "estimated"
-            priced_codes = list(codes)
+            confidence = "estimated" if set(profile_codes) == set(codes) else "partial"
+            extra = sorted(set(codes) - set(profile_codes))
             note = f"Estimativa retroativa: R$ {profile['referenceValue']:.2f} da ordem {profile['referenceOrder']} dividido por lote uniforme de {profile['batchCount']} intervenções."
+            if extra:
+                note += " Há outros materiais correlacionados fora desse valor de referência: " + ", ".join(extra) + "."
         elif priced:
             cost = sum(float(m["unitCost"]) for m in priced)
             priced_codes = [m["code"] for m in priced]
@@ -257,12 +260,13 @@ def calculate(history_docs, materials, profiles, mode, request_id):
 
         path = doc_path_from_name(doc.get("name", ""))
         fields = dict(doc.get("fields", {}))
+        material_status = "estimated" if cost > 0 and confidence == "estimated" else ("partial" if cost > 0 else "pending_unit_cost")
         fields.update({
             "linkedMaterialCodes": strings(codes),
             "costedMaterialCodes": strings(priced_codes),
             "materialCostEstimated": dv(round(cost, 2)),
             "materialCostCurrency": sv("BRL"),
-            "materialCostStatus": sv("estimated" if cost > 0 and confidence == "estimated" else ("partial" if cost > 0 else "pending_unit_cost")),
+            "materialCostStatus": sv(material_status),
             "materialCostBasis": sv(basis),
             "materialCostConfidence": sv(confidence),
             "materialCostIsActual": bv(False),
@@ -276,7 +280,6 @@ def calculate(history_docs, materials, profiles, mode, request_id):
 
         if mode == "apply":
             patch_full_doc(path, fields)
-            # Releitura do próprio documento para confirmar vínculo/custo.
             check = requests.get(f"{API}/{path}", params={"key": FIREBASE_KEY}, timeout=45)
             check.raise_for_status()
             verified = decode_fields(check.json())
@@ -293,8 +296,9 @@ def calculate(history_docs, materials, profiles, mode, request_id):
                 "subset": subset_raw,
                 "date": str(data.get("timestamp") or data.get("createdAt") or ""),
                 "materials": codes,
+                "costedMaterials": priced_codes,
                 "estimatedCost": round(cost, 2),
-                "status": "estimated" if cost > 0 else "pending_unit_cost",
+                "status": material_status,
                 "basis": basis,
             })
 
