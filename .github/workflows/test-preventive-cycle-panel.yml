@@ -43,6 +43,9 @@ jobs:
           grep -q 'cmms-report-month-input' mobile-polish.js
           grep -q 'Ciclo preventivo' mobile-polish.js
           grep -q 'Preventivas no mês' mobile-polish.js
+          grep -q 'Acumulado do histórico' mobile-polish.js
+          grep -q 'syncCanonicalHistoryToGlobalDB' mobile-polish.js
+          grep -q "collectionGroup('history')" mobile-polish.js
           grep -q 'completed' mobile-polish.js
           grep -q 'de ${max}' mobile-polish.js
           grep -q '@media(max-width:520px)' mobile-polish.js
@@ -108,4 +111,4 @@ jobs:
         run: |
           grep -q "preventive-cycle-ui.js" service-worker.js
           grep -q "mobile-polish.js" service-worker.js
-          grep -q "sala-valvulas-cmms-v2-v5" service-worker.js
+          grep -q "sala-valvulas-cmms-v2-v6" service-worker.js
