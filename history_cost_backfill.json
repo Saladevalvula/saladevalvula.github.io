@@ -1,7 +1,7 @@
 {
   "enabled": true,
-  "requestId": "history-cost-dryrun-20260823-1409",
-  "requestedAt": "2026-08-23T14:09:00-03:00",
+  "requestId": "history-cost-dryrun-20260823-1412-v2",
+  "requestedAt": "2026-08-23T14:12:00-03:00",
   "operation": "history_material_cost_backfill",
   "mode": "dry_run"
 }
