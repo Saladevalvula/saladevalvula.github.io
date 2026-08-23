@@ -4,7 +4,10 @@
 
   const STYLE_ID = 'cmms-mobile-polish-style';
   const cycleState = {};
+  const dashboardHistory = {};
+  const DASH_LINES = ['512', '513', '514'];
   let dashboardWrapped = false;
+  let dashboardHistoryReady = false;
 
   function currentMonthKey() {
     const d = new Date();
@@ -18,6 +21,53 @@
     if (!Number.isFinite(raw) || raw < 0) return null;
     const max = String(line) === '514' ? 72 : 175;
     return Math.min(max, raw);
+  }
+
+  function valveHistoryRecord(doc) {
+    const path = String(doc?.ref?.path || '');
+    const p = path.split('/');
+    if (p.length !== 6 || p[0] !== 'lines' || p[2] !== 'valves' || p[4] !== 'history') return null;
+    const line = String(p[1] || '');
+    const valve = String(p[3] || '');
+    if (!DASH_LINES.includes(line)) return null;
+    const data = doc.data ? (doc.data() || {}) : {};
+    return {
+      ...data,
+      line: String(data.line || line),
+      valve: String(data.valve ?? valve),
+      historyDocId: data.historyDocId || doc.id,
+      historyPath: path
+    };
+  }
+
+  function syncCanonicalHistoryToGlobalDB() {
+    if (!dashboardHistoryReady || typeof globalDB === 'undefined') return;
+
+    DASH_LINES.forEach(line => {
+      if (!globalDB[line]) globalDB[line] = {};
+      Object.values(globalDB[line]).forEach(v => { v.historico = []; });
+    });
+
+    Object.values(dashboardHistory).forEach(r => {
+      const line = String(r.line || '');
+      const valve = String(r.valve || '');
+      if (!DASH_LINES.includes(line) || !valve) return;
+      if (!globalDB[line]) globalDB[line] = {};
+      if (!globalDB[line][valve]) {
+        globalDB[line][valve] = {
+          valveNumber: valve === 'GERAL' ? 0 : Number(valve),
+          docId: valve
+        };
+      }
+      const target = globalDB[line][valve];
+      target.historico = target.historico || [];
+      target.historico.push(r);
+    });
+  }
+
+  function dashboardHistoryRows(line) {
+    const selectedLine = String(line || 'all');
+    return Object.values(dashboardHistory).filter(r => selectedLine === 'all' || String(r.line) === selectedLine);
   }
 
   function installStyles() {
@@ -65,6 +115,9 @@
         text-overflow:clip!important;
       }
       #cmms-cycle-dashboard-kpi strong{color:#86efac!important}
+      #cmms-history-accumulated{margin-top:12px}
+      #cmms-history-accumulated .report-kpi{min-height:96px}
+      #cmms-history-accumulated .report-kpi strong{font-size:1.55rem}
 
       @media(max-width:520px){
         .cmms-plan-fields{grid-template-columns:minmax(0,1fr)!important}
@@ -123,6 +176,36 @@
     if (heading) heading.textContent = 'Dash Sala de Válvulas';
   }
 
+  function renderAccumulatedHistory(container) {
+    container.querySelector('#cmms-history-accumulated')?.remove();
+    if (!dashboardHistoryReady) return;
+
+    const selectedLine = String(state?.cmms?.dashboardLine || 'all');
+    const rows = dashboardHistoryRows(selectedLine);
+    const corrective = rows.filter(r => r.type === 'corretiva').length;
+    const preventive = rows.filter(r => r.type === 'preventiva').length;
+    const sonda = rows.filter(r => r.type === 'sonda_event').length;
+    const scope = selectedLine === 'all' ? 'Todas as linhas' : `L${selectedLine}`;
+
+    const panel = document.createElement('div');
+    panel.id = 'cmms-history-accumulated';
+    panel.className = 'report-panel';
+    panel.innerHTML = `
+      <div class="report-panel-title">
+        <h3>Acumulado do histórico</h3>
+        <span>${scope} · todas as datas</span>
+      </div>
+      <div class="report-kpis">
+        <div class="report-kpi"><small>Intervenções acumuladas</small><strong>${rows.length}</strong><span>histórico completo</span></div>
+        <div class="report-kpi"><small>Corretivas acumuladas</small><strong>${corrective}</strong><span>histórico completo</span></div>
+        <div class="report-kpi good"><small>Preventivas acumuladas</small><strong>${preventive}</strong><span>registros com data</span></div>
+        <div class="report-kpi"><small>Eventos de sonda</small><strong>${sonda}</strong><span>histórico completo</span></div>
+      </div>`;
+
+    const monthlyGrid = container.querySelector('.report-kpis');
+    if (monthlyGrid) monthlyGrid.insertAdjacentElement('afterend', panel);
+  }
+
   function polishDashboard(container) {
     if (!container) return;
 
@@ -133,14 +216,19 @@
     }
 
     const kpis = [...container.querySelectorAll('.report-kpi')];
-    const preventiveCard = kpis.find(card => String(card.querySelector('small')?.textContent || '').trim().toLowerCase() === 'preventivas');
-    if (preventiveCard) preventiveCard.querySelector('small').textContent = 'Preventivas no mês';
+    kpis.forEach(card => {
+      const label = String(card.querySelector('small')?.textContent || '').trim().toLowerCase();
+      if (label === 'intervenções') card.querySelector('small').textContent = 'Intervenções no mês';
+      if (label === 'corretivas') card.querySelector('small').textContent = 'Corretivas no mês';
+      if (label === 'preventivas') card.querySelector('small').textContent = 'Preventivas no mês';
+    });
 
+    renderAccumulatedHistory(container);
     container.querySelector('#cmms-cycle-dashboard-kpi')?.remove();
 
     const selectedMonth = String(state?.cmms?.dashboardMonth || currentMonthKey());
     const selectedLine = String(state?.cmms?.dashboardLine || 'all');
-    if (selectedMonth !== currentMonthKey() || !['512', '513', '514'].includes(selectedLine)) return;
+    if (selectedMonth !== currentMonthKey() || !DASH_LINES.includes(selectedLine)) return;
 
     const completed = cycleCompleted(selectedLine);
     if (completed == null) return;
@@ -154,6 +242,8 @@
 
     const grid = container.querySelector('.report-kpis');
     if (!grid) return;
+    const preventiveCard = [...grid.querySelectorAll('.report-kpi')]
+      .find(k => String(k.querySelector('small')?.textContent || '').trim().toLowerCase() === 'preventivas no mês');
     if (preventiveCard) preventiveCard.insertAdjacentElement('afterend', card);
     else grid.appendChild(card);
   }
@@ -167,6 +257,7 @@
 
     const baseRenderDashboardView = window.renderDashboardView;
     window.renderDashboardView = function(container) {
+      syncCanonicalHistoryToGlobalDB();
       const result = baseRenderDashboardView.apply(this, arguments);
       polishDashboard(container);
       return result;
@@ -175,7 +266,10 @@
 
     if (state?.mode === 'dashboard') {
       const c = document.getElementById('main-container');
-      if (c) polishDashboard(c);
+      if (c) {
+        syncCanonicalHistoryToGlobalDB();
+        polishDashboard(c);
+      }
     }
   }
 
@@ -206,6 +300,19 @@
         if (c) polishDashboard(c);
       }
     }, err => console.warn('dashboard cycle listener', err));
+
+    if (typeof db.collectionGroup === 'function') {
+      db.collectionGroup('history').onSnapshot(snap => {
+        Object.keys(dashboardHistory).forEach(k => delete dashboardHistory[k]);
+        snap.forEach(doc => {
+          const record = valveHistoryRecord(doc);
+          if (record) dashboardHistory[record.historyPath] = record;
+        });
+        dashboardHistoryReady = true;
+        syncCanonicalHistoryToGlobalDB();
+        if (state?.mode === 'dashboard' && typeof render === 'function') render(false);
+      }, err => console.warn('dashboard canonical history listener', err));
+    }
   }
 
   setTimeout(polishRegisterTitle, 0);
