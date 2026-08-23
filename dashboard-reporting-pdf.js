@@ -21,6 +21,14 @@
     return [...document.querySelectorAll('.report-panel')].find(p => text(p.querySelector('.report-panel-title h3'), '').toLowerCase().includes(titlePart.toLowerCase()));
   }
 
+  function findFirstPanel(parts) {
+    for (const part of parts) {
+      const panel = findPanel(part);
+      if (panel) return panel;
+    }
+    return null;
+  }
+
   function addTitle(doc, title, period) {
     doc.setFontSize(18); doc.setTextColor(20); doc.text(title, 14, 15);
     doc.setFontSize(9); doc.setTextColor(90); doc.text(period, 14, 21);
@@ -49,6 +57,8 @@
     const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
     addTitle(doc, 'Sala de Válvulas - Relatório de Manutenção', period);
+    doc.setFontSize(7); doc.setTextColor(105);
+    doc.text('Corretiva = atuação/troca de subconjunto durante produção. Preventiva = válvula executada no PCM.', 14, 25);
     addKpis(doc, [...root.querySelectorAll('.report-kpi')]);
 
     const comparison = [...(findPanel('Comparação com')?.querySelectorAll('.report-compare-row') || [])].map(r => {
@@ -62,18 +72,18 @@
 
     doc.addPage();
     addTitle(doc, 'Análise técnica', period);
-    const valveRows = rowsFromPanel(findPanel('Pareto · válvulas'));
-    doc.setFontSize(11); doc.setTextColor(20); doc.text('Pareto de válvulas corretivas', 14, 30);
-    doc.autoTable({ startY: 34, head: [['Válvula', 'Qtd.']], body: valveRows.length ? valveRows : [['Sem dados', '0']], theme: 'grid', tableWidth: 125, margin: { left: 14 }, styles: { fontSize: 8 }, headStyles: { fillColor: [45, 50, 58] } });
+    const valveRows = rowsFromPanel(findFirstPanel(['Pareto · válvulas em produção', 'Pareto · válvulas']));
+    doc.setFontSize(11); doc.setTextColor(20); doc.text('Pareto de válvulas com corretivas em produção', 14, 30);
+    doc.autoTable({ startY: 34, head: [['Válvula', 'Atuações']], body: valveRows.length ? valveRows : [['Sem dados', '0']], theme: 'grid', tableWidth: 125, margin: { left: 14 }, styles: { fontSize: 8 }, headStyles: { fillColor: [45, 50, 58] } });
 
-    const componentRows = rowsFromPanel(findPanel('Pareto · componentes'));
-    doc.setFontSize(11); doc.text('Pareto de componentes', 157, 30);
-    doc.autoTable({ startY: 34, head: [['Componente', 'Qtd.']], body: componentRows.length ? componentRows : [['Sem dados', '0']], theme: 'grid', tableWidth: 125, margin: { left: 157 }, styles: { fontSize: 8 }, headStyles: { fillColor: [45, 50, 58] } });
+    const componentRows = rowsFromPanel(findFirstPanel(['Pareto · subconjuntos', 'Pareto · componentes']));
+    doc.setFontSize(11); doc.text('Pareto de subconjuntos', 157, 30);
+    doc.autoTable({ startY: 34, head: [['Subconjunto', 'Atuações']], body: componentRows.length ? componentRows : [['Sem dados', '0']], theme: 'grid', tableWidth: 125, margin: { left: 157 }, styles: { fontSize: 8 }, headStyles: { fillColor: [45, 50, 58] } });
 
     const recPanel = findPanel('Reincidências do mês');
     const recRows = [...(recPanel?.querySelectorAll('.report-recurrence') || [])].map(r => [text(r.querySelector('strong')), text(r.querySelector('b'))]);
     doc.setFontSize(11); doc.text('Reincidências', 14, 118);
-    doc.autoTable({ startY: 122, head: [['Local / componente', 'Ocorrências']], body: recRows.length ? recRows : [['Sem reincidências', '0']], theme: 'grid', tableWidth: 125, margin: { left: 14 }, styles: { fontSize: 8 }, headStyles: { fillColor: [45, 50, 58] } });
+    doc.autoTable({ startY: 122, head: [['Local / subconjunto', 'Ocorrências']], body: recRows.length ? recRows : [['Sem reincidências', '0']], theme: 'grid', tableWidth: 125, margin: { left: 14 }, styles: { fontSize: 8 }, headStyles: { fillColor: [45, 50, 58] } });
 
     const sapPanel = findPanel('Ordens SAP');
     const sapRows = [...(sapPanel?.querySelectorAll('.report-recurrence') || [])].map(r => [text(r.querySelector('strong')), text(r.querySelector('small'))]);
