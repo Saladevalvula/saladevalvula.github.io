@@ -1,4 +1,4 @@
-const CACHE='sala-valvulas-cmms-v2-v4';
+const CACHE='sala-valvulas-cmms-v2-v5';
 const CORE=['./','./index.html','./cmms-v2-prelude.js','./cmms-v2.js','./preventive-cycle-ui.js','./mobile-polish.js','./manifest.webmanifest','./app-icon.svg'];
 
 self.addEventListener('install',event=>{
