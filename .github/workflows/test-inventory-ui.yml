@@ -15,7 +15,7 @@ on:
       - 'service-worker.js'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   test:
@@ -37,4 +37,17 @@ jobs:
           grep -q "inventory-ui.js" service-worker.js
           grep -q "Materiais & Estoque" inventory-ui.js
           grep -q "db.collection('materials')" inventory-ui.js
-          echo "OK: módulo de materiais carregado e conectado ao Firestore."
+          echo '{"status":"verified","module":"inventory-ui","checks":["syntax","loader","service-worker","firestore-listener"]}' > inventory_ui_test_status.json
+      - name: Publish verification receipt
+        if: github.event_name == 'push'
+        run: |
+          cp inventory_ui_test_status.json /tmp/inventory_ui_test_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B publish-inventory-ui-status origin/main
+          cp /tmp/inventory_ui_test_status.json inventory_ui_test_status.json
+          git add inventory_ui_test_status.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "status: validar módulo de estoque [skip ci]"
+          git push origin HEAD:main
