@@ -115,6 +115,14 @@
     saveButton?.classList.add('cmms-plan-save');
   }
 
+  function polishRegisterTitle() {
+    const root = document.getElementById('main-container');
+    if (!root || state?.mode !== 'register' || state?.step !== 'line') return;
+    const heading = [...root.querySelectorAll('h2')]
+      .find(el => String(el.textContent || '').trim().toLowerCase() === 'painel geral');
+    if (heading) heading.textContent = 'Dash Sala de Válvulas';
+  }
+
   function polishDashboard(container) {
     if (!container) return;
 
@@ -183,6 +191,12 @@
     };
   }
 
+  const mainContainer = document.getElementById('main-container');
+  if (mainContainer && typeof MutationObserver !== 'undefined') {
+    const observer = new MutationObserver(polishRegisterTitle);
+    observer.observe(mainContainer, { childList: true, subtree: true });
+  }
+
   if (typeof db !== 'undefined') {
     db.collection('maintenance_cycle_state').onSnapshot(snap => {
       Object.keys(cycleState).forEach(k => delete cycleState[k]);
@@ -194,5 +208,6 @@
     }, err => console.warn('dashboard cycle listener', err));
   }
 
+  setTimeout(polishRegisterTitle, 0);
   setTimeout(() => wrapDashboardWhenReady(0), 0);
 })();
