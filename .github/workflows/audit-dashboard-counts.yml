@@ -1,0 +1,52 @@
+name: Audit dashboard counts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'dashboard-reporting.js'
+      - '.github/workflows/audit-dashboard-counts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Count Firestore history
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          python - <<'PY'
+          import os, requests, collections
+          project='sala-valvulas-ow-163b3'
+          key=os.environ['FIREBASE_KEY']
+          u=f'https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents:runQuery?key={key}'
+          body={'structuredQuery':{'from':[{'collectionId':'history','allDescendants':True}]}}
+          r=requests.post(u,json=body,timeout=60); r.raise_for_status()
+          rows=[]
+          for item in r.json():
+              doc=item.get('document')
+              if not doc: continue
+              f=doc.get('fields',{})
+              def sv(n): return f.get(n,{}).get('stringValue','')
+              rows.append((sv('line'),sv('valve'),sv('type'),sv('timestamp'),sv('subset'),doc['name']))
+          print('TOTAL HISTORY DOCS',len(rows))
+          print('TOTAL BY TYPE',dict(sorted(collections.Counter(x[2] or '(blank)' for x in rows).items())))
+          print('TOTAL BY LINE+TYPE',dict(sorted(collections.Counter((x[0],x[2] or '(blank)') for x in rows).items())))
+          for month in ['2026-07','2026-08']:
+              cur=[x for x in rows if (x[3] or '')[:7]==month]
+              print(month,'TOTAL',len(cur))
+              print(month,'BY TYPE',dict(sorted(collections.Counter(x[2] or '(blank)' for x in cur).items())))
+              print(month,'BY LINE+TYPE',dict(sorted(collections.Counter((x[0],x[2] or '(blank)') for x in cur).items())))
+          invalid=[x for x in rows if not x[3] or len(x[3])<7 or x[3][4:5]!='-']
+          print('INVALID TIMESTAMPS',len(invalid))
+          for x in invalid[:30]: print('INVALID',x[:5])
+          PY
