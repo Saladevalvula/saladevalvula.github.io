@@ -1,7 +1,7 @@
 {
-  "enabled": false,
-  "requestId": "material-tulipa-512-513-20260823",
-  "requestedAt": "2026-08-23T13:29:00-03:00",
+  "enabled": true,
+  "requestId": "material-tulipa-512-513-20260823-v2",
+  "requestedAt": "2026-08-23T13:49:00-03:00",
   "operation": "material_profile_upsert",
   "profileId": "tulipa-512-513",
   "subset": "Tulipa",
@@ -9,22 +9,22 @@
   "referenceSapOrder": "100003656998",
   "referencePlannedMaterialValue": 859.47,
   "currency": "BRL",
-  "source": "sap_component_screen_chatgpt",
+  "source": "catalogo_associacao_materiais_corrigido_chatgpt",
   "materials": [
     {
-      "sapCode": "1229520590",
-      "description": "VEDACAO;KRONES/1229520590",
+      "sapCode": "50120790",
+      "description": "VEDAÇÃO;KRONES/1229520590",
       "unit": "UN",
       "referenceQty": 7
     },
     {
-      "sapCode": "0169900924",
-      "description": "VEDACAO;KRONES/0169900924",
+      "sapCode": "50061622",
+      "description": "VEDAÇÃO;KRONES/0169900924",
       "unit": "UN",
       "referenceQty": 7
     },
     {
-      "sapCode": "0901737819",
+      "sapCode": "50267756",
       "description": "BUCHA;KRONES/0901737819",
       "unit": "UN",
       "referenceQty": 7
