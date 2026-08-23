@@ -1,5 +1,5 @@
-const CACHE='sala-valvulas-cmms-v2-v6';
-const CORE=['./','./index.html','./cmms-v2-prelude.js','./cmms-v2.js','./preventive-cycle-ui.js','./mobile-polish.js','./manifest.webmanifest','./app-icon.svg'];
+const CACHE='sala-valvulas-cmms-v2-v7';
+const CORE=['./','./index.html','./cmms-v2-prelude.js','./cmms-v2.js','./preventive-cycle-ui.js','./mobile-polish.js','./inventory-ui.js','./manifest.webmanifest','./app-icon.svg'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
@@ -29,13 +29,12 @@ self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);
   if(url.origin!==self.location.origin) return;
 
-  // Prioriza a versão mais nova do app para evitar interface presa em cache antigo.
   if(event.request.mode==='navigate'){
     event.respondWith(networkFirst(event.request,'./index.html'));
     return;
   }
 
-  if(['cmms-v2.js','cmms-v2-prelude.js','preventive-cycle-ui.js','mobile-polish.js','dashboard-reporting.js','dashboard-reporting-pdf.js','manifest.webmanifest','service-worker.js'].some(name=>url.pathname.endsWith('/'+name))){
+  if(['cmms-v2.js','cmms-v2-prelude.js','preventive-cycle-ui.js','mobile-polish.js','inventory-ui.js','dashboard-reporting.js','dashboard-reporting-pdf.js','manifest.webmanifest','service-worker.js'].some(name=>url.pathname.endsWith('/'+name))){
     event.respondWith(networkFirst(event.request));
     return;
   }
