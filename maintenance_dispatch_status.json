@@ -1,11 +1,11 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c7c5fcf-62b4-81ab-93a5-ea8eddf353fe",
-  "requestedAt": "2026-08-25T15:43:57.568Z",
-  "verifiedAt": "2026-08-25T15:44:19.792018+00:00",
+  "pageId": "3c7c5fcf-62b4-8152-bfb7-f70e90aabd74",
+  "requestedAt": "2026-08-25T15:44:36.317Z",
+  "verifiedAt": "2026-08-25T15:44:58.087237+00:00",
   "line": "512",
-  "valve": "169",
+  "valve": "26",
   "records": [
     {
       "subset": "Tulipa",
