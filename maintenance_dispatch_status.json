@@ -1,14 +1,19 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c7c5fcf-62b4-813a-9804-fbb498fc21a4",
-  "requestedAt": "2026-08-25T15:53:08.052Z",
-  "verifiedAt": "2026-08-25T15:53:31.015520+00:00",
-  "line": "512",
-  "valve": "156",
+  "pageId": "3c7c5fcf-62b4-81e5-a772-f836dde24a56",
+  "requestedAt": "2026-08-25T15:53:34.313Z",
+  "verifiedAt": "2026-08-25T15:53:55.696101+00:00",
+  "line": "513",
+  "valve": "6",
   "records": [
     {
-      "subset": "V8",
+      "subset": "Tulipa",
+      "type": "corretiva",
+      "count": 1
+    },
+    {
+      "subset": "V3",
       "type": "corretiva",
       "count": 1
     }
