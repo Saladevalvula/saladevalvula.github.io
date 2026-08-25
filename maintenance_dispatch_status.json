@@ -1,14 +1,24 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c7c5fcf-62b4-8160-b1d9-fec96c65ebbe",
-  "requestedAt": "2026-08-25T15:42:20.887Z",
-  "verifiedAt": "2026-08-25T15:42:43.762342+00:00",
-  "line": "513",
-  "valve": "155",
+  "pageId": "3c7c5fcf-62b4-810d-b4f3-fff89f2ac818",
+  "requestedAt": "2026-08-25T15:42:50.895Z",
+  "verifiedAt": "2026-08-25T15:43:18.062402+00:00",
+  "line": "512",
+  "valve": "12",
   "records": [
     {
       "subset": "SONDA",
+      "type": "corretiva",
+      "count": 1
+    },
+    {
+      "subset": "V8",
+      "type": "corretiva",
+      "count": 1
+    },
+    {
+      "subset": "Tulipa",
       "type": "corretiva",
       "count": 1
     }
