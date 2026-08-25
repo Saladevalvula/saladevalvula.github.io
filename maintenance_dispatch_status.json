@@ -1,14 +1,14 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c7c5fcf-62b4-81f4-8a40-e8e1d144c70c",
-  "requestedAt": "2026-08-25T15:47:14.939Z",
-  "verifiedAt": "2026-08-25T15:47:41.754104+00:00",
+  "pageId": "3c7c5fcf-62b4-81af-b1eb-c4e2b92864a7",
+  "requestedAt": "2026-08-25T15:47:45.306Z",
+  "verifiedAt": "2026-08-25T15:48:09.413601+00:00",
   "line": "513",
-  "valve": "104",
+  "valve": "13",
   "records": [
     {
-      "subset": "V4",
+      "subset": "V3",
       "type": "corretiva",
       "count": 1
     }
