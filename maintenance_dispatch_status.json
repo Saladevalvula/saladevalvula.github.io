@@ -1,11 +1,11 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c7c5fcf-62b4-8163-91ef-ec41235dca39",
-  "requestedAt": "2026-08-25T15:40:28.857Z",
-  "verifiedAt": "2026-08-25T15:40:52.022959+00:00",
+  "pageId": "3c7c5fcf-62b4-81a3-9088-ce9c4050c95c",
+  "requestedAt": "2026-08-25T15:41:12.463Z",
+  "verifiedAt": "2026-08-25T15:41:35.790274+00:00",
   "line": "513",
-  "valve": "27",
+  "valve": "150",
   "records": [
     {
       "subset": "SONDA",
