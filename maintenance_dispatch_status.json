@@ -1,11 +1,11 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c7c5fcf-62b4-8153-908e-d6bf28c96c59",
-  "requestedAt": "2026-08-25T15:38:21.191Z",
-  "verifiedAt": "2026-08-25T15:38:43.572214+00:00",
+  "pageId": "3c7c5fcf-62b4-81fe-8fcb-c2716cea29e3",
+  "requestedAt": "2026-08-25T15:38:58.685Z",
+  "verifiedAt": "2026-08-25T15:39:17.330931+00:00",
   "line": "513",
-  "valve": "109",
+  "valve": "75",
   "records": [
     {
       "subset": "V7",
