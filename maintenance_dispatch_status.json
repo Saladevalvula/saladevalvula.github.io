@@ -1,14 +1,14 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c7c5fcf-62b4-81d6-985b-e132951a423d",
-  "requestedAt": "2026-08-25T15:31:14.000Z",
-  "verifiedAt": "2026-08-25T15:31:38.708290+00:00",
+  "pageId": "3c7c5fcf-62b4-8140-a872-f30280287c9d",
+  "requestedAt": "2026-08-25T15:32:13.877Z",
+  "verifiedAt": "2026-08-25T15:32:36.761362+00:00",
   "line": "512",
-  "valve": "88",
+  "valve": "97",
   "records": [
     {
-      "subset": "V7",
+      "subset": "O-ring",
       "type": "corretiva",
       "count": 1
     }
