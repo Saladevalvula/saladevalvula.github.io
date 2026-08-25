@@ -1,14 +1,14 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c7c5fcf-62b4-8191-9ba8-d98d4f45ac95",
-  "requestedAt": "2026-08-25T15:33:21.564Z",
-  "verifiedAt": "2026-08-25T15:33:47.943955+00:00",
+  "pageId": "3c7c5fcf-62b4-8183-aeb9-e2b025b91c03",
+  "requestedAt": "2026-08-25T15:33:57.073Z",
+  "verifiedAt": "2026-08-25T15:34:21.684831+00:00",
   "line": "512",
-  "valve": "74",
+  "valve": "105",
   "records": [
     {
-      "subset": "SONDA",
+      "subset": "V8",
       "type": "corretiva",
       "count": 1
     }
