@@ -14,6 +14,7 @@ import os
 import re
 import sys
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -21,6 +22,7 @@ NOTION_TOKEN = os.environ["NOTION_TOKEN"]
 FIREBASE_KEY = os.environ["FIREBASE_KEY"]
 FIREBASE_PROJ = os.environ.get("FIREBASE_PROJ", "sala-valvulas-ow-163b3")
 ROOT = f"https://firestore.googleapis.com/v1/projects/{FIREBASE_PROJ}/databases/(default)/documents"
+LOCAL_TZ = ZoneInfo("America/Sao_Paulo")
 
 MAX_VALVES = {"512": 175, "513": 175, "514": 72}
 TYPE_MAP = {"corretiva": "corretiva", "preventiva": "preventiva", "diagnóstico": "inspecao", "diagnostico": "inspecao"}
@@ -54,7 +56,10 @@ def normalize_timestamp(value):
         return datetime.now(timezone.utc).isoformat()
     dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        # Datas do Notion sem fuso (inclusive YYYY-MM-DD) representam a data
+        # local da manutenção. Assumir UTC aqui fazia 00:00 virar 21:00 do dia
+        # anterior no app. Interpretamos como America/Sao_Paulo antes de UTC.
+        dt = dt.replace(tzinfo=LOCAL_TZ)
     return dt.astimezone(timezone.utc).isoformat()
 
 
