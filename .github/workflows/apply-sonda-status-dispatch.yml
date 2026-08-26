@@ -1,0 +1,67 @@
+name: Apply sonda status dispatch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sonda_status_dispatch.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sonda-status-dispatch
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Validate configuration
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: test -n "$FIREBASE_KEY" || (echo "FIREBASE_KEY ausente" && exit 1)
+
+      - name: Apply and verify sonda status
+        id: apply
+        continue-on-error: true
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: python apply_sonda_status_dispatch.py sonda_status_dispatch.json sonda_status_dispatch_status.json
+
+      - name: Publish verification status
+        if: always()
+        run: |
+          if [ ! -f sonda_status_dispatch_status.json ]; then
+            echo "Nenhum status de sonda gerado."
+            exit 0
+          fi
+          cp sonda_status_dispatch_status.json /tmp/sonda_status_dispatch_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B publish-sonda-status origin/main
+          cp /tmp/sonda_status_dispatch_status.json sonda_status_dispatch_status.json
+          git add sonda_status_dispatch_status.json
+          if git diff --cached --quiet; then
+            echo "Status já publicado."
+            exit 0
+          fi
+          git commit -m "status: confirmar sonda no Firebase [skip ci]"
+          git push origin HEAD:main
+
+      - name: Fail workflow when update was not verified
+        if: steps.apply.outcome == 'failure'
+        run: exit 1
