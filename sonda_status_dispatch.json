@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "requestedAt": "2026-08-26T21:31:40.000Z",
+  "items": [
+    {"line": "513", "valve": "27", "status": "ok"},
+    {"line": "513", "valve": "153", "status": "ok"}
+  ]
+}
