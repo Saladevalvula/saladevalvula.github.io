@@ -1,14 +1,19 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3c8c5fcf-62b4-815b-b8c3-f8a44e6e806c",
-  "requestedAt": "2026-08-26T21:25:00.000Z",
-  "verifiedAt": "2026-08-26T21:26:22.300015+00:00",
+  "pageId": "3c8c5fcf-62b4-8178-8a1a-f96bbd2a3c02",
+  "requestedAt": "2026-08-26T21:30:00.000Z",
+  "verifiedAt": "2026-08-26T21:31:04.917997+00:00",
   "line": "513",
-  "valve": "104",
+  "valve": "27",
   "records": [
     {
-      "subset": "O-ring",
+      "subset": "SONDA",
+      "type": "corretiva",
+      "count": 1
+    },
+    {
+      "subset": "MC9",
       "type": "corretiva",
       "count": 1
     }
