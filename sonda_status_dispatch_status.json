@@ -1,0 +1,18 @@
+{
+  "status": "verified",
+  "requestedAt": "2026-08-26T21:31:40.000Z",
+  "verifiedAt": "2026-08-26T21:31:53.213652+00:00",
+  "items": [
+    {
+      "line": "513",
+      "valve": "27",
+      "sonda_status": "ok"
+    },
+    {
+      "line": "513",
+      "valve": "153",
+      "sonda_status": "ok"
+    }
+  ],
+  "message": "sonda_status confirmado após releitura do Firebase."
+}
