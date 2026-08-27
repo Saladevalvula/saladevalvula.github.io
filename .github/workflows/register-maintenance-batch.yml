@@ -1,0 +1,45 @@
+name: Register maintenance batch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'maintenance_batch_dispatch.json'
+
+permissions:
+  contents: write
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Register and verify batch
+        id: batch
+        continue-on-error: true
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: python register_notion_batch.py maintenance_batch_dispatch.json maintenance_batch_status.json
+      - name: Publish status
+        if: always()
+        run: |
+          if [ ! -f maintenance_batch_status.json ]; then exit 0; fi
+          cp maintenance_batch_status.json /tmp/maintenance_batch_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B publish-maintenance-batch origin/main
+          cp /tmp/maintenance_batch_status.json maintenance_batch_status.json
+          git add maintenance_batch_status.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "status: maintenance batch verified [skip ci]"
+          git push origin HEAD:main
+      - name: Fail when batch not verified
+        if: steps.batch.outcome == 'failure'
+        run: exit 1
