@@ -1,0 +1,143 @@
+{
+  "status": "verified",
+  "requestedAt": "2026-08-27T16:46:00-03:00",
+  "verifiedAt": "2026-08-27T19:47:37.057647+00:00",
+  "items": [
+    {
+      "pageId": "3c9c5fcf-62b4-81b4-8b03-ec616292e4a4",
+      "status": "verified",
+      "line": "514",
+      "valve": "20",
+      "records": [
+        {
+          "recordId": "notion-bb540dc83793c1aa0031",
+          "subset": "Tulipa",
+          "type": "corretiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-81b4-8b03-ec616292e4a4"
+        }
+      ]
+    },
+    {
+      "pageId": "3c9c5fcf-62b4-8146-88e2-d6f1abd26ed6",
+      "status": "verified",
+      "line": "514",
+      "valve": "22",
+      "records": [
+        {
+          "recordId": "notion-476c3e8bdb77b97f461c",
+          "subset": "Tulipa",
+          "type": "corretiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-8146-88e2-d6f1abd26ed6"
+        }
+      ]
+    },
+    {
+      "pageId": "3c9c5fcf-62b4-8199-85b6-eecc5c92490f",
+      "status": "verified",
+      "line": "514",
+      "valve": "26",
+      "records": [
+        {
+          "recordId": "notion-a7039dd7a57f60f6ec38",
+          "subset": "Tulipa",
+          "type": "corretiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-8199-85b6-eecc5c92490f"
+        }
+      ]
+    },
+    {
+      "pageId": "3c9c5fcf-62b4-8103-9244-cac2a64325cb",
+      "status": "verified",
+      "line": "514",
+      "valve": "36",
+      "records": [
+        {
+          "recordId": "notion-3eda8ec0426dc2c73e48",
+          "subset": "Tulipa",
+          "type": "corretiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-8103-9244-cac2a64325cb"
+        }
+      ]
+    },
+    {
+      "pageId": "3c9c5fcf-62b4-817c-85e1-f9f8db7e1f28",
+      "status": "verified",
+      "line": "514",
+      "valve": "22",
+      "records": [
+        {
+          "recordId": "notion-03164b990e6494cee089",
+          "subset": "Geral",
+          "type": "preventiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-817c-85e1-f9f8db7e1f28"
+        }
+      ]
+    },
+    {
+      "pageId": "3c9c5fcf-62b4-819a-b0e4-c1656b8ad05b",
+      "status": "verified",
+      "line": "514",
+      "valve": "23",
+      "records": [
+        {
+          "recordId": "notion-ce5bb7ea41273236e239",
+          "subset": "Geral",
+          "type": "preventiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-819a-b0e4-c1656b8ad05b"
+        }
+      ]
+    },
+    {
+      "pageId": "3c9c5fcf-62b4-8123-89c7-c77e3604a076",
+      "status": "verified",
+      "line": "514",
+      "valve": "24",
+      "records": [
+        {
+          "recordId": "notion-d58d4d0dd30c90c33468",
+          "subset": "Geral",
+          "type": "preventiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-8123-89c7-c77e3604a076"
+        }
+      ]
+    },
+    {
+      "pageId": "3c9c5fcf-62b4-8103-8754-cb98ab8473a9",
+      "status": "verified",
+      "line": "514",
+      "valve": "25",
+      "records": [
+        {
+          "recordId": "notion-fce857cc94e9b964beea",
+          "subset": "Geral",
+          "type": "preventiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-8103-8754-cb98ab8473a9"
+        }
+      ]
+    },
+    {
+      "pageId": "3c9c5fcf-62b4-81fc-9fca-fb47c85501e9",
+      "status": "verified",
+      "line": "514",
+      "valve": "26",
+      "records": [
+        {
+          "recordId": "notion-a1d2847debe5cebf8970",
+          "subset": "Geral",
+          "type": "preventiva",
+          "status": "ok",
+          "notionPageId": "3c9c5fcf-62b4-81fc-9fca-fb47c85501e9"
+        }
+      ]
+    }
+  ],
+  "message": "Históricos conferidos por sync_index e releitura dos documentos Firebase."
+}
