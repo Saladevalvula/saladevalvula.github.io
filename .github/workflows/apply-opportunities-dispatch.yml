@@ -1,0 +1,65 @@
+name: Apply opportunities dispatch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'opportunities_dispatch.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: opportunities-dispatch
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install requests
+
+      - name: Validate Firebase secret
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: test -n "$FIREBASE_KEY" || (echo "FIREBASE_KEY ausente" && exit 1)
+
+      - name: Apply and verify opportunities
+        id: apply
+        continue-on-error: true
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: python apply_opportunities_dispatch.py opportunities_dispatch.json opportunities_dispatch_status.json
+
+      - name: Publish verification receipt
+        if: always()
+        run: |
+          if [ ! -f opportunities_dispatch_status.json ]; then
+            echo "Nenhum recibo gerado."
+            exit 0
+          fi
+          cp opportunities_dispatch_status.json /tmp/opportunities_dispatch_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B publish-opportunities-status origin/main
+          cp /tmp/opportunities_dispatch_status.json opportunities_dispatch_status.json
+          git add opportunities_dispatch_status.json
+          if git diff --cached --quiet; then
+            echo "Recibo já publicado."
+            exit 0
+          fi
+          git commit -m "status: confirmar oportunidades no Firebase [skip ci]"
+          git push origin HEAD:main
+
+      - name: Fail when update was not verified
+        if: steps.apply.outcome == 'failure'
+        run: exit 1
