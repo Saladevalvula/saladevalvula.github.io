@@ -1,0 +1,73 @@
+{
+  "status": "verified",
+  "requestId": "pcm-l512-20260827-1447",
+  "requestedAt": "2026-08-27T14:47:00-03:00",
+  "verifiedAt": "2026-08-27T17:51:32.812904+00:00",
+  "items": [
+    {
+      "id": "pcm-L512-V157-sonda-jumper",
+      "line": "512",
+      "valve": "157",
+      "subset": "SONDA",
+      "text": "Válvula jumpeada; necessário parar a linha para analisar a causa e normalizar.",
+      "status": "aberta"
+    },
+    {
+      "id": "pcm-L512-V31-individual-enchimento",
+      "line": "512",
+      "valve": "31",
+      "subset": "Enchimento",
+      "text": "Individual de enchimento alterado para compensar falha; investigar causa e normalizar parâmetro.",
+      "status": "aberta"
+    },
+    {
+      "id": "pcm-L512-V59-individual-enchimento",
+      "line": "512",
+      "valve": "59",
+      "subset": "Enchimento",
+      "text": "Individual de enchimento alterado para compensar falha; investigar causa e normalizar parâmetro.",
+      "status": "aberta"
+    },
+    {
+      "id": "pcm-L512-V83-individual-enchimento",
+      "line": "512",
+      "valve": "83",
+      "subset": "Enchimento",
+      "text": "Individual de enchimento alterado para compensar falha; investigar causa e normalizar parâmetro.",
+      "status": "aberta"
+    },
+    {
+      "id": "pcm-L512-V84-individual-enchimento",
+      "line": "512",
+      "valve": "84",
+      "subset": "Enchimento",
+      "text": "Individual de enchimento alterado para compensar falha; investigar causa e normalizar parâmetro.",
+      "status": "aberta"
+    },
+    {
+      "id": "pcm-L512-V154-individual-enchimento",
+      "line": "512",
+      "valve": "154",
+      "subset": "Enchimento",
+      "text": "Individual de enchimento alterado para compensar falha; investigar causa e normalizar parâmetro.",
+      "status": "aberta"
+    },
+    {
+      "id": "pcm-L512-V160-individual-enchimento",
+      "line": "512",
+      "valve": "160",
+      "subset": "Enchimento",
+      "text": "Individual de enchimento alterado para compensar falha; investigar causa e normalizar parâmetro.",
+      "status": "aberta"
+    },
+    {
+      "id": "pcm-L512-V165-individual-enchimento",
+      "line": "512",
+      "valve": "165",
+      "subset": "Enchimento",
+      "text": "Individual de enchimento alterado para compensar falha; investigar causa e normalizar parâmetro.",
+      "status": "aberta"
+    }
+  ],
+  "message": "Oportunidades PCM confirmadas após releitura do Firebase."
+}
