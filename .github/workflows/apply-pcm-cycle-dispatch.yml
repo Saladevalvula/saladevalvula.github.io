@@ -1,0 +1,43 @@
+name: Apply PCM cycle dispatch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pcm_cycle_dispatch.json'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Apply PCM progress
+        id: apply
+        continue-on-error: true
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: python apply_pcm_cycle_dispatch.py pcm_cycle_dispatch.json pcm_cycle_status.json
+      - name: Publish status
+        if: always()
+        run: |
+          if [ ! -f pcm_cycle_status.json ]; then exit 0; fi
+          cp pcm_cycle_status.json /tmp/pcm_cycle_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B publish-pcm-cycle origin/main
+          cp /tmp/pcm_cycle_status.json pcm_cycle_status.json
+          git add pcm_cycle_status.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "status: PCM cycle verified [skip ci]"
+          git push origin HEAD:main
+      - name: Fail when not verified
+        if: steps.apply.outcome == 'failure'
+        run: exit 1
