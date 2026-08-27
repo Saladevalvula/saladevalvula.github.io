@@ -1,17 +1,12 @@
 {
   "status": "verified",
-  "requestedAt": "2026-08-26T21:31:40.000Z",
-  "verifiedAt": "2026-08-26T21:31:53.213652+00:00",
+  "requestedAt": "2026-08-27T14:47:00-03:00",
+  "verifiedAt": "2026-08-27T17:51:27.433788+00:00",
   "items": [
     {
-      "line": "513",
-      "valve": "27",
-      "sonda_status": "ok"
-    },
-    {
-      "line": "513",
-      "valve": "153",
-      "sonda_status": "ok"
+      "line": "512",
+      "valve": "157",
+      "sonda_status": "jumpeada"
     }
   ],
   "message": "sonda_status confirmado após releitura do Firebase."
