@@ -1,61 +1,73 @@
 {
   "status": "verified",
-  "requestedAt": "2026-08-27T16:42:30-03:00",
-  "verifiedAt": "2026-08-27T19:43:44.624261+00:00",
-  "count": 9,
+  "requestedAt": "2026-09-17T14:11:00-03:00",
+  "verifiedAt": "2026-09-17T17:28:22.219038+00:00",
+  "count": 49,
   "items": [
     {
-      "pageId": "3c9c5fcf-62b4-81b4-8b03-ec616292e4a4",
-      "line": "514",
+      "pageId": "373c5fcf-62b4-8198-8aca-c7d61c876fdf",
+      "line": "513",
+      "valve": "5",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "373c5fcf-62b4-81a1-be7f-f36e78ec3b6f",
+      "line": "513",
+      "valve": "1",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-810e-bce7-c66d7024716c",
+      "line": "513",
+      "valve": "9",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8116-80b4-c6d46f4a8c37",
+      "line": "513",
+      "valve": "21",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-813f-9d0e-d5bb7bb44e50",
+      "line": "513",
       "valve": "20",
       "records": [
         {
-          "subset": "Tulipa",
-          "type": "corretiva",
+          "subset": "Geral",
+          "type": "preventiva",
           "count": 1
         }
       ]
     },
     {
-      "pageId": "3c9c5fcf-62b4-8146-88e2-d6f1abd26ed6",
-      "line": "514",
-      "valve": "22",
-      "records": [
-        {
-          "subset": "Tulipa",
-          "type": "corretiva",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "pageId": "3c9c5fcf-62b4-8199-85b6-eecc5c92490f",
-      "line": "514",
-      "valve": "26",
-      "records": [
-        {
-          "subset": "Tulipa",
-          "type": "corretiva",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "pageId": "3c9c5fcf-62b4-8103-9244-cac2a64325cb",
-      "line": "514",
-      "valve": "36",
-      "records": [
-        {
-          "subset": "Tulipa",
-          "type": "corretiva",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "pageId": "3c9c5fcf-62b4-817c-85e1-f9f8db7e1f28",
-      "line": "514",
-      "valve": "22",
+      "pageId": "3dec5fcf-62b4-8142-ba75-c63caebef591",
+      "line": "513",
+      "valve": "32",
       "records": [
         {
           "subset": "Geral",
@@ -65,9 +77,9 @@
       ]
     },
     {
-      "pageId": "3c9c5fcf-62b4-819a-b0e4-c1656b8ad05b",
-      "line": "514",
-      "valve": "23",
+      "pageId": "3dec5fcf-62b4-8145-a8fe-de2d800130db",
+      "line": "513",
+      "valve": "37",
       "records": [
         {
           "subset": "Geral",
@@ -77,8 +89,116 @@
       ]
     },
     {
-      "pageId": "3c9c5fcf-62b4-8123-89c7-c77e3604a076",
-      "line": "514",
+      "pageId": "3dec5fcf-62b4-8151-a17c-d11b8ee27d66",
+      "line": "513",
+      "valve": "48",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8153-a19a-fd6c5885df6f",
+      "line": "513",
+      "valve": "6",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8157-a2ab-dcd00d11d26f",
+      "line": "513",
+      "valve": "33",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8158-96c7-eb1595146acf",
+      "line": "513",
+      "valve": "34",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-815b-a665-e9185b1ca1d3",
+      "line": "513",
+      "valve": "35",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-815c-baf4-fd286a1d12f7",
+      "line": "513",
+      "valve": "8",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8163-9bcf-d2e725bb3453",
+      "line": "513",
+      "valve": "46",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-816a-8b2a-e81d2746843a",
+      "line": "513",
+      "valve": "19",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8172-95d2-ce58d4936aaf",
+      "line": "513",
+      "valve": "41",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8175-ac1a-c681b66685d0",
+      "line": "513",
       "valve": "24",
       "records": [
         {
@@ -89,8 +209,260 @@
       ]
     },
     {
-      "pageId": "3c9c5fcf-62b4-8103-8754-cb98ab8473a9",
-      "line": "514",
+      "pageId": "3dec5fcf-62b4-8179-995c-debb2a742db0",
+      "line": "513",
+      "valve": "49",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-817c-a22b-c85467c64a4a",
+      "line": "513",
+      "valve": "44",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8182-874a-ce356590824a",
+      "line": "513",
+      "valve": "45",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8182-9b20-d569b8bf49cd",
+      "line": "513",
+      "valve": "3",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8186-87f8-d5d38f61e77a",
+      "line": "513",
+      "valve": "15",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-818b-99ee-e2067906daeb",
+      "line": "513",
+      "valve": "23",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8196-b89f-f7bfa851d831",
+      "line": "513",
+      "valve": "17",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8199-a0ef-f5ef17322edf",
+      "line": "513",
+      "valve": "22",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-819a-accb-c10581da0912",
+      "line": "513",
+      "valve": "39",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-819b-b9b0-c0226748a1bb",
+      "line": "513",
+      "valve": "28",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-819d-920d-c933f23403ab",
+      "line": "513",
+      "valve": "26",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-819e-890f-d1c948a0c8f3",
+      "line": "513",
+      "valve": "13",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8105-84b8-c94b965354c5",
+      "line": "513",
+      "valve": "2",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8106-b5e3-f8fc970f179c",
+      "line": "513",
+      "valve": "42",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8107-a32f-d8cbda4b864f",
+      "line": "513",
+      "valve": "27",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8110-99f3-e0454fc6043d",
+      "line": "513",
+      "valve": "11",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-8113-9f5d-c73cbed2a939",
+      "line": "513",
+      "valve": "38",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81a3-a4f0-e8ed7b1f5ad4",
+      "line": "513",
+      "valve": "43",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81a8-a5e2-d30fd83507c1",
+      "line": "513",
+      "valve": "31",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81a9-9da1-ddc620c29baa",
+      "line": "513",
+      "valve": "40",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81ba-8604-d6cd7d2a1a24",
+      "line": "513",
+      "valve": "18",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81bd-8834-df8954aecadb",
+      "line": "513",
       "valve": "25",
       "records": [
         {
@@ -101,9 +473,117 @@
       ]
     },
     {
-      "pageId": "3c9c5fcf-62b4-81fc-9fca-fb47c85501e9",
-      "line": "514",
-      "valve": "26",
+      "pageId": "3dec5fcf-62b4-81c9-9d62-fb56011dac5e",
+      "line": "513",
+      "valve": "10",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81d1-a26c-c190117debce",
+      "line": "513",
+      "valve": "16",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81d3-84c0-c6457e824607",
+      "line": "513",
+      "valve": "47",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81d6-a0f4-e7379549df6a",
+      "line": "513",
+      "valve": "36",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81e2-b396-eeed9d9ab5d6",
+      "line": "513",
+      "valve": "30",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81e4-bc6a-f66fd615af10",
+      "line": "513",
+      "valve": "12",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81ee-81ff-c7171bc6e795",
+      "line": "513",
+      "valve": "4",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81ef-ab6b-c02cdd91358c",
+      "line": "513",
+      "valve": "14",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81f5-9368-e8c2fe6a499b",
+      "line": "513",
+      "valve": "7",
+      "records": [
+        {
+          "subset": "Geral",
+          "type": "preventiva",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "pageId": "3dec5fcf-62b4-81fd-8568-ee1c306a780c",
+      "line": "513",
+      "valve": "29",
       "records": [
         {
           "subset": "Geral",
