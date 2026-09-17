@@ -1,15 +1,15 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3dec5fcf-62b4-814a-96df-e55dc562452a",
-  "requestedAt": "2026-09-17T13:10:15-03:00",
-  "verifiedAt": "2026-09-17T16:10:36.631962+00:00",
+  "pageId": "3dec5fcf-62b4-81fd-96f5-f11768eeda91",
+  "requestedAt": "2026-09-17T13:10:50-03:00",
+  "verifiedAt": "2026-09-17T16:11:09.643078+00:00",
   "line": "513",
-  "valve": "56",
+  "valve": "45",
   "records": [
     {
-      "subset": "Subconjunto",
-      "type": "preventiva",
+      "subset": "Tucho",
+      "type": "corretiva",
       "count": 1
     }
   ],
