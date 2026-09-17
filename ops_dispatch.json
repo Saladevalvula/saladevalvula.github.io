@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "requestId": "pcm-513-20260917-v57-v63",
   "requestedAt": "2026-09-17T13:18:24-03:00",
   "operation": "preventive_cycle_plan",
