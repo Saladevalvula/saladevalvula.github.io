@@ -1,11 +1,11 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3dec5fcf-62b4-81fd-96f5-f11768eeda91",
-  "requestedAt": "2026-09-17T13:10:50-03:00",
-  "verifiedAt": "2026-09-17T16:11:09.643078+00:00",
+  "pageId": "3dec5fcf-62b4-8147-8c2a-ff920ee45ef4",
+  "requestedAt": "2026-09-17T13:11:20-03:00",
+  "verifiedAt": "2026-09-17T16:11:44.791691+00:00",
   "line": "513",
-  "valve": "45",
+  "valve": "49",
   "records": [
     {
       "subset": "Tucho",
