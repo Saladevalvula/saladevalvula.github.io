@@ -1,16 +1,25 @@
 {
   "status": "verified",
-  "requestId": "sap-100003759812-20260822-confirmada",
-  "requestedAt": "2026-08-22T19:00:00-03:00",
-  "operation": "sap_order_upsert",
-  "sapOrderNumber": "100003759812",
+  "requestId": "pcm-513-20260917-v57-v63",
+  "requestedAt": "2026-09-17T13:18:24-03:00",
+  "operation": "preventive_cycle_plan",
   "line": "513",
-  "month": "2026-08",
-  "sapStatus": "concluida",
-  "systemStatus": "LIB CONF CAPC MOME MatC NOAP",
-  "actualEndDate": "2026-08-20",
-  "historyEvent": "concluida",
-  "historyPath": "sap_orders/100003759812/history/sap-100003759812-20260822-confirmada",
-  "verifiedAt": "2026-08-22T22:13:31.757447+00:00",
-  "message": "Ordem SAP e evento de histórico relidos e verificados no Firebase."
+  "completedThrough": 56,
+  "completedCount": 56,
+  "nextValve": 57,
+  "plannedValves": [
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63
+  ],
+  "plannedDate": "A definir",
+  "month": "2026-09",
+  "planId": "2026-09-513",
+  "linkedSapOrderIds": [],
+  "verifiedAt": "2026-09-17T16:18:49.751753+00:00",
+  "message": "Ciclo preventivo, programação e vínculos SAP relidos e verificados no Firebase."
 }
