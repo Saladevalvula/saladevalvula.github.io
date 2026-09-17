@@ -1,20 +1,11 @@
 {
-  "enabled": false,
-  "requestId": "sap-100003759812-20260822-confirmada",
-  "requestedAt": "2026-08-22T19:00:00-03:00",
-  "operation": "sap_order_upsert",
-  "sapOrderNumber": "100003759812",
+  "enabled": true,
+  "requestId": "pcm-513-20260917-v57-v63",
+  "requestedAt": "2026-09-17T13:18:24-03:00",
+  "operation": "preventive_cycle_plan",
   "line": "513",
-  "month": "2026-08",
-  "status": "concluida",
-  "description": "QA-0-09Manutenção válvulas criticas",
-  "sapType": "ZM03",
-  "activityType": "300",
-  "maintenancePlan": "JCOAY048-004",
-  "systemStatus": "LIB CONF CAPC MOME MatC NOAP",
-  "startDate": "2026-08-24",
-  "actualEndDate": "2026-08-20",
-  "source": "sap_iw38_chatgpt",
-  "historyEvent": "concluida",
-  "historyDescription": "Ordem confirmada no SAP (CONF) e com fim real em 20/08/2026."
+  "completedThrough": 56,
+  "plannedValves": [57, 58, 59, 60, 61, 62, 63],
+  "plannedDate": "A definir",
+  "month": "2026-09"
 }
