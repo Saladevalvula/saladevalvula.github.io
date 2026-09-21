@@ -1,15 +1,15 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3e2c5fcf-62b4-815e-bc54-cbf99238f4c1",
-  "requestedAt": "2026-09-21T08:50:04-03:00",
-  "verifiedAt": "2026-09-21T11:50:29.121326+00:00",
-  "line": "513",
-  "valve": "170",
+  "pageId": "3e2c5fcf-62b4-8138-ac50-d1901495ba14",
+  "requestedAt": "2026-09-21T08:57:01-03:00",
+  "verifiedAt": "2026-09-21T11:57:26.538122+00:00",
+  "line": "514",
+  "valve": "65",
   "records": [
     {
-      "subset": "V4",
-      "type": "corretiva",
+      "subset": "Geral",
+      "type": "inspecao",
       "count": 1
     }
   ],
