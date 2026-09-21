@@ -1,15 +1,15 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3e2c5fcf-62b4-81f2-8f45-ed66c0214a2a",
-  "requestedAt": "2026-09-21T08:58:05-03:00",
-  "verifiedAt": "2026-09-21T11:58:29.666211+00:00",
-  "line": "514",
-  "valve": "27",
+  "pageId": "3e2c5fcf-62b4-81f8-bea8-ef8c735d95d2",
+  "requestedAt": "2026-09-21T14:55:35-03:00",
+  "verifiedAt": "2026-09-21T17:56:01.834242+00:00",
+  "line": "513",
+  "valve": "19",
   "records": [
     {
-      "subset": "Geral",
-      "type": "inspecao",
+      "subset": "SONDA",
+      "type": "corretiva",
       "count": 1
     }
   ],
