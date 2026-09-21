@@ -1,10 +1,5 @@
 {
-  "enabled": true,
-  "requestedAt": "2026-09-21T08:59:11-03:00",
-  "pageIds": [
-    "3e2c5fcf-62b4-8138-ac50-d1901495ba14",
-    "3e2c5fcf-62b4-814d-8830-fc38c69374d3",
-    "3e2c5fcf-62b4-81f2-8f45-ed66c0214a2a",
-    "3e2c5fcf-62b4-814d-8800-ec7bf2658e25"
-  ]
+  "enabled": false,
+  "requestedAt": "2026-09-21T08:59:57-03:00",
+  "pageIds": []
 }
