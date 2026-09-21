@@ -1,19 +1,14 @@
 {
   "status": "verified",
   "schema": "history_v2",
-  "pageId": "3dec5fcf-62b4-8149-b235-f5f0cca402f8",
-  "requestedAt": "2026-09-17T13:12:00-03:00",
-  "verifiedAt": "2026-09-17T16:12:28.942299+00:00",
+  "pageId": "3e2c5fcf-62b4-815e-bc54-cbf99238f4c1",
+  "requestedAt": "2026-09-21T08:50:04-03:00",
+  "verifiedAt": "2026-09-21T11:50:29.121326+00:00",
   "line": "513",
-  "valve": "155",
+  "valve": "170",
   "records": [
     {
-      "subset": "Tucho",
-      "type": "corretiva",
-      "count": 1
-    },
-    {
-      "subset": "Tulipa",
+      "subset": "V4",
       "type": "corretiva",
       "count": 1
     }
