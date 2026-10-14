@@ -1,0 +1,50 @@
+name: Audit Firebase Maintenance History (read only)
+on:
+  push:
+    branches:
+      - chatgpt/auditoria-firebase-recorrencia
+    paths:
+      - 'audit_firebase_history_readonly.py'
+      - '.github/workflows/audit-firebase-history.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Read-only Firebase audit
+        id: read
+        continue-on-error: true
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          test -n "$FIREBASE_KEY" || (echo "FIREBASE_KEY indisponivel" && exit 1)
+          python audit_firebase_history_readonly.py
+      - name: Publish sanitized summary (no raw descriptions)
+        if: always()
+        run: |
+          if [ ! -f firebase_history_audit_status.json ]; then
+            printf '{"status":"failed","error":"Script nao gerou resumo"}\n' > firebase_history_audit_status.json
+          fi
+          cp firebase_history_audit_status.json /tmp/firebase_history_audit_status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin chatgpt/auditoria-firebase-recorrencia
+          git checkout -B publish-firebase-audit origin/chatgpt/auditoria-firebase-recorrencia
+          cp /tmp/firebase_history_audit_status.json firebase_history_audit_status.json
+          git add firebase_history_audit_status.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "audit: resultado leitura Firebase sem alteracoes [skip ci]"
+          git push origin HEAD:chatgpt/auditoria-firebase-recorrencia
+      - name: Flag failure
+        if: steps.read.outcome == 'failure'
+        run: exit 1
