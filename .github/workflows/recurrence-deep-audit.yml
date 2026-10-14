@@ -1,0 +1,46 @@
+name: Read-only Firebase Recurrence Detail
+on:
+  push:
+    branches: [chatgpt/auditoria-firebase-recorrencia]
+    paths:
+      - recurrence_deep_audit.py
+      - .github/workflows/recurrence-deep-audit.yml
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Read Firebase only
+        id: audit
+        continue-on-error: true
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+        run: |
+          test -n "$FIREBASE_KEY" || exit 1
+          python recurrence_deep_audit.py
+      - name: Publish minimized audit
+        if: always()
+        run: |
+          if [ ! -f recurrence_firebase_data.json ]; then printf '{"status":"failed","error":"Arquivo de auditoria nao foi gerado"}' > recurrence_firebase_data.json; fi
+          cp recurrence_firebase_data.json /tmp/recurrence_firebase_data.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin chatgpt/auditoria-firebase-recorrencia
+          git checkout -B publish-recurrence-audit origin/chatgpt/auditoria-firebase-recorrencia
+          cp /tmp/recurrence_firebase_data.json recurrence_firebase_data.json
+          git add recurrence_firebase_data.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "audit: consolidacao de recorrencias do Firebase [skip ci]"
+          git push origin HEAD:chatgpt/auditoria-firebase-recorrencia
+      - name: Fail if extraction failed
+        if: steps.audit.outcome == 'failure'
+        run: exit 1
