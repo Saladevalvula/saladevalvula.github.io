@@ -1,0 +1,5357 @@
+{
+  "status": "verified",
+  "generatedAt": "2026-10-14T00:38:43.883363+00:00",
+  "data_origin": "Firebase Firestore em leitura direta via GitHub Actions",
+  "method": "Uma válvula é recorrente quando apresenta corretivas em >=2 datas locais distintas. Subconjuntos são tratados separadamente. Não infere falha idêntica.",
+  "firebase_marker": {
+    "line512": 188,
+    "legacyHistoryItems": 301,
+    "line514": 22,
+    "completed": true,
+    "schemaVersion": "history_v2",
+    "historyDocuments": 301,
+    "completedAt": "2026-08-22T01:45:28.202753+00:00",
+    "line513": 91
+  },
+  "total": {
+    "history_documents": 458,
+    "corrective_documents": 309,
+    "recurrent_valves": 58
+  },
+  "lines": {
+    "512": {
+      "valve_documents": 88,
+      "valves_with_history": 88,
+      "history_documents": 221,
+      "type_counts": {
+        "corretiva": 185,
+        "preventiva": 20,
+        "sonda_event": 16
+      },
+      "source_counts": {
+        "legacy_migration": 136,
+        "notion": 75,
+        "work_order": 1,
+        "app": 9
+      },
+      "status_counts": {
+        "pendente": 42,
+        "ok": 179
+      },
+      "valves_with_corrective": 87,
+      "recurrent_valves_multiple_corrective_days": 33,
+      "valves": [
+        {
+          "valve": "157",
+          "history_count": 10,
+          "type_counts": {
+            "corretiva": 7,
+            "sonda_event": 3
+          },
+          "corrective_records": 7,
+          "corrective_distinct_days": 5,
+          "corrective_dates": [
+            "2026-02-08",
+            "2026-03-03",
+            "2026-06-29",
+            "2026-08-21",
+            "2026-08-22"
+          ],
+          "subsets_repeating_different_days": {
+            "SONDA": 3,
+            "Tulipa": 2
+          },
+          "corrective_subsets": {
+            "Tulipa": 2,
+            "SONDA": 3,
+            "V8": 1,
+            "V7": 1
+          },
+          "sources": {
+            "legacy_migration": 7,
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 7,
+            "pendente": 3
+          },
+          "first_history_date": "2026-01-09",
+          "last_history_date": "2026-08-22"
+        },
+        {
+          "valve": "12",
+          "history_count": 8,
+          "type_counts": {
+            "corretiva": 6,
+            "preventiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 6,
+          "corrective_distinct_days": 4,
+          "corrective_dates": [
+            "2026-01-21",
+            "2026-06-29",
+            "2026-08-16",
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {
+            "SONDA": 2,
+            "V8": 2
+          },
+          "corrective_subsets": {
+            "Geral": 1,
+            "SONDA": 2,
+            "V8": 2,
+            "Tulipa": 1
+          },
+          "sources": {
+            "legacy_migration": 5,
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 7,
+            "pendente": 1
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "13",
+          "history_count": 7,
+          "type_counts": {
+            "corretiva": 6,
+            "preventiva": 1
+          },
+          "corrective_records": 6,
+          "corrective_distinct_days": 4,
+          "corrective_dates": [
+            "2026-01-21",
+            "2026-07-31",
+            "2026-08-21",
+            "2026-08-23"
+          ],
+          "subsets_repeating_different_days": {
+            "V8": 2
+          },
+          "corrective_subsets": {
+            "SONDA": 2,
+            "V8": 2,
+            "Geral": 1,
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 5,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 7
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-08-23"
+        },
+        {
+          "valve": "5",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-01-21",
+            "2026-07-02",
+            "2026-07-26"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1,
+            "Tucho": 1,
+            "V8": 1,
+            "Acionamento V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 2,
+            "pendente": 2
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-07-26"
+        },
+        {
+          "valve": "42",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-07-02",
+            "2026-08-18",
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {
+            "V8": 2
+          },
+          "corrective_subsets": {
+            "Geral": 1,
+            "Tucho": 1,
+            "V8": 2
+          },
+          "sources": {
+            "app": 1,
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 2,
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "124",
+          "history_count": 5,
+          "type_counts": {
+            "sonda_event": 1,
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-01-21",
+            "2026-07-02",
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {
+            "V8": 2
+          },
+          "corrective_subsets": {
+            "V8": 2,
+            "SONDA": 1,
+            "Tucho": 1
+          },
+          "sources": {
+            "legacy_migration": 3,
+            "notion": 2
+          },
+          "statuses": {
+            "pendente": 3,
+            "ok": 2
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "160",
+          "history_count": 5,
+          "type_counts": {
+            "corretiva": 4,
+            "sonda_event": 1
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-01-14",
+            "2026-01-21",
+            "2026-03-17"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "SMC": 1,
+            "V1": 1,
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 5
+          },
+          "statuses": {
+            "ok": 4,
+            "pendente": 1
+          },
+          "first_history_date": "2026-01-09",
+          "last_history_date": "2026-03-17"
+        },
+        {
+          "valve": "30",
+          "history_count": 4,
+          "type_counts": {
+            "sonda_event": 1,
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-01-21",
+            "2026-07-02",
+            "2026-07-31"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1,
+            "V7": 1,
+            "Subconjunto": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 2
+          },
+          "statuses": {
+            "pendente": 1,
+            "ok": 3
+          },
+          "first_history_date": "2026-01-09",
+          "last_history_date": "2026-07-31"
+        },
+        {
+          "valve": "59",
+          "history_count": 5,
+          "type_counts": {
+            "corretiva": 5
+          },
+          "corrective_records": 5,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-14",
+            "2026-08-18"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "V5": 1,
+            "V2": 1,
+            "V6": 1,
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 4,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 5
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-08-18"
+        },
+        {
+          "valve": "132",
+          "history_count": 5,
+          "type_counts": {
+            "corretiva": 5
+          },
+          "corrective_records": 5,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-14",
+            "2026-07-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V7": 1,
+            "V2": 1,
+            "Jumper": 1,
+            "SONDA": 2
+          },
+          "sources": {
+            "legacy_migration": 4,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 5
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-07-01"
+        },
+        {
+          "valve": "145",
+          "history_count": 6,
+          "type_counts": {
+            "corretiva": 5,
+            "sonda_event": 1
+          },
+          "corrective_records": 5,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-03-09",
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {
+            "SONDA": 2
+          },
+          "corrective_subsets": {
+            "Jumper": 1,
+            "SONDA": 4
+          },
+          "sources": {
+            "legacy_migration": 4,
+            "notion": 2
+          },
+          "statuses": {
+            "pendente": 3,
+            "ok": 3
+          },
+          "first_history_date": "2026-01-09",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "18",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-03-30",
+            "2026-04-04"
+          ],
+          "subsets_repeating_different_days": {
+            "V3": 2
+          },
+          "corrective_subsets": {
+            "V2": 1,
+            "V3": 2,
+            "V1": 1
+          },
+          "sources": {
+            "legacy_migration": 4
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-03-30",
+          "last_history_date": "2026-04-04"
+        },
+        {
+          "valve": "123",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-14",
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {
+            "V2": 2
+          },
+          "corrective_subsets": {
+            "V2": 2,
+            "V3": 1,
+            "V1": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "134",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-07-02",
+            "2026-07-31"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Jumper": 1,
+            "SONDA": 1,
+            "Tucho": 1,
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 2,
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-31"
+        },
+        {
+          "valve": "152",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-07-01",
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {
+            "SONDA": 2
+          },
+          "corrective_subsets": {
+            "SONDA": 4
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-07-01",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "166",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-03-11",
+            "2026-05-07"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V7": 1,
+            "Tucho": 1,
+            "Acionamento V3": 1,
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 4
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-03-11",
+          "last_history_date": "2026-05-07"
+        },
+        {
+          "valve": "170",
+          "history_count": 5,
+          "type_counts": {
+            "corretiva": 4,
+            "preventiva": 1
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-05-07",
+            "2026-08-12"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V5/V6": 1,
+            "V1": 1,
+            "Tucho": 1,
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 4,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 5
+          },
+          "first_history_date": "2026-01-07",
+          "last_history_date": "2026-08-12"
+        },
+        {
+          "valve": "4",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-21",
+            "2026-03-12"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "V8": 1,
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 3
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-03-12"
+        },
+        {
+          "valve": "14",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 3,
+            "preventiva": 1
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-21",
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {
+            "V8": 2
+          },
+          "corrective_subsets": {
+            "Geral": 1,
+            "V8": 2
+          },
+          "sources": {
+            "legacy_migration": 4
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "21",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 3,
+            "preventiva": 1
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-14",
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "V2": 1,
+            "V7": 1
+          },
+          "sources": {
+            "legacy_migration": 4
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-03-02"
+        },
+        {
+          "valve": "33",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-05-07",
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1,
+            "Acionamento V3": 1,
+            "Tulipa": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-05-07",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "37",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-14",
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "V2": 1,
+            "Subconjunto": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "43",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-07-02",
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1,
+            "Tucho": 1,
+            "V8": 1
+          },
+          "sources": {
+            "app": 1,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "99",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-07-02",
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "Tucho": 1,
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "1",
+          "history_count": 15,
+          "type_counts": {
+            "corretiva": 2,
+            "preventiva": 13
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-21",
+            "2026-08-28"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "V1": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 12,
+            "work_order": 1
+          },
+          "statuses": {
+            "ok": 15
+          },
+          "first_history_date": "2026-01-02",
+          "last_history_date": "2026-08-28"
+        },
+        {
+          "valve": "7",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-14",
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-01-21"
+        },
+        {
+          "valve": "44",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-08-21",
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1,
+            "V8": 1
+          },
+          "sources": {
+            "app": 1,
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-08-21",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "48",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 2,
+            "sonda_event": 1
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-08-21",
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1,
+            "SONDA": 1
+          },
+          "sources": {
+            "app": 1,
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2,
+            "pendente": 1
+          },
+          "first_history_date": "2026-03-24",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "86",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-19",
+            "2026-08-17"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-08-17"
+        },
+        {
+          "valve": "91",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-05-07",
+            "2026-08-16"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Acionamento V3": 1,
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-05-07",
+          "last_history_date": "2026-08-16"
+        },
+        {
+          "valve": "97",
+          "history_count": 3,
+          "type_counts": {
+            "sonda_event": 1,
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-19",
+            "2026-08-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1,
+            "O-ring": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "pendente": 1,
+            "ok": 2
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-08-01"
+        },
+        {
+          "valve": "108",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-19",
+            "2026-06-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-06-19"
+        },
+        {
+          "valve": "143",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 2,
+            "sonda_event": 1
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-19",
+            "2026-03-20"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Caixa de ar": 1,
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 3
+          },
+          "statuses": {
+            "ok": 2,
+            "pendente": 1
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-03-20"
+        },
+        {
+          "valve": "8",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-14"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V2": 1,
+            "V8": 1,
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 3
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-01-14"
+        },
+        {
+          "valve": "67",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-05-07"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1,
+            "Acionamento V3": 1,
+            "V7": 1
+          },
+          "sources": {
+            "legacy_migration": 3
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-05-07",
+          "last_history_date": "2026-05-07"
+        },
+        {
+          "valve": "89",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V1": 1,
+            "V5/V6": 1,
+            "V2": 1
+          },
+          "sources": {
+            "legacy_migration": 3
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "05",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "Tucho": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "9",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-31"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 2
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-07-31",
+          "last_history_date": "2026-07-31"
+        },
+        {
+          "valve": "27",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1,
+            "V8": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "85",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "Tucho": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "112",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1,
+            "V8": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "118",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1,
+            "V8": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "130",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-14"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "V2": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-01-14"
+        },
+        {
+          "valve": "136",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "V2": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-02-19"
+        },
+        {
+          "valve": "149",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1,
+            "Tucho": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "pendente": 2
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "2",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-01-21"
+        },
+        {
+          "valve": "6",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-01-21"
+        },
+        {
+          "valve": "10",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-06-29"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-06-29",
+          "last_history_date": "2026-06-29"
+        },
+        {
+          "valve": "19",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V6": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-01-21"
+        },
+        {
+          "valve": "20",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-01-21"
+        },
+        {
+          "valve": "26",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-17"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tulipa": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-17",
+          "last_history_date": "2026-08-17"
+        },
+        {
+          "valve": "28",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-21",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "31",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-21",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "35",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-20"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-20",
+          "last_history_date": "2026-02-20"
+        },
+        {
+          "valve": "41",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-02-19"
+        },
+        {
+          "valve": "45",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "app": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-25",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "46",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "app": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-25",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "47",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "app": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-25",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "66",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-02-19"
+        },
+        {
+          "valve": "71",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-19",
+          "last_history_date": "2026-08-19"
+        },
+        {
+          "valve": "72",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "74",
+          "history_count": 2,
+          "type_counts": {
+            "sonda_event": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "app": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "pendente": 1,
+            "ok": 1
+          },
+          "first_history_date": "2026-08-02",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "76",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-13"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-13",
+          "last_history_date": "2026-03-13"
+        },
+        {
+          "valve": "87",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-31"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V7": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-07-31",
+          "last_history_date": "2026-07-31"
+        },
+        {
+          "valve": "88",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V7": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-01",
+          "last_history_date": "2026-08-01"
+        },
+        {
+          "valve": "92",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 1
+          },
+          "first_history_date": "2026-01-09",
+          "last_history_date": "2026-01-21"
+        },
+        {
+          "valve": "105",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-02",
+          "last_history_date": "2026-08-02"
+        },
+        {
+          "valve": "107",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-19",
+          "last_history_date": "2026-08-19"
+        },
+        {
+          "valve": "109",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-05"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V5/V6": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-05",
+          "last_history_date": "2026-08-05"
+        },
+        {
+          "valve": "110",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-02-19"
+        },
+        {
+          "valve": "111",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V5/V6": 1
+          },
+          "sources": {
+            "app": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-25",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "119",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-21",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "121",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-21",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "125",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "137",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-19",
+          "last_history_date": "2026-08-19"
+        },
+        {
+          "valve": "138",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-21",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "144",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-04"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-04",
+          "last_history_date": "2026-08-04"
+        },
+        {
+          "valve": "147",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-05-07"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-07",
+          "last_history_date": "2026-05-07"
+        },
+        {
+          "valve": "148",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Caixa de ar": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-02-19"
+        },
+        {
+          "valve": "153",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 1
+          },
+          "first_history_date": "2026-02-12",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "154",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-23"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-23",
+          "last_history_date": "2026-08-23"
+        },
+        {
+          "valve": "156",
+          "history_count": 2,
+          "type_counts": {
+            "preventiva": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-23"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-03-02",
+          "last_history_date": "2026-08-23"
+        },
+        {
+          "valve": "161",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-14"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-01-14"
+        },
+        {
+          "valve": "168",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-11"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-11",
+          "last_history_date": "2026-03-11"
+        },
+        {
+          "valve": "169",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-16"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tulipa": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-16",
+          "last_history_date": "2026-08-16"
+        },
+        {
+          "valve": "173",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-20"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 1
+          },
+          "first_history_date": "2026-02-12",
+          "last_history_date": "2026-03-20"
+        },
+        {
+          "valve": "174",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-14"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V8": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-01-14"
+        },
+        {
+          "valve": "11",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-17",
+          "last_history_date": "2026-03-17"
+        }
+      ]
+    },
+    "513": {
+      "valve_documents": 98,
+      "valves_with_history": 98,
+      "history_documents": 202,
+      "type_counts": {
+        "preventiva": 75,
+        "corretiva": 101,
+        "sonda_event": 23,
+        "inspecao": 3
+      },
+      "source_counts": {
+        "app": 11,
+        "legacy_migration": 79,
+        "notion": 112
+      },
+      "status_counts": {
+        "ok": 175,
+        "pendente": 26,
+        "observacao": 1
+      },
+      "valves_with_corrective": 58,
+      "recurrent_valves_multiple_corrective_days": 21,
+      "valves": [
+        {
+          "valve": "27",
+          "history_count": 8,
+          "type_counts": {
+            "sonda_event": 2,
+            "corretiva": 5,
+            "preventiva": 1
+          },
+          "corrective_records": 5,
+          "corrective_distinct_days": 4,
+          "corrective_dates": [
+            "2026-02-12",
+            "2026-08-13",
+            "2026-08-26",
+            "2026-10-13"
+          ],
+          "subsets_repeating_different_days": {
+            "SONDA": 4
+          },
+          "corrective_subsets": {
+            "SONDA": 4,
+            "MC9": 1
+          },
+          "sources": {
+            "legacy_migration": 3,
+            "notion": 5
+          },
+          "statuses": {
+            "pendente": 2,
+            "ok": 6
+          },
+          "first_history_date": "2026-02-12",
+          "last_history_date": "2026-10-13"
+        },
+        {
+          "valve": "13",
+          "history_count": 6,
+          "type_counts": {
+            "preventiva": 2,
+            "corretiva": 4
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 4,
+          "corrective_dates": [
+            "2026-08-02",
+            "2026-08-19",
+            "2026-08-24",
+            "2026-08-26"
+          ],
+          "subsets_repeating_different_days": {
+            "V3": 3
+          },
+          "corrective_subsets": {
+            "Tulipa": 1,
+            "V3": 3
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 5
+          },
+          "statuses": {
+            "ok": 6
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-08-26"
+        },
+        {
+          "valve": "98",
+          "history_count": 7,
+          "type_counts": {
+            "corretiva": 4,
+            "sonda_event": 3
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 4,
+          "corrective_dates": [
+            "2026-02-12",
+            "2026-03-12",
+            "2026-06-27",
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {
+            "SONDA": 3
+          },
+          "corrective_subsets": {
+            "SONDA": 3,
+            "Acionamento V3": 1
+          },
+          "sources": {
+            "legacy_migration": 6,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 4,
+            "pendente": 3
+          },
+          "first_history_date": "2026-02-12",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "170",
+          "history_count": 5,
+          "type_counts": {
+            "corretiva": 5
+          },
+          "corrective_records": 5,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-01-23",
+            "2026-08-24",
+            "2026-09-19"
+          ],
+          "subsets_repeating_different_days": {
+            "V3": 2
+          },
+          "corrective_subsets": {
+            "V2": 1,
+            "V3": 2,
+            "V7": 1,
+            "V4": 1
+          },
+          "sources": {
+            "legacy_migration": 3,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 5
+          },
+          "first_history_date": "2026-01-23",
+          "last_history_date": "2026-09-19"
+        },
+        {
+          "valve": "104",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 3,
+            "inspecao": 1
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-08-18",
+            "2026-08-24",
+            "2026-08-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "O-ring": 1,
+            "Tulipa": 1,
+            "V4": 1
+          },
+          "sources": {
+            "notion": 4
+          },
+          "statuses": {
+            "ok": 3,
+            "pendente": 1
+          },
+          "first_history_date": "2026-08-18",
+          "last_history_date": "2026-10-13"
+        },
+        {
+          "valve": "140",
+          "history_count": 8,
+          "type_counts": {
+            "sonda_event": 3,
+            "corretiva": 4,
+            "preventiva": 1
+          },
+          "corrective_records": 4,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-25",
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1,
+            "Tulipa": 2,
+            "V3": 1
+          },
+          "sources": {
+            "app": 4,
+            "legacy_migration": 4
+          },
+          "statuses": {
+            "pendente": 3,
+            "ok": 5
+          },
+          "first_history_date": "2026-02-25",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "6",
+          "history_count": 5,
+          "type_counts": {
+            "preventiva": 2,
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-01-29",
+            "2026-08-24"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1,
+            "Tulipa": 1,
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 5
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-08-24"
+        },
+        {
+          "valve": "26",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 3,
+            "preventiva": 1
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-03-02",
+            "2026-03-08"
+          ],
+          "subsets_repeating_different_days": {
+            "V4": 2
+          },
+          "corrective_subsets": {
+            "V4": 2,
+            "V2": 1
+          },
+          "sources": {
+            "legacy_migration": 3,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-08"
+        },
+        {
+          "valve": "76",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-07-01",
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {
+            "Acionamento V3": 2
+          },
+          "corrective_subsets": {
+            "Tucho": 1,
+            "Acionamento V3": 2
+          },
+          "sources": {
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-07-01",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "153",
+          "history_count": 4,
+          "type_counts": {
+            "sonda_event": 1,
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-08-13",
+            "2026-08-26"
+          ],
+          "subsets_repeating_different_days": {
+            "SONDA": 2
+          },
+          "corrective_subsets": {
+            "SONDA": 2,
+            "MC9": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 3
+          },
+          "statuses": {
+            "pendente": 1,
+            "ok": 3
+          },
+          "first_history_date": "2026-08-13",
+          "last_history_date": "2026-08-26"
+        },
+        {
+          "valve": "155",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-08-13",
+            "2026-09-17"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1,
+            "Tulipa": 1,
+            "SONDA": 1
+          },
+          "sources": {
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-08-13",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "157",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-08-20",
+            "2026-08-23"
+          ],
+          "subsets_repeating_different_days": {
+            "MC9": 2
+          },
+          "corrective_subsets": {
+            "SONDA": 1,
+            "MC9": 2
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-08-20",
+          "last_history_date": "2026-08-23"
+        },
+        {
+          "valve": "9",
+          "history_count": 5,
+          "type_counts": {
+            "corretiva": 2,
+            "preventiva": 2,
+            "sonda_event": 1
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-03-19",
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V7": 1,
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 4,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 4,
+            "pendente": 1
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "14",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 2,
+            "preventiva": 1
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-08-02",
+            "2026-09-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1,
+            "V3": 1
+          },
+          "sources": {
+            "notion": 3
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-09-21"
+        },
+        {
+          "valve": "73",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-25",
+            "2026-10-13"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V5": 1,
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-02-25",
+          "last_history_date": "2026-10-13"
+        },
+        {
+          "valve": "78",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-06-27",
+            "2026-08-05"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "Acionamento V3": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-06-27",
+          "last_history_date": "2026-08-05"
+        },
+        {
+          "valve": "91",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-08-01",
+            "2026-08-22"
+          ],
+          "subsets_repeating_different_days": {
+            "Tulipa": 2
+          },
+          "corrective_subsets": {
+            "Tulipa": 2
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-08-01",
+          "last_history_date": "2026-08-22"
+        },
+        {
+          "valve": "103",
+          "history_count": 4,
+          "type_counts": {
+            "sonda_event": 2,
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-12",
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {
+            "SONDA": 2
+          },
+          "corrective_subsets": {
+            "SONDA": 2
+          },
+          "sources": {
+            "legacy_migration": 4
+          },
+          "statuses": {
+            "pendente": 2,
+            "ok": 2
+          },
+          "first_history_date": "2026-02-12",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "106",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-03-02",
+            "2026-03-03"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "V2": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-03-02",
+          "last_history_date": "2026-03-03"
+        },
+        {
+          "valve": "109",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-06-27",
+            "2026-08-05"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Acionamento V3": 1,
+            "V7": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-06-27",
+          "last_history_date": "2026-08-05"
+        },
+        {
+          "valve": "123",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-06-23",
+            "2026-06-27"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1,
+            "Acionamento V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-06-23",
+          "last_history_date": "2026-06-27"
+        },
+        {
+          "valve": "30",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 3,
+            "preventiva": 1
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V5": 1,
+            "V6": 1,
+            "V4": 1
+          },
+          "sources": {
+            "legacy_migration": 3,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-19"
+        },
+        {
+          "valve": "2067167",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-05-17"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Acionamento V3": 1,
+            "Tucho": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-05-17",
+          "last_history_date": "2026-05-17"
+        },
+        {
+          "valve": "1",
+          "history_count": 4,
+          "type_counts": {
+            "preventiva": 3,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-20"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "app": 1,
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "5",
+          "history_count": 4,
+          "type_counts": {
+            "preventiva": 3,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-29"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "app": 1,
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3,
+            "observacao": 1
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "8",
+          "history_count": 3,
+          "type_counts": {
+            "preventiva": 2,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-03"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tulipa": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-08-03"
+        },
+        {
+          "valve": "11",
+          "history_count": 4,
+          "type_counts": {
+            "preventiva": 2,
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 3,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3,
+            "pendente": 1
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "12",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 1,
+            "preventiva": 2
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-03-25"
+        },
+        {
+          "valve": "19",
+          "history_count": 2,
+          "type_counts": {
+            "preventiva": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-09-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-09-21"
+        },
+        {
+          "valve": "22",
+          "history_count": 2,
+          "type_counts": {
+            "preventiva": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-09"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-08-09"
+        },
+        {
+          "valve": "25",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1,
+            "preventiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2,
+            "pendente": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "38",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1,
+            "preventiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-12"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2,
+            "pendente": 1
+          },
+          "first_history_date": "2026-02-12",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "45",
+          "history_count": 2,
+          "type_counts": {
+            "preventiva": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-09-17"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "49",
+          "history_count": 2,
+          "type_counts": {
+            "preventiva": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-09-17"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "57",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-10-13"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-10-13",
+          "last_history_date": "2026-10-13"
+        },
+        {
+          "valve": "58",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-03"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-03",
+          "last_history_date": "2026-08-03"
+        },
+        {
+          "valve": "59",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V4": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-01-21"
+        },
+        {
+          "valve": "64",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 1
+          },
+          "first_history_date": "2026-03-17",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "71",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-19"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tulipa": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-02-19"
+        },
+        {
+          "valve": "74",
+          "history_count": 2,
+          "type_counts": {
+            "sonda_event": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-26"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "pendente": 1,
+            "ok": 1
+          },
+          "first_history_date": "2026-02-26",
+          "last_history_date": "2026-02-26"
+        },
+        {
+          "valve": "75",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-08"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V7": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-08",
+          "last_history_date": "2026-08-08"
+        },
+        {
+          "valve": "79",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-06-27"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Acionamento V3": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-06-27",
+          "last_history_date": "2026-06-27"
+        },
+        {
+          "valve": "81",
+          "history_count": 2,
+          "type_counts": {
+            "sonda_event": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-09-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "app": 2
+          },
+          "statuses": {
+            "pendente": 1,
+            "ok": 1
+          },
+          "first_history_date": "2026-09-25",
+          "last_history_date": "2026-09-25"
+        },
+        {
+          "valve": "85",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-07-01",
+          "last_history_date": "2026-07-01"
+        },
+        {
+          "valve": "95",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-22"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V7": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-22",
+          "last_history_date": "2026-08-22"
+        },
+        {
+          "valve": "107",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V2": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-02",
+          "last_history_date": "2026-03-02"
+        },
+        {
+          "valve": "111",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tucho": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-07-01",
+          "last_history_date": "2026-07-01"
+        },
+        {
+          "valve": "113",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-07-02"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Acionamento V3": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-07-02",
+          "last_history_date": "2026-07-02"
+        },
+        {
+          "valve": "117",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-26"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 1
+          },
+          "first_history_date": "2026-02-20",
+          "last_history_date": "2026-02-26"
+        },
+        {
+          "valve": "129",
+          "history_count": 2,
+          "type_counts": {
+            "sonda_event": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "pendente": 1,
+            "ok": 1
+          },
+          "first_history_date": "2026-03-12",
+          "last_history_date": "2026-08-21"
+        },
+        {
+          "valve": "136",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-22"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tulipa": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-22",
+          "last_history_date": "2026-08-22"
+        },
+        {
+          "valve": "137",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-12"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 1
+          },
+          "first_history_date": "2026-02-12",
+          "last_history_date": "2026-03-12"
+        },
+        {
+          "valve": "138",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-22"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-22",
+          "last_history_date": "2026-08-22"
+        },
+        {
+          "valve": "141",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "sonda_event": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-26"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 1,
+            "pendente": 1
+          },
+          "first_history_date": "2026-02-26",
+          "last_history_date": "2026-02-26"
+        },
+        {
+          "valve": "142",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-24"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-24",
+          "last_history_date": "2026-02-24"
+        },
+        {
+          "valve": "150",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-13"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "SONDA": 1
+          },
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-13",
+          "last_history_date": "2026-08-13"
+        },
+        {
+          "valve": "158",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-25"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V3": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-25",
+          "last_history_date": "2026-02-25"
+        },
+        {
+          "valve": "171",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-23"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "V4": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-23",
+          "last_history_date": "2026-01-23"
+        },
+        {
+          "valve": "2",
+          "history_count": 3,
+          "type_counts": {
+            "preventiva": 3
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "app": 1,
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "3",
+          "history_count": 3,
+          "type_counts": {
+            "preventiva": 3
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "app": 1,
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "4",
+          "history_count": 3,
+          "type_counts": {
+            "preventiva": 3
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "app": 1,
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "7",
+          "history_count": 2,
+          "type_counts": {
+            "preventiva": 2
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-03-25"
+        },
+        {
+          "valve": "10",
+          "history_count": 2,
+          "type_counts": {
+            "preventiva": 2
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-01-01",
+          "last_history_date": "2026-03-25"
+        },
+        {
+          "valve": "15",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-02-01"
+        },
+        {
+          "valve": "16",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-02-01"
+        },
+        {
+          "valve": "17",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-02-01"
+        },
+        {
+          "valve": "18",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-02-01"
+        },
+        {
+          "valve": "20",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-01",
+          "last_history_date": "2026-02-01"
+        },
+        {
+          "valve": "21",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "23",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "24",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "28",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "29",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "31",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "32",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "33",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "34",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "35",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "36",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "37",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "39",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "40",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-04-01",
+          "last_history_date": "2026-04-01"
+        },
+        {
+          "valve": "41",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-05-01"
+        },
+        {
+          "valve": "42",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-05-01"
+        },
+        {
+          "valve": "43",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-05-01"
+        },
+        {
+          "valve": "44",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-05-01"
+        },
+        {
+          "valve": "46",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-05-01"
+        },
+        {
+          "valve": "47",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-05-01"
+        },
+        {
+          "valve": "48",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-01",
+          "last_history_date": "2026-05-01"
+        },
+        {
+          "valve": "50",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-17",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "51",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-17",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "52",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-17",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "53",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-17",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "54",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-17",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "55",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-17",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "56",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-17",
+          "last_history_date": "2026-09-17"
+        },
+        {
+          "valve": "80",
+          "history_count": 1,
+          "type_counts": {
+            "inspecao": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "pendente": 1
+          },
+          "first_history_date": "2026-10-13",
+          "last_history_date": "2026-10-13"
+        },
+        {
+          "valve": "139",
+          "history_count": 2,
+          "type_counts": {
+            "sonda_event": 1,
+            "inspecao": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "pendente": 2
+          },
+          "first_history_date": "2026-02-12",
+          "last_history_date": "2026-10-13"
+        }
+      ]
+    },
+    "514": {
+      "valve_documents": 25,
+      "valves_with_history": 25,
+      "history_documents": 35,
+      "type_counts": {
+        "preventiva": 8,
+        "corretiva": 23,
+        "inspecao": 4
+      },
+      "source_counts": {
+        "legacy_migration": 22,
+        "notion": 13
+      },
+      "status_counts": {
+        "pendente": 1,
+        "ok": 34
+      },
+      "valves_with_corrective": 16,
+      "recurrent_valves_multiple_corrective_days": 4,
+      "valves": [
+        {
+          "valve": "20",
+          "history_count": 3,
+          "type_counts": {
+            "corretiva": 3
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-02-19",
+            "2026-02-28",
+            "2026-08-27"
+          ],
+          "subsets_repeating_different_days": {
+            "Geral": 2
+          },
+          "corrective_subsets": {
+            "Geral": 2,
+            "Tulipa": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 3
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-08-27"
+        },
+        {
+          "valve": "26",
+          "history_count": 4,
+          "type_counts": {
+            "corretiva": 3,
+            "preventiva": 1
+          },
+          "corrective_records": 3,
+          "corrective_distinct_days": 3,
+          "corrective_dates": [
+            "2026-02-19",
+            "2026-02-28",
+            "2026-08-27"
+          ],
+          "subsets_repeating_different_days": {
+            "Geral": 2
+          },
+          "corrective_subsets": {
+            "Geral": 2,
+            "Tulipa": 1
+          },
+          "sources": {
+            "legacy_migration": 2,
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 4
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-08-27"
+        },
+        {
+          "valve": "21",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-19",
+            "2026-02-28"
+          ],
+          "subsets_repeating_different_days": {
+            "Geral": 2
+          },
+          "corrective_subsets": {
+            "Geral": 2
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-02-19",
+          "last_history_date": "2026-02-28"
+        },
+        {
+          "valve": "36",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 2,
+          "corrective_dates": [
+            "2026-02-28",
+            "2026-08-27"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1,
+            "Tulipa": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-02-28",
+          "last_history_date": "2026-08-27"
+        },
+        {
+          "valve": "68",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 2
+          },
+          "corrective_records": 2,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 2
+          },
+          "sources": {
+            "legacy_migration": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "1",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-28"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-28",
+          "last_history_date": "2026-02-28"
+        },
+        {
+          "valve": "10",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-05-18"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "O-ring": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-18",
+          "last_history_date": "2026-05-18"
+        },
+        {
+          "valve": "11",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "22",
+          "history_count": 2,
+          "type_counts": {
+            "preventiva": 1,
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-08-27"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Tulipa": 1
+          },
+          "sources": {
+            "notion": 2
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-08-27",
+          "last_history_date": "2026-08-27"
+        },
+        {
+          "valve": "27",
+          "history_count": 2,
+          "type_counts": {
+            "corretiva": 1,
+            "inspecao": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-12"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1,
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 2
+          },
+          "first_history_date": "2026-03-12",
+          "last_history_date": "2026-09-21"
+        },
+        {
+          "valve": "31",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-03-01"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-03-01",
+          "last_history_date": "2026-03-01"
+        },
+        {
+          "valve": "33",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-28"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-28",
+          "last_history_date": "2026-02-28"
+        },
+        {
+          "valve": "34",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-01-21"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-21",
+          "last_history_date": "2026-01-21"
+        },
+        {
+          "valve": "48",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-28"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-28",
+          "last_history_date": "2026-02-28"
+        },
+        {
+          "valve": "56",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-28"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-28",
+          "last_history_date": "2026-02-28"
+        },
+        {
+          "valve": "63",
+          "history_count": 1,
+          "type_counts": {
+            "corretiva": 1
+          },
+          "corrective_records": 1,
+          "corrective_distinct_days": 1,
+          "corrective_dates": [
+            "2026-02-28"
+          ],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {
+            "Geral": 1
+          },
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-02-28",
+          "last_history_date": "2026-02-28"
+        },
+        {
+          "valve": "0",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "pendente": 1
+          },
+          "first_history_date": "2026-06-04",
+          "last_history_date": "2026-06-04"
+        },
+        {
+          "valve": "23",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-27",
+          "last_history_date": "2026-08-27"
+        },
+        {
+          "valve": "24",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-27",
+          "last_history_date": "2026-08-27"
+        },
+        {
+          "valve": "25",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-08-27",
+          "last_history_date": "2026-08-27"
+        },
+        {
+          "valve": "28",
+          "history_count": 1,
+          "type_counts": {
+            "inspecao": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-21",
+          "last_history_date": "2026-09-21"
+        },
+        {
+          "valve": "35",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-01-14",
+          "last_history_date": "2026-01-14"
+        },
+        {
+          "valve": "65",
+          "history_count": 1,
+          "type_counts": {
+            "inspecao": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-21",
+          "last_history_date": "2026-09-21"
+        },
+        {
+          "valve": "72",
+          "history_count": 1,
+          "type_counts": {
+            "inspecao": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "notion": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-09-21",
+          "last_history_date": "2026-09-21"
+        },
+        {
+          "valve": "6872",
+          "history_count": 1,
+          "type_counts": {
+            "preventiva": 1
+          },
+          "corrective_records": 0,
+          "corrective_distinct_days": 0,
+          "corrective_dates": [],
+          "subsets_repeating_different_days": {},
+          "corrective_subsets": {},
+          "sources": {
+            "legacy_migration": 1
+          },
+          "statuses": {
+            "ok": 1
+          },
+          "first_history_date": "2026-05-19",
+          "last_history_date": "2026-05-19"
+        }
+      ]
+    }
+  },
+  "privacy": "Resumo técnico sem descrições, nomes, executantes ou fotos. Nenhuma escrita no Firebase."
+}
